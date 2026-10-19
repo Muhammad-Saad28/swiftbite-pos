@@ -12,7 +12,10 @@ import {
   getPOSInventory, 
   getPOSMenuItemIngredients, 
   addPOSMenuItemIngredient, 
-  deletePOSMenuItemIngredient, 
+  deletePOSMenuItemIngredient,
+  addPOSMenuItem,
+  togglePOSMenuItemAvailability,
+  deletePOSMenuItem,
   POSMenuItem, 
   POSCategory, 
   POSInventoryItem, 
@@ -55,32 +58,36 @@ export default function AdminMenuPage() {
     refreshData();
   }, []);
 
-  const handleToggleAvailability = (id: string) => {
-    setItems(items.map((i) => (i.id === id ? { ...i, available: !i.available } : i)));
+  const handleToggleAvailability = async (id: string) => {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    const newStatus = !item.available;
+    setItems(items.map((i) => (i.id === id ? { ...i, available: newStatus } : i)));
+    await togglePOSMenuItemAvailability(id, newStatus);
   };
 
-  const handleAddItem = () => {
+  const handleAddItem = async () => {
     if (!newName || !newPrice) return;
     const priceNum = parseInt(newPrice, 10);
-    const categoryObj = categories.find(c => c.id === newCategory) || categories[0];
     
-    const newItem: POSMenuItem = {
-      id: `m_${Date.now()}`,
+    await addPOSMenuItem({
       category_id: newCategory,
-      category_name: categoryObj?.name || "General",
       name: newName,
       description: newDesc || null,
       price: priceNum,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80",
-      available: true,
-      featured: false,
-    };
+    });
 
-    setItems([newItem, ...items]);
     setIsAddModalOpen(false);
     setNewName("");
     setNewPrice("");
     setNewDesc("");
+    await refreshData();
+  };
+
+  const handleDeleteItem = async (id: string) => {
+    setItems(items.filter(i => i.id !== id));
+    await deletePOSMenuItem(id);
+    await refreshData();
   };
 
   const openRecipeModal = async (item: POSMenuItem) => {

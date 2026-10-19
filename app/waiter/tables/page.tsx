@@ -40,7 +40,7 @@ export default function WaiterTablesPage() {
 
   const itemVariants = {
     hidden: { opacity: 0, scale: 0.8 },
-    show: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 100 } }
+    show: { opacity: 1, scale: 1, transition: { type: "spring" as const, stiffness: 100 } }
   };
 
   return (

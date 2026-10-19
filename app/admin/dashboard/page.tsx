@@ -368,7 +368,7 @@ export default function AdminDashboardPage() {
                   {/* Actions */}
                   <div className="flex items-center space-x-3 pt-4">
                     <Button
-                      size="default"
+                      size="md"
                       onClick={() => handleAcceptOrder(order.id)}
                       className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.2)] font-bold rounded-xl transition-all hover:-translate-y-0.5"
                     >
@@ -376,7 +376,7 @@ export default function AdminDashboardPage() {
                       <span>Accept</span>
                     </Button>
                     <Button
-                      size="default"
+                      size="md"
                       variant="outline"
                       onClick={() => setRejectingOrderId(order.id)}
                       className="flex-1 border-rose-500/30 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 font-bold rounded-xl transition-all"

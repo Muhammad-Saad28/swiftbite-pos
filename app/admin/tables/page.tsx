@@ -11,10 +11,12 @@ import {
   getPOSOrders, 
   reservePOSTable, 
   cancelPOSTableReservation, 
+  addPOSTable,
+  deletePOSTable,
   POSTable, 
   POSOrder 
 } from "@/lib/pos-data";
-import { Utensils, Users, Plus, Calendar, XCircle, Phone, User } from "lucide-react";
+import { Utensils, Users, Plus, Calendar, XCircle, Phone, User, Trash2 } from "lucide-react";
 
 export default function AdminTablesPage() {
   const [tables, setTables] = useState<POSTable[]>([]);
@@ -45,16 +47,20 @@ export default function AdminTablesPage() {
     refreshData();
   }, []);
 
-  const handleAddTable = () => {
+  const handleAddTable = async () => {
     if (!newTableNum) return;
     const num = parseInt(newTableNum, 10);
     const cap = parseInt(newCapacity, 10) || 4;
-    setTables([
-      ...tables,
-      { id: `t_${Date.now()}`, table_number: num, capacity: cap, status: "available" },
-    ]);
+    await addPOSTable(num, cap);
     setIsAddModalOpen(false);
     setNewTableNum("");
+    await refreshData();
+  };
+
+  const handleDeleteTable = async (tableNum: number) => {
+    await deletePOSTable(tableNum);
+    setSelectedTable(null);
+    await refreshData();
   };
 
   const handleReserve = async () => {
@@ -198,6 +204,18 @@ export default function AdminTablesPage() {
                   className="border-red-500/40 text-red-400 hover:bg-red-500/20 font-bold text-xs"
                 >
                   Clear Reservation
+                </Button>
+              )}
+
+              {selectedTable.status !== "occupied" && (
+                <Button
+                  size="sm"
+                  variant="danger"
+                  onClick={() => handleDeleteTable(selectedTable.table_number)}
+                  className="font-bold text-xs flex items-center space-x-1"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  <span>Remove Table</span>
                 </Button>
               )}
 

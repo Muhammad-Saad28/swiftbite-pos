@@ -42,6 +42,7 @@ export interface POSOrderItem {
 
 export interface POSOrder {
   id: string;
+  order_number?: number | string;
   table_id: string | null;
   table_number?: number;
   waiter_id: string | null;
@@ -62,6 +63,26 @@ export interface POSOrder {
   completed_at: string | null;
   items?: POSOrderItem[];
   rejection_reason?: string;
+}
+
+export function formatOrderNumber(orderIdOrNumber: string | number | undefined, indexFallback: number = 1): string {
+  if (!orderIdOrNumber) {
+    return String(indexFallback).padStart(7, "0");
+  }
+  // If it's a numeric number or string of pure digits
+  const str = String(orderIdOrNumber).trim();
+  if (/^\d+$/.test(str)) {
+    const num = parseInt(str, 10);
+    return String(num).padStart(7, "0");
+  }
+  // If it's a UUID (e.g. 545275df-8297-4d4e-bcc6-8d5f1b3ef470)
+  // Extract hex digits and convert to deterministic numeric representation or use fallback
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+  }
+  const numericVal = (hash % 900000) + 1;
+  return String(numericVal).padStart(7, "0");
 }
 
 export interface POSInventoryItem {
@@ -187,6 +208,42 @@ export async function getPOSTables(): Promise<POSTable[]> {
   return mockTables;
 }
 
+export async function addPOSTable(tableNumber: number, capacity: number): Promise<POSTable> {
+  let newTable: POSTable = {
+    id: `t_${Date.now()}`,
+    table_number: tableNumber,
+    capacity: capacity,
+    status: "available",
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from("tables")
+      .insert({
+        table_number: tableNumber,
+        capacity: capacity,
+        status: "available",
+      })
+      .select()
+      .single();
+
+    if (!error && data) {
+      newTable = data as POSTable;
+    }
+  } catch (e) {}
+
+  mockTables.push(newTable);
+  return newTable;
+}
+
+export async function deletePOSTable(tableNumber: number): Promise<boolean> {
+  mockTables = mockTables.filter(t => t.table_number !== tableNumber);
+  try {
+    await supabase.from("tables").delete().eq("table_number", tableNumber);
+  } catch (e) {}
+  return true;
+}
+
 export async function reservePOSTable(
   tableNumber: number,
   reservedBy: string,
@@ -259,6 +316,69 @@ export async function getPOSMenuItems(): Promise<POSMenuItem[]> {
   return mockMenuItems;
 }
 
+export async function addPOSMenuItem(item: {
+  category_id?: string | null;
+  name: string;
+  description?: string | null;
+  price: number;
+  image?: string | null;
+}): Promise<POSMenuItem> {
+  const cat = mockCategories.find(c => c.id === item.category_id);
+  let newItem: POSMenuItem = {
+    id: `m_${Date.now()}`,
+    category_id: item.category_id || null,
+    category_name: cat?.name || "General",
+    name: item.name,
+    description: item.description || null,
+    price: item.price,
+    image: item.image || "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80",
+    available: true,
+    featured: false,
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from("menu_items")
+      .insert({
+        category_id: item.category_id || null,
+        name: item.name,
+        description: item.description || null,
+        price: item.price,
+        image: newItem.image,
+        available: true,
+      })
+      .select("*, categories(name)")
+      .single();
+
+    if (!error && data) {
+      newItem = {
+        ...data,
+        category_name: data.categories?.name || cat?.name || "General",
+      };
+    }
+  } catch (e) {}
+
+  mockMenuItems.unshift(newItem);
+  return newItem;
+}
+
+export async function togglePOSMenuItemAvailability(id: string, available: boolean): Promise<boolean> {
+  const found = mockMenuItems.find(m => m.id === id);
+  if (found) found.available = available;
+  try {
+    await supabase.from("menu_items").update({ available }).eq("id", id);
+  } catch (e) {}
+  return true;
+}
+
+export async function deletePOSMenuItem(id: string): Promise<boolean> {
+  mockMenuItems = mockMenuItems.filter(m => m.id !== id);
+  try {
+    await supabase.from("menu_items").delete().eq("id", id);
+  } catch (e) {}
+  return true;
+}
+
 export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
   try {
     let query = supabase
@@ -273,8 +393,10 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
     const { data, error } = await query;
 
     if (!error && data) {
-      return data.map((order: any) => ({
+      const totalCount = data.length;
+      return data.map((order: any, idx: number) => ({
         ...order,
+        order_number: totalCount - idx,
         table_number: order.tables?.table_number,
         waiter_name: order.users?.name || "Staff",
         items: order.order_items?.map((item: any) => ({
@@ -307,10 +429,12 @@ export async function createPOSOrder(order: {
   const subtotal = order.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const tax = Math.round(subtotal * 0.18);
   const total = subtotal + tax;
-  const orderId = (1048 + mockOrders.length).toString();
+  const nextNum = mockOrders.length + 1;
+  const orderId = (1000 + nextNum).toString();
 
   const newOrder: POSOrder = {
     id: orderId,
+    order_number: nextNum,
     table_id: order.table_id || null,
     table_number: order.table_number || undefined,
     waiter_id: order.waiter_id,
@@ -543,6 +667,54 @@ export async function adjustPOSInventoryStock(id: string, deltaQuantity: number,
     return true;
   }
   return false;
+}
+
+export async function addPOSInventoryItem(item: {
+  name: string;
+  unit: string;
+  quantity: number;
+  minimum_quantity: number;
+}): Promise<POSInventoryItem> {
+  let newItem: POSInventoryItem = {
+    id: `inv_${Date.now()}`,
+    name: item.name,
+    unit: item.unit || "kg",
+    quantity: item.quantity >= 0 ? item.quantity : 0,
+    minimum_quantity: item.minimum_quantity >= 0 ? item.minimum_quantity : 0,
+    updated_at: new Date().toISOString(),
+    status: item.quantity <= item.minimum_quantity ? "critical" : item.quantity <= item.minimum_quantity * 2 ? "low" : "in_stock",
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from("inventory")
+      .insert({
+        name: item.name,
+        unit: item.unit || "kg",
+        quantity: item.quantity,
+        minimum_quantity: item.minimum_quantity,
+      })
+      .select()
+      .single();
+
+    if (!error && data) {
+      newItem = {
+        ...data,
+        status: data.quantity <= data.minimum_quantity ? "critical" : data.quantity <= data.minimum_quantity * 2 ? "low" : "in_stock",
+      };
+    }
+  } catch (e) {}
+
+  mockInventory.push(newItem);
+  return newItem;
+}
+
+export async function deletePOSInventoryItem(id: string): Promise<boolean> {
+  mockInventory = mockInventory.filter(i => i.id !== id);
+  try {
+    await supabase.from("inventory").delete().eq("id", id);
+  } catch (e) {}
+  return true;
 }
 
 export async function getPOSMenuItemIngredients(menuItemId: string): Promise<POSMenuItemIngredient[]> {
