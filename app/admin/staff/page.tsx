@@ -15,7 +15,7 @@ export default function AdminStaffPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
-  const [newRole, setNewRole] = useState<"admin" | "waiter" | "kitchen">("waiter");
+  const [newRole, setNewRole] = useState<"admin" | "waiter" | "kitchen" | "cashier" | "rider">("waiter");
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
 
   const refreshData = async () => {
@@ -304,11 +304,13 @@ export default function AdminStaffPage() {
             </label>
             <select
               value={newRole}
-              onChange={(e) => setNewRole(e.target.value as "admin" | "waiter" | "kitchen")}
+              onChange={(e) => setNewRole(e.target.value as "admin" | "waiter" | "kitchen" | "cashier" | "rider")}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="waiter">Waiter</option>
               <option value="kitchen">Kitchen Staff</option>
+              <option value="cashier">Cashier</option>
+              <option value="rider">Rider / Delivery Staff</option>
               <option value="admin">Admin / Manager</option>
             </select>
           </div>

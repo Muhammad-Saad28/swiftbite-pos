@@ -310,13 +310,16 @@ export default function AdminDashboardPage() {
         <div className="h-1 w-full bg-gradient-to-r from-orange-500 to-amber-500" />
         <CardHeader className="flex flex-row items-center justify-between bg-zinc-900/50 border-b border-zinc-800/50 pb-4">
           <CardTitle className="text-white flex items-center space-x-3 text-xl">
-            <span>Incoming Waiter Orders Awaiting Approval</span>
+            <span>Incoming Waiter Orders (Cashier Review & Confirmation Queue)</span>
             {pendingOrders.length > 0 && (
               <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
                 {pendingOrders.length} Pending
               </span>
             )}
           </CardTitle>
+          <span className="text-xs text-zinc-400 font-medium">
+            Managed by Cashier Panel
+          </span>
         </CardHeader>
         <CardContent className="pt-6">
           {pendingOrders.length === 0 ? (

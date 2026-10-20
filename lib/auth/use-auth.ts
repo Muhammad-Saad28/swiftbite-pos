@@ -8,16 +8,18 @@ export interface UserSession {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "waiter" | "kitchen";
+  role: "admin" | "waiter" | "kitchen" | "cashier" | "rider";
   status?: "pending" | "approved" | "rejected";
 }
 
 // System Registered Credentials Mapping
-export const SYSTEM_USERS: { email: string; password: string; role: "admin" | "waiter" | "kitchen"; name: string; id: string }[] = [
+export const SYSTEM_USERS: { email: string; password: string; role: "admin" | "waiter" | "kitchen" | "cashier" | "rider"; name: string; id: string }[] = [
   { id: "10000000-0000-0000-0000-000000000001", email: "admin@swiftbite", password: "admin123", role: "admin", name: "Admin Manager" },
   { id: "10000000-0000-0000-0000-000000000002", email: "ali@swiftbite", password: "ali1@123", role: "waiter", name: "Ali Hassan" },
   { id: "10000000-0000-0000-0000-000000000003", email: "afaq@swiftbite", password: "afaq1@123", role: "waiter", name: "Afaq Ahmed" },
   { id: "10000000-0000-0000-0000-000000000004", email: "rehan@swiftbite", password: "rehan@123", role: "kitchen", name: "Chef Rehan" },
+  { id: "10000000-0000-0000-0000-000000000005", email: "cashier@swiftbite", password: "cashier123", role: "cashier", name: "Sara Cashier" },
+  { id: "10000000-0000-0000-0000-000000000006", email: "rider@swiftbite", password: "rider123", role: "rider", name: "Zubair Rider" },
 ];
 
 export function useAuth() {
@@ -26,7 +28,7 @@ export function useAuth() {
 
   const refreshUser = useCallback(() => {
     if (typeof window !== "undefined") {
-      const storedRole = localStorage.getItem("userRole") as "admin" | "waiter" | "kitchen" | null;
+      const storedRole = localStorage.getItem("userRole") as "admin" | "waiter" | "kitchen" | "cashier" | "rider" | null;
       const storedEmail = localStorage.getItem("userEmail");
       const storedName = localStorage.getItem("userName");
       const storedId = localStorage.getItem("userId");
@@ -52,7 +54,7 @@ export function useAuth() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        const role = (session.user.user_metadata?.role || "waiter") as "admin" | "waiter" | "kitchen";
+        const role = (session.user.user_metadata?.role || "waiter") as "admin" | "waiter" | "kitchen" | "cashier" | "rider";
         const email = session.user.email || "";
         const name = session.user.user_metadata?.name || email.split("@")[0] || "User";
         const id = session.user.id;
@@ -93,7 +95,7 @@ export function useAuth() {
     return user.status === "approved";
   }, [user?.email, user?.status]);
 
-  const signIn = useCallback(async (inputEmail: string, inputPassword: string, selectedRole?: "admin" | "waiter" | "kitchen") => {
+  const signIn = useCallback(async (inputEmail: string, inputPassword: string, selectedRole?: "admin" | "waiter" | "kitchen" | "cashier" | "rider") => {
     setLoading(true);
 
     const cleanEmail = inputEmail.trim().toLowerCase();
@@ -120,7 +122,7 @@ export function useAuth() {
           throw new Error("Your registration request was rejected by an administrator.");
         }
 
-        const role = data.role as "admin" | "waiter" | "kitchen";
+        const role = data.role as "admin" | "waiter" | "kitchen" | "cashier" | "rider";
         const name = data.name || cleanEmail;
         const id = data.id;
         const status = (data.status || "approved") as "pending" | "approved" | "rejected";
@@ -146,7 +148,7 @@ export function useAuth() {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password: inputPassword });
       if (!error && data.user) {
-        const role = (data.user.user_metadata?.role || selectedRole || "waiter") as "admin" | "waiter" | "kitchen";
+        const role = (data.user.user_metadata?.role || selectedRole || "waiter") as "admin" | "waiter" | "kitchen" | "cashier" | "rider";
         const name = data.user.user_metadata?.name || cleanEmail.split("@")[0];
         localStorage.setItem("userRole", role);
         localStorage.setItem("userEmail", cleanEmail);
@@ -159,7 +161,36 @@ export function useAuth() {
       }
     } catch (e) {}
 
-    // 3. System Credentials Matching
+    // 3. System & Locally Registered Credentials Matching
+    const allRegisteredUsers = typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("swiftbite_registered_users") || "[]")
+      : [];
+
+    const localMatch = allRegisteredUsers.find(
+      (u: any) => u.email?.toLowerCase() === cleanEmail
+    );
+
+    if (localMatch) {
+      if (localMatch.status === "pending" || (!localMatch.active && localMatch.status !== "rejected")) {
+        setLoading(false);
+        throw new Error("Your account registration is pending admin approval. Please ask an admin to accept your request.");
+      }
+      if (localMatch.status === "rejected") {
+        setLoading(false);
+        throw new Error("Your registration request was rejected by an administrator.");
+      }
+
+      localStorage.setItem("userRole", localMatch.role);
+      localStorage.setItem("userEmail", localMatch.email);
+      localStorage.setItem("userName", localMatch.name);
+      localStorage.setItem("userId", localMatch.id);
+      localStorage.setItem("userStatus", localMatch.status);
+
+      setUser({ id: localMatch.id, name: localMatch.name, email: localMatch.email, role: localMatch.role, status: localMatch.status });
+      setLoading(false);
+      return { role: localMatch.role, status: localMatch.status };
+    }
+
     const matchedUser = SYSTEM_USERS.find(
       (u) =>
         (u.email.toLowerCase() === cleanEmail || u.email.toLowerCase() === `${cleanEmail}.com` || cleanEmail.startsWith(u.email.toLowerCase())) &&
@@ -182,10 +213,10 @@ export function useAuth() {
     throw new Error("Invalid email or password");
   }, []);
 
-  const register = useCallback(async (name: string, inputEmail: string, password: string, role: "admin" | "waiter" | "kitchen") => {
+  const register = useCallback(async (name: string, inputEmail: string, password: string, role: "admin" | "waiter" | "kitchen" | "cashier" | "rider") => {
     setLoading(true);
     const cleanEmail = inputEmail.trim().toLowerCase();
-    const isStaff = role === "waiter" || role === "kitchen";
+    const isStaff = role !== "admin";
     const status = isStaff ? "pending" : "approved";
     const active = !isStaff;
 
@@ -211,8 +242,9 @@ export function useAuth() {
       }
     } catch (e) {}
 
-    // Sync to POS user store
-    await addPOSUser({ name, email: cleanEmail, role, status });
+    // Sync to POS user store & local storage cache
+    const posUser = await addPOSUser({ name, email: cleanEmail, role, status, password });
+    if (posUser?.id) assignedId = posUser.id;
 
     localStorage.setItem("userRole", role);
     localStorage.setItem("userEmail", cleanEmail);

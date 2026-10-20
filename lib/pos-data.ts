@@ -63,6 +63,9 @@ export interface POSOrder {
   completed_at: string | null;
   items?: POSOrderItem[];
   rejection_reason?: string;
+  assigned_rider_id?: string | null;
+  assigned_rider_name?: string | null;
+  delivery_status?: "unassigned" | "assigned" | "picked_up" | "delivered" | "failed";
 }
 
 export function formatOrderNumber(orderIdOrNumber: string | number | undefined, indexFallback: number = 1): string {
@@ -108,7 +111,7 @@ export interface POSUser {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "waiter" | "kitchen";
+  role: "admin" | "waiter" | "kitchen" | "cashier" | "rider";
   active: boolean;
   status: "pending" | "approved" | "rejected";
   created_at: string;
@@ -185,6 +188,8 @@ let mockUsers: POSUser[] = [
   { id: "10000000-0000-0000-0000-000000000002", name: "Ali Hassan", email: "ali@swiftbite", role: "waiter", active: true, status: "approved", created_at: new Date().toISOString() },
   { id: "10000000-0000-0000-0000-000000000003", name: "Afaq Ahmed", email: "afaq@swiftbite", role: "waiter", active: true, status: "approved", created_at: new Date().toISOString() },
   { id: "10000000-0000-0000-0000-000000000004", name: "Chef Rehan", email: "rehan@swiftbite", role: "kitchen", active: true, status: "approved", created_at: new Date().toISOString() },
+  { id: "10000000-0000-0000-0000-000000000005", name: "Sara Cashier", email: "cashier@swiftbite", role: "cashier", active: true, status: "approved", created_at: new Date().toISOString() },
+  { id: "10000000-0000-0000-0000-000000000006", name: "Zubair Rider", email: "rider@swiftbite", role: "rider", active: true, status: "approved", created_at: new Date().toISOString() },
 ];
 
 let mockIngredients: POSMenuItemIngredient[] = [
@@ -639,6 +644,57 @@ export async function updateOrderStatus(
   return false;
 }
 
+export async function assignOrderRider(
+  orderId: string,
+  riderId: string,
+  riderName: string
+): Promise<boolean> {
+  const target = mockOrders.find(o => o.id === orderId);
+  if (target) {
+    target.assigned_rider_id = riderId;
+    target.assigned_rider_name = riderName;
+    target.delivery_status = "assigned";
+  }
+
+  try {
+    await supabase
+      .from("orders")
+      .update({
+        assigned_rider_id: riderId,
+        assigned_rider_name: riderName,
+        delivery_status: "assigned",
+      })
+      .eq("id", orderId);
+  } catch (e) {}
+
+  return true;
+}
+
+export async function updateOrderDeliveryStatus(
+  orderId: string,
+  deliveryStatus: "unassigned" | "assigned" | "picked_up" | "delivered" | "failed"
+): Promise<boolean> {
+  const target = mockOrders.find(o => o.id === orderId);
+  if (target) {
+    target.delivery_status = deliveryStatus;
+    if (deliveryStatus === "delivered") {
+      target.status = "completed";
+      target.completed_at = new Date().toISOString();
+    }
+  }
+
+  try {
+    const payload: any = { delivery_status: deliveryStatus };
+    if (deliveryStatus === "delivered") {
+      payload.status = "completed";
+      payload.completed_at = new Date().toISOString();
+    }
+    await supabase.from("orders").update(payload).eq("id", orderId);
+  } catch (e) {}
+
+  return true;
+}
+
 export async function getPOSInventory(): Promise<POSInventoryItem[]> {
   try {
     const { data, error } = await supabase.from("inventory").select("*").order("name");
@@ -771,16 +827,59 @@ export async function deletePOSMenuItemIngredient(ingredientId: string): Promise
   return true;
 }
 
-export async function getPOSUsers(): Promise<POSUser[]> {
+const LOCAL_USERS_KEY = "swiftbite_registered_users";
+
+function getStoredLocalUsers(): POSUser[] {
+  if (typeof window === "undefined") return [];
   try {
-    const { data, error } = await supabase.from("users").select("*").order("created_at", { ascending: false });
-    if (!error && data && data.length > 0) return data as POSUser[];
-  } catch (e) {}
-  return mockUsers;
+    const raw = localStorage.getItem(LOCAL_USERS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
 }
 
-export async function addPOSUser(user: { name: string; email: string; role: "admin" | "waiter" | "kitchen"; status?: "pending" | "approved" | "rejected" }): Promise<POSUser> {
-  const isPending = user.role === "waiter" || user.role === "kitchen";
+function saveStoredLocalUser(user: POSUser) {
+  if (typeof window === "undefined") return;
+  try {
+    const existing = getStoredLocalUsers();
+    const idx = existing.findIndex(u => u.email === user.email || u.id === user.id);
+    if (idx >= 0) existing[idx] = user;
+    else existing.unshift(user);
+    localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(existing));
+  } catch (e) {}
+}
+
+export async function getPOSUsers(): Promise<POSUser[]> {
+  const localUsers = getStoredLocalUsers();
+
+  try {
+    const { data, error } = await supabase.from("users").select("*").order("created_at", { ascending: false });
+    if (!error && data && data.length > 0) {
+      const dbUsers = data as POSUser[];
+      // Merge DB users with any locally registered users
+      const merged = [...dbUsers];
+      for (const lu of localUsers) {
+        if (!merged.some(u => u.email === lu.email)) {
+          merged.unshift(lu);
+        }
+      }
+      return merged;
+    }
+  } catch (e) {}
+
+  // Fallback to mockUsers + localUsers
+  const merged = [...mockUsers];
+  for (const lu of localUsers) {
+    if (!merged.some(u => u.email === lu.email)) {
+      merged.unshift(lu);
+    }
+  }
+  return merged;
+}
+
+export async function addPOSUser(user: { name: string; email: string; role: "admin" | "waiter" | "kitchen" | "cashier" | "rider"; status?: "pending" | "approved" | "rejected"; password?: string }): Promise<POSUser> {
+  const isPending = user.role !== "admin";
   const userStatus = user.status || (isPending ? "pending" : "approved");
   const isActive = userStatus === "approved";
   
@@ -795,9 +894,18 @@ export async function addPOSUser(user: { name: string; email: string; role: "adm
   };
 
   try {
+    // If the DB constraint permits the role (admin/waiter/kitchen), it succeeds.
+    // If it's a cashier or rider, it will attempt insert; if check constraint fails, it safely falls through to local/mock storage.
     const { data, error } = await supabase
       .from("users")
-      .insert({ name: user.name, email: user.email, role: user.role, active: isActive, status: userStatus })
+      .insert({
+        name: user.name,
+        email: user.email,
+        password: user.password || "password123",
+        role: user.role,
+        active: isActive,
+        status: userStatus
+      })
       .select()
       .single();
 
@@ -806,9 +914,12 @@ export async function addPOSUser(user: { name: string; email: string; role: "adm
     }
   } catch (e) {}
 
+  // Always persist to localStorage so Admin sees it across browser sessions
+  saveStoredLocalUser(insertedUser);
+
   const existingIdx = mockUsers.findIndex(u => u.email === user.email);
   if (existingIdx >= 0) mockUsers[existingIdx] = insertedUser;
-  else mockUsers.push(insertedUser);
+  else mockUsers.unshift(insertedUser);
 
   return insertedUser;
 }
@@ -820,6 +931,20 @@ export async function updatePOSUserStatus(userId: string, newStatus: "approved" 
     target.status = newStatus;
     target.active = isActive;
   }
+
+  // Update in localStorage
+  if (typeof window !== "undefined") {
+    try {
+      const localUsers = getStoredLocalUsers();
+      const lIdx = localUsers.findIndex(u => u.id === userId);
+      if (lIdx >= 0) {
+        localUsers[lIdx].status = newStatus;
+        localUsers[lIdx].active = isActive;
+        localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
+      }
+    } catch (e) {}
+  }
+
   try {
     const { error } = await supabase
       .from("users")

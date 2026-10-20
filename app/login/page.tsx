@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ShieldCheck, UserCheck, ChefHat, ArrowRight, Lock, Mail, User, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, UserCheck, ChefHat, ArrowRight, Lock, Mail, User, CheckCircle2, CreditCard, Bike } from "lucide-react";
 
 export default function LoginPage() {
   const [mode, setMode] = useState<"login" | "register">("login");
-  const [role, setRole] = useState<"admin" | "waiter" | "kitchen">("admin");
+  const [role, setRole] = useState<"admin" | "waiter" | "kitchen" | "cashier" | "rider">("admin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +19,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { signIn, register } = useAuth();
 
-  const handleRoleChange = (newRole: "admin" | "waiter" | "kitchen") => {
+  const handleRoleChange = (newRole: "admin" | "waiter" | "kitchen" | "cashier" | "rider") => {
     setRole(newRole);
   };
 
@@ -47,12 +47,16 @@ export default function LoginPage() {
         setTimeout(() => {
           if (res.role === "admin") router.push("/admin/dashboard");
           else if (res.role === "kitchen") router.push("/kitchen/dashboard");
+          else if (res.role === "cashier") router.push("/cashier/dashboard");
+          else if (res.role === "rider") router.push("/rider/dashboard");
           else router.push("/waiter/dashboard");
         }, 800);
       } else {
         const res = await signIn(email, password, role);
         if (res.role === "admin") router.push("/admin/dashboard");
         else if (res.role === "kitchen") router.push("/kitchen/dashboard");
+        else if (res.role === "cashier") router.push("/cashier/dashboard");
+        else if (res.role === "rider") router.push("/rider/dashboard");
         else router.push("/waiter/dashboard");
       }
     } catch (err: any) {
@@ -108,43 +112,67 @@ export default function LoginPage() {
           </button>
         </div>
 
-        {/* Role Selector Tabs (Admin / Waiter / Kitchen) */}
-        <div className="grid grid-cols-3 p-1 bg-zinc-900 rounded-xl border border-zinc-800">
+        {/* Role Selector Tabs (Admin / Waiter / Kitchen / Cashier / Rider) */}
+        <div className="grid grid-cols-5 p-1 bg-zinc-900 rounded-xl border border-zinc-800">
           <button
             type="button"
             onClick={() => handleRoleChange("admin")}
-            className={`flex items-center justify-center space-x-1.5 py-2 px-2 rounded-lg text-[11px] font-bold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1 py-2 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all ${
               role === "admin"
                 ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            <ShieldCheck className="h-3.5 w-3.5" />
+            <ShieldCheck className="h-3.5 w-3.5 mb-0.5 sm:mb-0" />
             <span>ADMIN</span>
           </button>
           <button
             type="button"
             onClick={() => handleRoleChange("waiter")}
-            className={`flex items-center justify-center space-x-1.5 py-2 px-2 rounded-lg text-[11px] font-bold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1 py-2 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all ${
               role === "waiter"
                 ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            <UserCheck className="h-3.5 w-3.5" />
+            <UserCheck className="h-3.5 w-3.5 mb-0.5 sm:mb-0" />
             <span>WAITER</span>
           </button>
           <button
             type="button"
             onClick={() => handleRoleChange("kitchen")}
-            className={`flex items-center justify-center space-x-1.5 py-2 px-2 rounded-lg text-[11px] font-bold transition-all ${
+            className={`flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1 py-2 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all ${
               role === "kitchen"
                 ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            <ChefHat className="h-3.5 w-3.5" />
+            <ChefHat className="h-3.5 w-3.5 mb-0.5 sm:mb-0" />
             <span>KITCHEN</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleRoleChange("cashier")}
+            className={`flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1 py-2 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all ${
+              role === "cashier"
+                ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            <CreditCard className="h-3.5 w-3.5 mb-0.5 sm:mb-0" />
+            <span>CASHIER</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleRoleChange("rider")}
+            className={`flex flex-col sm:flex-row items-center justify-center space-x-0 sm:space-x-1 py-2 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all ${
+              role === "rider"
+                ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            <Bike className="h-3.5 w-3.5 mb-0.5 sm:mb-0" />
+            <span>RIDER</span>
           </button>
         </div>
 

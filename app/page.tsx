@@ -17,6 +17,10 @@ export default function RootPage() {
         router.replace("/admin/dashboard");
       } else if (user.role === "kitchen") {
         router.replace("/kitchen/dashboard");
+      } else if (user.role === "cashier") {
+        router.replace("/cashier/dashboard");
+      } else if (user.role === "rider") {
+        router.replace("/rider/dashboard");
       } else {
         router.replace("/waiter/dashboard");
       }
