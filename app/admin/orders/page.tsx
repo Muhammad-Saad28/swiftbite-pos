@@ -328,34 +328,101 @@ export default function AdminOrdersPage() {
               <button
                 type="button"
                 onClick={() => { setDiscountType("none"); setDiscountValue(0); }}
-                className={`py-1.5 rounded-lg text-xs font-bold border ${discountType === "none" ? "bg-orange-600 border-orange-500 text-white" : "bg-zinc-950 border-zinc-800 text-zinc-400"}`}
+                className={`py-1.5 rounded-lg text-xs font-bold border transition-all ${discountType === "none" ? "bg-orange-600 border-orange-500 text-white shadow-sm" : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200"}`}
               >
                 No Discount
               </button>
               <button
                 type="button"
-                onClick={() => setDiscountType("percentage")}
-                className={`py-1.5 rounded-lg text-xs font-bold border ${discountType === "percentage" ? "bg-orange-600 border-orange-500 text-white" : "bg-zinc-950 border-zinc-800 text-zinc-400"}`}
+                onClick={() => {
+                  setDiscountType("percentage");
+                  if (discountValue === 0) setDiscountValue(10);
+                }}
+                className={`py-1.5 rounded-lg text-xs font-bold border transition-all ${discountType === "percentage" ? "bg-orange-600 border-orange-500 text-white shadow-sm" : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200"}`}
               >
                 Percentage (%)
               </button>
               <button
                 type="button"
-                onClick={() => setDiscountType("flat")}
-                className={`py-1.5 rounded-lg text-xs font-bold border ${discountType === "flat" ? "bg-orange-600 border-orange-500 text-white" : "bg-zinc-950 border-zinc-800 text-zinc-400"}`}
+                onClick={() => {
+                  setDiscountType("flat");
+                  if (discountValue === 0) setDiscountValue(100);
+                }}
+                className={`py-1.5 rounded-lg text-xs font-bold border transition-all ${discountType === "flat" ? "bg-orange-600 border-orange-500 text-white shadow-sm" : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200"}`}
               >
                 Flat Amount (Rs)
               </button>
             </div>
 
-            {discountType !== "none" && (
-              <Input
-                type="number"
-                placeholder={discountType === "percentage" ? "Discount Percentage (e.g. 10 for 10%)" : "Flat Discount Amount (e.g. 200)"}
-                value={discountValue || ""}
-                onChange={(e) => setDiscountValue(parseFloat(e.target.value) || 0)}
-                className="bg-zinc-950 border-zinc-800 text-xs"
-              />
+            {discountType === "percentage" && (
+              <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2 mb-2">
+                <Input
+                  label="Enter Any Discount Percentage (%)"
+                  type="number"
+                  step="any"
+                  min="0"
+                  max="100"
+                  placeholder="e.g. 5, 10, 15, 20, 25..."
+                  value={discountValue === 0 ? "" : discountValue}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    setDiscountValue(isNaN(val) ? 0 : Math.max(0, Math.min(100, val)));
+                  }}
+                  className="bg-zinc-900 border-zinc-800 text-xs font-mono font-bold"
+                />
+                <div className="flex items-center space-x-1.5 pt-1">
+                  <span className="text-[10px] text-zinc-500 font-bold uppercase">Quick:</span>
+                  {[5, 10, 15, 20, 25, 50].map((pct) => (
+                    <button
+                      key={pct}
+                      type="button"
+                      onClick={() => setDiscountValue(pct)}
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all ${
+                        discountValue === pct
+                          ? "bg-orange-600 text-white border-orange-500"
+                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                      }`}
+                    >
+                      {pct}%
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {discountType === "flat" && (
+              <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2 mb-2">
+                <Input
+                  label="Enter Any Flat Cut-Off Amount (Rs)"
+                  type="number"
+                  step="any"
+                  min="0"
+                  placeholder="e.g. 50, 100, 200, 500..."
+                  value={discountValue === 0 ? "" : discountValue}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    setDiscountValue(isNaN(val) ? 0 : Math.max(0, val));
+                  }}
+                  className="bg-zinc-900 border-zinc-800 text-xs font-mono font-bold"
+                />
+                <div className="flex items-center space-x-1.5 pt-1">
+                  <span className="text-[10px] text-zinc-500 font-bold uppercase">Quick:</span>
+                  {[50, 100, 150, 200, 300, 500].map((amt) => (
+                    <button
+                      key={amt}
+                      type="button"
+                      onClick={() => setDiscountValue(amt)}
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all ${
+                        discountValue === amt
+                          ? "bg-orange-600 text-white border-orange-500"
+                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                      }`}
+                    >
+                      Rs.{amt}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
 

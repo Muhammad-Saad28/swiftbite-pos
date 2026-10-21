@@ -51,6 +51,15 @@ export default function CashierDashboardPage() {
   const [discountValue, setDiscountValue] = useState<number>(0);
   const [cashTendered, setCashTendered] = useState<string>("");
 
+  // Payment Success Confirmation Modal State
+  const [paymentSuccessData, setPaymentSuccessData] = useState<{
+    order: POSOrder;
+    paidAmount: number;
+    paymentMethod: string;
+    discountAmt: number;
+    changeDue: number;
+  } | null>(null);
+
   // Assign Rider Modal State
   const [dispatchOrder, setDispatchOrder] = useState<POSOrder | null>(null);
   const [selectedRiderId, setSelectedRiderId] = useState<string>("");
@@ -94,20 +103,34 @@ export default function CashierDashboardPage() {
 
   const handleFinalizeSettlement = async () => {
     if (!checkoutOrder) return;
+    const subtotal = checkoutOrder.subtotal || 0;
+    let discountAmt = 0;
+    if (discountType === "percentage") discountAmt = Math.round(subtotal * ((discountValue || 0) / 100));
+    else if (discountType === "flat") discountAmt = discountValue || 0;
+    const netTotal = Math.max(0, (subtotal + checkoutOrder.tax) - discountAmt);
+    const tendered = parseFloat(cashTendered) || netTotal;
+    const change = Math.max(0, tendered - netTotal);
+
     await updatePOSOrderPaymentAndDiscount(checkoutOrder.id, paymentMethod, discountValue, discountType);
     await updateOrderStatus(checkoutOrder.id, "completed");
     
-    // Automatically open receipt modal after successful settlement
-    const updated = orders.find(o => o.id === checkoutOrder.id);
-    if (updated) {
-      setSelectedReceiptOrder({
-        ...updated,
-        payment_method: paymentMethod,
-        discount_amount: discountValue,
-        discount_type: discountType,
-        status: "completed",
-      });
-    }
+    const updatedOrder: POSOrder = {
+      ...checkoutOrder,
+      payment_method: paymentMethod,
+      discount_amount: discountValue,
+      discount_type: discountType,
+      total: netTotal,
+      status: "completed",
+    };
+
+    // Show Confirmation Screen
+    setPaymentSuccessData({
+      order: updatedOrder,
+      paidAmount: netTotal,
+      paymentMethod,
+      discountAmt,
+      changeDue: paymentMethod === "cash" ? change : 0,
+    });
 
     setCheckoutOrder(null);
     await refreshData();
@@ -558,40 +581,127 @@ export default function CashierDashboardPage() {
               })()}
             </div>
 
-            {/* Discount Form */}
+            {/* Discount Section */}
             <div className="space-y-2">
               <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400">
                 Apply Discount
               </label>
+              
+              {/* Discount Mode Tabs */}
               <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => { setDiscountType("none"); setDiscountValue(0); }}
-                  className={`py-1.5 rounded-lg text-xs font-bold border ${
-                    discountType === "none" ? "bg-orange-600 text-white border-orange-500" : "bg-zinc-950 text-zinc-400 border-zinc-800"
+                  className={`py-1.5 rounded-lg text-xs font-bold border transition-all ${
+                    discountType === "none"
+                      ? "bg-orange-600 text-white border-orange-500 shadow-sm"
+                      : "bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-zinc-200"
                   }`}
                 >
-                  None
+                  No Discount
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setDiscountType("percentage"); setDiscountValue(10); }}
-                  className={`py-1.5 rounded-lg text-xs font-bold border ${
-                    discountType === "percentage" && discountValue === 10 ? "bg-orange-600 text-white border-orange-500" : "bg-zinc-950 text-zinc-400 border-zinc-800"
+                  onClick={() => {
+                    setDiscountType("percentage");
+                    if (discountValue === 0) setDiscountValue(10);
+                  }}
+                  className={`py-1.5 rounded-lg text-xs font-bold border transition-all ${
+                    discountType === "percentage"
+                      ? "bg-orange-600 text-white border-orange-500 shadow-sm"
+                      : "bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-zinc-200"
                   }`}
                 >
-                  10% Off
+                  Percentage (%)
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setDiscountType("percentage"); setDiscountValue(15); }}
-                  className={`py-1.5 rounded-lg text-xs font-bold border ${
-                    discountType === "percentage" && discountValue === 15 ? "bg-orange-600 text-white border-orange-500" : "bg-zinc-950 text-zinc-400 border-zinc-800"
+                  onClick={() => {
+                    setDiscountType("flat");
+                    if (discountValue === 0) setDiscountValue(100);
+                  }}
+                  className={`py-1.5 rounded-lg text-xs font-bold border transition-all ${
+                    discountType === "flat"
+                      ? "bg-orange-600 text-white border-orange-500 shadow-sm"
+                      : "bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-zinc-200"
                   }`}
                 >
-                  15% Off
+                  Flat Amount (Rs)
                 </button>
               </div>
+
+              {/* Custom Input & Quick Presets for Percentage */}
+              {discountType === "percentage" && (
+                <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
+                  <Input
+                    label="Enter Any Discount Percentage (%)"
+                    type="number"
+                    step="any"
+                    min="0"
+                    max="100"
+                    placeholder="e.g. 5, 10, 15, 20, 25..."
+                    value={discountValue === 0 ? "" : discountValue}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setDiscountValue(isNaN(val) ? 0 : Math.max(0, Math.min(100, val)));
+                    }}
+                    className="bg-zinc-900 border-zinc-800 text-xs font-mono font-bold"
+                  />
+                  <div className="flex items-center space-x-1.5 pt-1">
+                    <span className="text-[10px] text-zinc-500 font-bold uppercase">Quick:</span>
+                    {[5, 10, 15, 20, 25, 50].map((pct) => (
+                      <button
+                        key={pct}
+                        type="button"
+                        onClick={() => setDiscountValue(pct)}
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all ${
+                          discountValue === pct
+                            ? "bg-orange-600 text-white border-orange-500"
+                            : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                        }`}
+                      >
+                        {pct}%
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Custom Input & Quick Presets for Flat Amount */}
+              {discountType === "flat" && (
+                <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
+                  <Input
+                    label="Enter Any Flat Cut-Off Amount (Rs)"
+                    type="number"
+                    step="any"
+                    min="0"
+                    placeholder="e.g. 50, 100, 200, 500..."
+                    value={discountValue === 0 ? "" : discountValue}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setDiscountValue(isNaN(val) ? 0 : Math.max(0, val));
+                    }}
+                    className="bg-zinc-900 border-zinc-800 text-xs font-mono font-bold"
+                  />
+                  <div className="flex items-center space-x-1.5 pt-1">
+                    <span className="text-[10px] text-zinc-500 font-bold uppercase">Quick:</span>
+                    {[50, 100, 150, 200, 300, 500].map((amt) => (
+                      <button
+                        key={amt}
+                        type="button"
+                        onClick={() => setDiscountValue(amt)}
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all ${
+                          discountValue === amt
+                            ? "bg-orange-600 text-white border-orange-500"
+                            : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                        }`}
+                      >
+                        Rs.{amt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Payment Method Selector */}
@@ -668,6 +778,84 @@ export default function CashierDashboardPage() {
                 className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5"
               >
                 Confirm Payment & Settle
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Payment Success Confirmation Modal */}
+      <Modal
+        isOpen={!!paymentSuccessData}
+        onClose={() => setPaymentSuccessData(null)}
+        title="Payment Confirmation"
+      >
+        {paymentSuccessData && (
+          <div className="space-y-5 text-center py-2">
+            {/* Success Check Animation Icon */}
+            <div className="h-16 w-16 mx-auto rounded-full bg-emerald-500/10 border-2 border-emerald-500 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)] animate-in zoom-in-75 duration-300">
+              <CheckCircle2 className="h-9 w-9 text-emerald-400" />
+            </div>
+
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                Payment Successful & Order Closed
+              </span>
+              <h2 className="text-2xl font-black text-white tracking-tight mt-2">
+                Rs. {paymentSuccessData.paidAmount.toLocaleString()}
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                Order #{paymentSuccessData.order.id} &bull; {paymentSuccessData.order.table_number ? `Table ${paymentSuccessData.order.table_number.toString().padStart(2, "0")}` : paymentSuccessData.order.customer_name || "Counter Walk-in"}
+              </p>
+            </div>
+
+            {/* Transaction Breakdown Summary */}
+            <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-800 text-left text-xs font-mono space-y-2">
+              <div className="flex justify-between text-zinc-400">
+                <span>Payment Method:</span>
+                <span className="font-bold text-white uppercase bg-zinc-900 px-2 py-0.5 rounded font-sans">
+                  {paymentSuccessData.paymentMethod.replace("_", " ")}
+                </span>
+              </div>
+              <div className="flex justify-between text-zinc-400">
+                <span>Items Ordered:</span>
+                <span className="text-zinc-200">{paymentSuccessData.order.items?.length || 0} Item(s)</span>
+              </div>
+              {paymentSuccessData.discountAmt > 0 && (
+                <div className="flex justify-between text-emerald-400 font-bold">
+                  <span>Discount Applied:</span>
+                  <span>- Rs. {paymentSuccessData.discountAmt.toLocaleString()}</span>
+                </div>
+              )}
+              {paymentSuccessData.changeDue > 0 && (
+                <div className="pt-2 border-t border-zinc-800 flex justify-between items-baseline font-sans">
+                  <span className="text-zinc-300 font-semibold">Change Given:</span>
+                  <span className="text-base font-black text-emerald-400 font-mono">
+                    Rs. {paymentSuccessData.changeDue.toLocaleString()}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => setPaymentSuccessData(null)}
+                className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 font-bold text-xs h-11 rounded-xl"
+              >
+                Close & Next Order
+              </Button>
+              <Button
+                onClick={() => {
+                  const ord = paymentSuccessData.order;
+                  setPaymentSuccessData(null);
+                  setSelectedReceiptOrder(ord);
+                }}
+                className="bg-orange-600 hover:bg-orange-500 text-white font-black text-xs h-11 rounded-xl shadow-lg shadow-orange-600/30 flex items-center justify-center space-x-2"
+              >
+                <Printer className="h-4 w-4" />
+                <span>Print Thermal Receipt</span>
               </Button>
             </div>
           </div>

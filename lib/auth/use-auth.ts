@@ -123,6 +123,10 @@ export function useAuth() {
         }
 
         const role = data.role as "admin" | "waiter" | "kitchen" | "cashier" | "rider";
+        if (selectedRole && role !== selectedRole) {
+          setLoading(false);
+          throw new Error(`This account is registered as a ${role.toUpperCase()}. Please switch to the ${role.toUpperCase()} tab to sign in.`);
+        }
         const name = data.name || cleanEmail;
         const id = data.id;
         const status = (data.status || "approved") as "pending" | "approved" | "rejected";
@@ -149,6 +153,10 @@ export function useAuth() {
       const { data, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password: inputPassword });
       if (!error && data.user) {
         const role = (data.user.user_metadata?.role || selectedRole || "waiter") as "admin" | "waiter" | "kitchen" | "cashier" | "rider";
+        if (selectedRole && role !== selectedRole) {
+          setLoading(false);
+          throw new Error(`This account is registered as a ${role.toUpperCase()}. Please switch to the ${role.toUpperCase()} tab to sign in.`);
+        }
         const name = data.user.user_metadata?.name || cleanEmail.split("@")[0];
         localStorage.setItem("userRole", role);
         localStorage.setItem("userEmail", cleanEmail);
@@ -171,6 +179,11 @@ export function useAuth() {
     );
 
     if (localMatch) {
+      if (selectedRole && localMatch.role !== selectedRole) {
+        setLoading(false);
+        throw new Error(`This account is registered as a ${localMatch.role.toUpperCase()}. Please switch to the ${localMatch.role.toUpperCase()} tab to sign in.`);
+      }
+
       if (localMatch.status === "pending" || (!localMatch.active && localMatch.status !== "rejected")) {
         setLoading(false);
         throw new Error("Your account registration is pending admin approval. Please ask an admin to accept your request.");
@@ -198,6 +211,11 @@ export function useAuth() {
     );
 
     if (matchedUser) {
+      if (selectedRole && matchedUser.role !== selectedRole) {
+        setLoading(false);
+        throw new Error(`This account is registered as a ${matchedUser.role.toUpperCase()}. Please switch to the ${matchedUser.role.toUpperCase()} tab to sign in.`);
+      }
+
       localStorage.setItem("userRole", matchedUser.role);
       localStorage.setItem("userEmail", matchedUser.email);
       localStorage.setItem("userName", matchedUser.name);
