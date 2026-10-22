@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getPOSOrders, POSOrder } from "@/lib/pos-data";
 import { ReceiptModal } from "@/components/receipt-modal";
-import { Search, Printer, Receipt, DollarSign, CheckCircle2 } from "lucide-react";
+import { Search, Printer, Receipt, DollarSign, CheckCircle2, Banknote, CreditCard, QrCode } from "lucide-react";
 
 export default function CashierHistoryPage() {
   const [orders, setOrders] = useState<POSOrder[]>([]);
@@ -19,6 +19,13 @@ export default function CashierHistoryPage() {
   }, []);
 
   const completedOrders = orders.filter((o) => o.status === "completed");
+
+  const cashOrders = completedOrders.filter((o) => !o.payment_method || o.payment_method === "cash");
+  const onlineOrders = completedOrders.filter((o) => o.payment_method === "card" || o.payment_method === "qr_online" || o.payment_method === "split");
+
+
+  const totalCashRevenue = cashOrders.reduce((sum, o) => sum + o.total, 0);
+  const totalOnlineRevenue = onlineOrders.reduce((sum, o) => sum + o.total, 0);
 
   const filtered = completedOrders.filter((o) => {
     return (
@@ -37,9 +44,41 @@ export default function CashierHistoryPage() {
           <h1 className="text-2xl font-black text-white tracking-tight">Settled Receipts & Financial Ledger</h1>
           <p className="text-xs text-zinc-400">Complete archive of closed transactions, collected payments, and thermal reprints</p>
         </div>
-        <div className="flex items-center space-x-3 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl">
-          <span className="text-xs text-zinc-400 font-medium">Total Settled:</span>
-          <span className="text-base font-black text-emerald-400 font-mono">Rs. {totalSettledRevenue.toLocaleString()}</span>
+      </div>
+
+      {/* Financial Summary Breakdown Tiles */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400 block">Total Settled Sales</span>
+            <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">Rs. {totalSettledRevenue.toLocaleString()}</span>
+            <p className="text-[10px] text-zinc-500 mt-0.5">{completedOrders.length} Completed Orders</p>
+          </div>
+          <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <DollarSign className="h-5 w-5" />
+          </div>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 block">Cash Payments</span>
+            <span className="text-xl sm:text-2xl font-black text-amber-300 font-mono">Rs. {totalCashRevenue.toLocaleString()}</span>
+            <p className="text-[10px] text-zinc-500 mt-0.5">{cashOrders.length} Cash Transactions</p>
+          </div>
+          <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+            <Banknote className="h-5 w-5" />
+          </div>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-sky-400 block">Online / Card Transfers</span>
+            <span className="text-xl sm:text-2xl font-black text-sky-300 font-mono">Rs. {totalOnlineRevenue.toLocaleString()}</span>
+            <p className="text-[10px] text-zinc-500 mt-0.5">{onlineOrders.length} Online / Card Transactions</p>
+          </div>
+          <div className="h-10 w-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+            <CreditCard className="h-5 w-5" />
+          </div>
         </div>
       </div>
 
