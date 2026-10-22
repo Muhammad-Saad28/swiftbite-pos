@@ -24,11 +24,12 @@ import {
   DollarSign, 
   Package, 
   AlertTriangle, 
-  Sparkles,
-  ExternalLink,
-  MessageCircle,
-  HandCoins
+  Sparkles, 
+  ExternalLink, 
+  MessageCircle, 
+  HandCoins 
 } from "lucide-react";
+import { LiveTimerBadge } from "@/components/live-timer-badge";
 
 export default function RiderDashboardPage() {
   const { user } = useAuth();
@@ -284,6 +285,20 @@ export default function RiderDashboardPage() {
                     {isPickedUp ? "In Transit (Out for Delivery)" : "Assigned (Pick up at Kitchen)"}
                   </span>
                 </div>
+
+
+                {/* Trip Timer Display */}
+                {order.ride_started_at && (
+                  <div className="p-2.5 rounded-xl bg-sky-950/40 border border-sky-500/40 flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-sky-300">Ride Elapsed Time:</span>
+                    <LiveTimerBadge
+                      startTime={order.ride_started_at}
+                      endTime={order.delivered_at}
+                      label="Trip"
+                      variant="ride"
+                    />
+                  </div>
+                )}
 
                 {/* Customer Details & Address */}
                 <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2 text-xs">

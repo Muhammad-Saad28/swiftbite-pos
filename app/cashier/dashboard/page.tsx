@@ -15,11 +15,14 @@ import {
   confirmRiderCashHandover,
   CANCELLATION_PIN,
   requestOrderCancellation,
+  startOrderKitchenTimer,
+  stopOrderKitchenTimer,
   POSOrder, 
   POSUser 
 } from "@/lib/pos-data";
 import { ReceiptModal } from "@/components/receipt-modal";
 import { KitchenReceiptModal } from "@/components/kitchen-receipt-modal";
+import { LiveTimerBadge } from "@/components/live-timer-badge";
 import { 
   Search, 
   CheckCircle, 
@@ -99,11 +102,24 @@ export default function CashierDashboardPage() {
     await updateOrderStatus(orderId, "accepted");
     const targetOrder = orders.find(o => o.id === orderId);
     if (targetOrder) {
+      await startOrderKitchenTimer(orderId);
       setSelectedKitchenOrder({ ...targetOrder, status: "accepted" });
     }
     await refreshData();
   };
 
+
+
+  const handleOpenKitchenKOT = async (order: POSOrder) => {
+    await startOrderKitchenTimer(order.id);
+    setSelectedKitchenOrder(order);
+    await refreshData();
+  };
+
+  const handleMarkServed = async (orderId: string) => {
+    await stopOrderKitchenTimer(orderId);
+    await refreshData();
+  };
 
   const handleOpenCancelModal = (order: POSOrder) => {
     setCancellingOrder(order);
@@ -464,6 +480,35 @@ export default function CashierDashboardPage() {
                     </div>
                   )}
 
+
+                  {/* Active Timers Display */}
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {order.kitchen_started_at && (
+                      <LiveTimerBadge
+                        startTime={order.kitchen_started_at}
+                        endTime={order.served_at}
+                        label="Kitchen"
+                        variant="kitchen"
+                      />
+                    )}
+                    {order.ride_started_at && (
+                      <LiveTimerBadge
+                        startTime={order.ride_started_at}
+                        endTime={order.delivered_at}
+                        label="Trip"
+                        variant="ride"
+                      />
+                    )}
+                    {order.return_started_at && (
+                      <LiveTimerBadge
+                        startTime={order.return_started_at}
+                        endTime={order.handover_completed_at}
+                        label="Return"
+                        variant="return"
+                      />
+                    )}
+                  </div>
+
                   {/* Items List */}
                   <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 space-y-1.5 text-xs">
                     {order.items?.map((item) => (
@@ -542,6 +587,19 @@ export default function CashierDashboardPage() {
                     </Button>
                   )}
 
+
+                  {/* Mark Served Button: stops kitchen timer and marks served */}
+                  {order.kitchen_started_at && !order.served_at && order.status !== "completed" && order.status !== "cancelled" && order.status !== "rejected" && (
+                    <Button
+                      size="sm"
+                      onClick={() => handleMarkServed(order.id)}
+                      className="w-full bg-purple-600 hover:bg-purple-500 text-white font-black text-xs h-9 flex items-center justify-center space-x-1.5 shadow-md shadow-purple-600/20"
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                      <span>MARK SERVED (STOP KITCHEN TIMER)</span>
+                    </Button>
+                  )}
+
                   {/* Settle Bill / Collect Payment (Primary in Bill Settlement) */}
                   {activeTab === "settlement" && order.status !== "completed" && (
                     <Button
@@ -559,7 +617,7 @@ export default function CashierDashboardPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => setSelectedKitchenOrder(order)}
+                      onClick={() => handleOpenKitchenKOT(order)}
                       className="w-full border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white text-[11px] font-bold flex items-center justify-center space-x-1"
                     >
                       <ChefHat className="h-3.5 w-3.5 text-amber-400" />

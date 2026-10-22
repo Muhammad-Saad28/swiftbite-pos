@@ -68,6 +68,12 @@ export interface POSOrder {
   assigned_rider_id?: string | null;
   assigned_rider_name?: string | null;
   delivery_status?: "unassigned" | "assigned" | "picked_up" | "handover_pending" | "delivered" | "failed";
+  kitchen_started_at?: string | null;
+  served_at?: string | null;
+  ride_started_at?: string | null;
+  delivered_at?: string | null;
+  return_started_at?: string | null;
+  handover_completed_at?: string | null;
 }
 
 export function formatOrderNumber(orderIdOrNumber: string | number | undefined, indexFallback: number = 1): string {
@@ -5119,6 +5125,79 @@ export async function deletePOSMenuItem(id: string): Promise<boolean> {
   } catch (e) {}
 
   return true;
+}
+
+
+export async function startOrderKitchenTimer(orderId: string): Promise<string> {
+  const now = new Date().toISOString();
+  const target = mockOrders.find(o => o.id === orderId);
+  if (target) {
+    if (!target.kitchen_started_at) target.kitchen_started_at = now;
+  }
+  if (typeof window !== "undefined") {
+    try {
+      const timers = JSON.parse(localStorage.getItem("pos_order_timers") || "{}");
+      if (!timers[orderId]) timers[orderId] = {};
+      if (!timers[orderId].kitchen_started_at) {
+        timers[orderId].kitchen_started_at = now;
+        localStorage.setItem("pos_order_timers", JSON.stringify(timers));
+      }
+    } catch (e) {}
+  }
+  return now;
+}
+
+export async function stopOrderKitchenTimer(orderId: string): Promise<boolean> {
+  const now = new Date().toISOString();
+  const target = mockOrders.find(o => o.id === orderId);
+  if (target) {
+    target.served_at = now;
+    target.status = "served";
+  }
+  if (typeof window !== "undefined") {
+    try {
+      const timers = JSON.parse(localStorage.getItem("pos_order_timers") || "{}");
+      if (!timers[orderId]) timers[orderId] = {};
+      timers[orderId].served_at = now;
+      localStorage.setItem("pos_order_timers", JSON.stringify(timers));
+    } catch (e) {}
+  }
+  await updateOrderStatus(orderId, "served");
+  return true;
+}
+
+export function getOrderTimers(orderId: string): {
+  kitchen_started_at?: string | null;
+  served_at?: string | null;
+  ride_started_at?: string | null;
+  delivered_at?: string | null;
+  return_started_at?: string | null;
+  handover_completed_at?: string | null;
+} {
+  if (typeof window !== "undefined") {
+    try {
+      const timers = JSON.parse(localStorage.getItem("pos_order_timers") || "{}");
+      return timers[orderId] || {};
+    } catch (e) {}
+  }
+  return {};
+}
+
+export async function setOrderTimer(orderId: string, field: "kitchen_started_at" | "served_at" | "ride_started_at" | "delivered_at" | "return_started_at" | "handover_completed_at"): Promise<string> {
+  const now = new Date().toISOString();
+  const target = mockOrders.find(o => o.id === orderId);
+  if (target) {
+    (target as any)[field] = now;
+  }
+  if (typeof window !== "undefined") {
+    try {
+      const timers = JSON.parse(localStorage.getItem("pos_order_timers") || "{}");
+      if (!timers[orderId]) timers[orderId] = {};
+      timers[orderId][field] = now;
+      localStorage.setItem("pos_order_timers", JSON.stringify(timers));
+    } catch (e) {}
+  }
+  return now;
 }
 
 export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
