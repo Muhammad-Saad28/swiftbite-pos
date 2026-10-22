@@ -111,8 +111,17 @@ export default function CashierDashboardPage() {
 
 
   const handleOpenKitchenKOT = async (order: POSOrder) => {
-    await startOrderKitchenTimer(order.id);
-    setSelectedKitchenOrder(order);
+    const startedTime = await startOrderKitchenTimer(order.id);
+    // Optimistically update local order state immediately so timer displays without waiting
+    setOrders((prev) =>
+      prev.map((o) =>
+        o.id === order.id ? { ...o, kitchen_started_at: o.kitchen_started_at || startedTime } : o
+      )
+    );
+    setSelectedKitchenOrder({
+      ...order,
+      kitchen_started_at: order.kitchen_started_at || startedTime,
+    });
     await refreshData();
   };
 

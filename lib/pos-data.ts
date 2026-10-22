@@ -5214,9 +5214,11 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
     const { data, error } = await query;
 
     let localAssignments: Record<string, any> = {};
+    let allStoredTimers: Record<string, any> = {};
     if (typeof window !== "undefined") {
       try {
         localAssignments = JSON.parse(localStorage.getItem("pos_rider_assignments") || "{}");
+        allStoredTimers = JSON.parse(localStorage.getItem("pos_order_timers") || "{}");
       } catch (e) {}
     }
 
@@ -5224,6 +5226,7 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
       const totalCount = data.length;
       return data.map((order: any, idx: number) => {
         const local = localAssignments[order.id];
+        const localTimers = allStoredTimers[order.id] || {};
         const assignedRiderId = local?.assigned_rider_id || (order.waiter_id ? order.waiter_id : null);
         const assignedRiderName = local?.assigned_rider_name || (order.users?.name ? order.users?.name : null);
         const deliveryStatus = local?.delivery_status || (order.status === "completed" ? "delivered" : order.status === "served" ? "picked_up" : assignedRiderId ? "assigned" : "unassigned");
@@ -5249,6 +5252,12 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
               notes: dealContents || item.notes || null,
             };
           }),
+          kitchen_started_at: localTimers.kitchen_started_at || order.kitchen_started_at || null,
+          served_at: localTimers.served_at || order.served_at || null,
+          ride_started_at: localTimers.ride_started_at || order.ride_started_at || null,
+          delivered_at: localTimers.delivered_at || order.delivered_at || null,
+          return_started_at: localTimers.return_started_at || order.return_started_at || null,
+          handover_completed_at: localTimers.handover_completed_at || order.handover_completed_at || null,
         };
       });
     }
