@@ -50,9 +50,9 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             className="receipt-container bg-white text-zinc-950 p-6 sm:p-7 rounded-2xl shadow-xl border border-zinc-200/80 mx-auto max-w-[380px] font-sans transition-all"
           >
           {/* Top Brand Logo & Restaurant Header */}
-          <div className="text-center space-y-2 pb-4 border-b border-zinc-200">
+          <div className="text-center space-y-2 pb-4 border-b-2 border-black">
             <div className="relative inline-block">
-              <div className="h-16 w-16 mx-auto rounded-full p-1 bg-gradient-to-tr from-orange-500 to-amber-400 shadow-md flex items-center justify-center">
+              <div className="h-18 w-18 mx-auto rounded-full p-1 bg-black shadow-md flex items-center justify-center">
                 <img
                   src="/logo.jpeg"
                   alt="SwiftBite Logo"
@@ -62,64 +62,64 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             </div>
 
             <div>
-              <h2 className="text-2xl font-black tracking-tight text-zinc-950 uppercase font-sans">
+              <h2 className="text-3xl font-black tracking-tight text-black uppercase font-sans">
                 SWIFTBITE POS
               </h2>
-              <p className="text-xs font-black text-orange-600 tracking-wider uppercase">
+              <p className="text-sm font-black text-black tracking-wider uppercase mt-0.5">
                 Gourmet Burgers & Fast Food
               </p>
             </div>
 
-            <div className="text-[11px] text-zinc-900 leading-tight space-y-0.5 pt-0.5 font-bold">
+            <div className="text-xs text-black leading-snug space-y-0.5 pt-1 font-black">
               <p>Main G.T. Road, near Orange Line Station, Dera Gujran, Lahore</p>
               <p>Phone: 0321-2490006 / 0306-4656951</p>
             </div>
           </div>
 
           {/* Receipt Number Highlight Banner */}
-          <div className="my-3 py-2 px-3 rounded-xl bg-zinc-200 border border-zinc-400 flex items-center justify-between">
+          <div className="my-3 py-2.5 px-3.5 rounded-xl border-2 border-black bg-white flex items-center justify-between">
             <div className="text-left">
-              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-800 block">
+              <span className="text-xs font-black uppercase tracking-widest text-black block">
                 Receipt Number
               </span>
-              <span className="text-lg font-black font-mono tracking-wider text-black">
+              <span className="text-xl font-black font-mono tracking-wider text-black">
                 #{numericReceiptNo}
               </span>
             </div>
             <div className="text-right">
-              <span className="inline-block px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-sm">
+              <span className="inline-block px-3.5 py-1.5 rounded-lg text-sm font-black uppercase tracking-wider bg-black text-white shadow-sm">
                 {order.order_type ? order.order_type.replace("_", " ") : "Dine-In"}
               </span>
             </div>
           </div>
 
           {/* Metadata Grid */}
-          <div className="py-2.5 border-y-2 border-dashed border-zinc-700 text-xs space-y-1.5 font-mono">
+          <div className="py-3 border-y-2 border-dashed border-black text-sm space-y-2 font-mono">
             <div className="flex justify-between items-center">
-              <span className="text-zinc-800 font-black">Date & Time:</span>
+              <span className="text-black font-black">Date & Time:</span>
               <span className="font-black text-black">{formattedDate}, {formattedTime}</span>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-zinc-800 font-black">Server / Cashier:</span>
+              <span className="text-black font-black">Server / Cashier:</span>
               <span className="font-black text-black">{order.waiter_name || "Admin Manager"}</span>
             </div>
 
             {order.customer_name && (
-              <div className="pt-1.5 mt-1.5 border-t border-dotted border-zinc-600 space-y-1">
+              <div className="pt-2 mt-2 border-t-2 border-dotted border-black space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-zinc-800 font-black">Customer:</span>
+                  <span className="text-black font-black">Customer:</span>
                   <span className="font-black text-black">{order.customer_name}</span>
                 </div>
                 {order.customer_phone && (
                   <div className="flex justify-between items-center">
-                    <span className="text-zinc-800 font-black">Phone:</span>
+                    <span className="text-black font-black">Phone:</span>
                     <span className="font-black text-black">{order.customer_phone}</span>
                   </div>
                 )}
                 {order.delivery_address && (
-                  <div className="text-[11px] text-zinc-900 pt-0.5 flex justify-between font-bold">
-                    <span className="text-zinc-800 font-black">Address:</span>
+                  <div className="text-xs text-black pt-1 flex justify-between font-black">
+                    <span className="text-black font-black">Address:</span>
                     <span className="text-right max-w-[65%] font-sans font-black">{order.delivery_address}</span>
                   </div>
                 )}
@@ -128,29 +128,29 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </div>
 
           {/* Items Table */}
-          <div className="pt-3 pb-2 space-y-2">
-            <div className="flex justify-between text-xs font-black uppercase tracking-wider text-zinc-900 border-b-2 border-zinc-800 pb-1.5">
-              <span>Item Description</span>
-              <span>Amount</span>
+          <div className="pt-3 pb-2 space-y-2.5">
+            <div className="flex justify-between text-base font-black uppercase tracking-wider text-black border-b-2 border-black pb-2">
+              <span className="text-base font-black">Item Description</span>
+              <span className="text-base font-black">Amount</span>
             </div>
 
-            <div className="divide-y divide-dashed divide-zinc-500">
+            <div className="divide-y-2 divide-dashed divide-black">
               {order.items?.map((item) => (
-                <div key={item.id} className="py-2.5 flex justify-between items-start text-sm font-mono">
+                <div key={item.id} className="py-3 flex justify-between items-start text-lg font-mono">
                   <div className="pr-3 text-left">
-                    <p className="font-black text-black leading-tight text-sm">
+                    <p className="font-black text-black leading-snug text-lg">
                       {item.menu_item_name}
                     </p>
                     {item.notes && (
-                      <p className="text-[11px] font-black text-zinc-900 mt-1 leading-snug bg-zinc-200 p-1.5 rounded border border-zinc-400">
+                      <p className="text-xs font-black text-black mt-1.5 leading-snug bg-white p-2 rounded border-2 border-black">
                         📦 Combo includes: {item.notes}
                       </p>
                     )}
-                    <p className="text-xs font-black text-zinc-800 mt-0.5">
+                    <p className="text-sm font-black text-black mt-1">
                       {item.quantity} &times; Rs. {item.price.toLocaleString()}
                     </p>
                   </div>
-                  <span className="font-black text-black whitespace-nowrap pt-0.5 text-sm">
+                  <span className="font-black text-black whitespace-nowrap pt-0.5 text-lg">
                     Rs. {(item.price * item.quantity).toLocaleString()}
                   </span>
                 </div>
@@ -159,37 +159,37 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </div>
 
           {/* Financial Breakdown */}
-          <div className="pt-2 border-t-2 border-black space-y-2 text-sm font-mono">
-            <div className="flex justify-between text-zinc-900 font-black">
+          <div className="pt-3 border-t-2 border-black space-y-2 text-base font-mono">
+            <div className="flex justify-between text-black font-black">
               <span>Subtotal:</span>
               <span className="font-black text-black">Rs. {order.subtotal.toLocaleString()}</span>
             </div>
 
             {calcDiscountValue > 0 && (
-              <div className="flex justify-between text-emerald-800 font-black">
+              <div className="flex justify-between text-black font-black">
                 <span>Discount ({isPercentage ? `${discountAmount}%` : "Special"}):</span>
                 <span>- Rs. {calcDiscountValue.toLocaleString()}</span>
               </div>
             )}
 
             {/* Total Highlight */}
-            <div className="pt-3 mt-2 border-t-2 border-dashed border-zinc-700 flex justify-between items-baseline">
+            <div className="pt-3.5 mt-2 border-t-2 border-dashed border-black flex justify-between items-baseline">
               <div>
-                <span className="text-sm font-black uppercase tracking-wider text-black block">
+                <span className="text-base font-black uppercase tracking-wider text-black block">
                   Net Amount
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-2xl font-black text-black tracking-tight">
+                <span className="text-3xl font-black text-black tracking-tight">
                   Rs. {order.total.toLocaleString()}
                 </span>
               </div>
             </div>
 
             {order.payment_method && (
-              <div className="pt-2 border-t border-dotted border-zinc-600 flex justify-between text-xs items-center font-bold">
-                <span className="text-zinc-800 font-black">Paid Via:</span>
-                <span className="font-black uppercase tracking-wider text-black bg-zinc-200 border border-zinc-400 px-2 py-0.5 rounded">
+              <div className="pt-2.5 border-t-2 border-dotted border-black flex justify-between text-sm items-center font-black">
+                <span className="text-black font-black">Paid Via:</span>
+                <span className="font-black uppercase tracking-wider text-white bg-black px-2.5 py-1 rounded">
                   {order.payment_method.replace("_", " ")}
                 </span>
               </div>
@@ -197,9 +197,9 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </div>
 
           {/* Barcode & Footer Greeting */}
-          <div className="pt-5 pb-1 text-center space-y-2 border-t-2 border-dashed border-zinc-700 mt-3">
+          <div className="pt-5 pb-1 text-center space-y-2 border-t-2 border-dashed border-black mt-3">
             {/* Decorative Barcode Lines */}
-            <div className="flex justify-center items-center space-x-[2px] h-9 py-1 opacity-90">
+            <div className="flex justify-center items-center space-x-[2px] h-10 py-1">
               {[3, 1, 4, 1, 2, 5, 2, 1, 3, 2, 4, 1, 2, 4, 1, 3, 2, 4, 1, 2, 3, 1, 4, 2, 3].map((w, i) => (
                 <span
                   key={i}
@@ -208,13 +208,13 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                 />
               ))}
             </div>
-            <p className="text-[10px] font-mono font-black tracking-widest text-zinc-900 uppercase">
+            <p className="text-xs font-mono font-black tracking-widest text-black uppercase">
               *{numericReceiptNo}*
             </p>
 
-            <div className="text-xs text-zinc-900 space-y-0.5 pt-1">
-              <p className="font-black text-black text-sm">Thank you for dining with SwiftBite!</p>
-              <p className="text-[10px] font-black">We hope to serve you again soon &bull; Have a wonderful day</p>
+            <div className="text-sm text-black space-y-1 pt-1.5 font-black">
+              <p className="font-black text-black text-base">Thank you for dining with SwiftBite!</p>
+              <p className="text-xs font-black">We hope to serve you again soon &bull; Have a wonderful day</p>
             </div>
           </div>
         </div>
