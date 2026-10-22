@@ -5283,7 +5283,7 @@ export async function createPOSOrder(order: {
 }): Promise<POSOrder> {
   const orderType = order.order_type || "dine_in";
   const subtotal = order.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const tax = Math.round(subtotal * 0.18);
+  const tax = 0;
   const total = subtotal + tax;
   const nextNum = mockOrders.length + 1;
   const orderId = (1000 + nextNum).toString();
@@ -5397,7 +5397,7 @@ export async function updatePOSOrderPaymentAndDiscount(
         ? Math.round(subtotal * (discountAmount / 100))
         : discountAmount;
 
-      const total = Math.max(0, (subtotal + tax) - discountVal);
+      const total = Math.max(0, subtotal - discountVal);
 
       await supabase
         .from("orders")
@@ -5420,7 +5420,7 @@ export async function updatePOSOrderItems(
   notes?: string
 ): Promise<boolean> {
   const subtotal = newItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const tax = Math.round(subtotal * 0.18);
+  const tax = 0;
   const total = subtotal + tax;
 
   const target = mockOrders.find(o => o.id === orderId);

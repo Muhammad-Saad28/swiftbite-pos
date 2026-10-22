@@ -473,10 +473,7 @@ export default function AdminOrdersPage() {
               <span>Subtotal:</span>
               <span className="text-white font-mono">Rs. {checkoutOrder?.subtotal || 0}</span>
             </div>
-            <div className="flex justify-between text-zinc-400">
-              <span>GST Tax (18%):</span>
-              <span className="text-white font-mono">Rs. {checkoutOrder?.tax || 0}</span>
-            </div>
+
             {(() => {
               const subtotal = checkoutOrder?.subtotal || 0;
               const tax = checkoutOrder?.tax || 0;
@@ -486,7 +483,7 @@ export default function AdminOrdersPage() {
               } else if (discountType === "flat") {
                 calculatedDiscount = discountValue || 0;
               }
-              const finalTotal = Math.max(0, (subtotal + tax) - calculatedDiscount);
+              const finalTotal = Math.max(0, subtotal - calculatedDiscount);
 
               return (
                 <>

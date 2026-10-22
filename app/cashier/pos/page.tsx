@@ -95,7 +95,7 @@ export default function CashierPOSRegisterPage() {
   };
 
   const subtotal = cart.reduce((sum, c) => sum + c.item.price * c.quantity, 0);
-  const tax = Math.round(subtotal * 0.18);
+  const tax = 0;
   const total = subtotal + tax;
 
   const handlePlaceOrder = async () => {
@@ -375,10 +375,7 @@ export default function CashierPOSRegisterPage() {
                 <span>Subtotal:</span>
                 <span className="text-white">Rs. {subtotal}</span>
               </div>
-              <div className="flex justify-between text-zinc-400">
-                <span>GST Tax (18%):</span>
-                <span className="text-white">Rs. {tax}</span>
-              </div>
+
               <div className="pt-2 border-t border-zinc-800 flex justify-between items-baseline font-sans">
                 <span className="font-black text-white text-sm">TOTAL AMOUNT:</span>
                 <span className="text-xl font-black text-orange-400 font-mono">Rs. {total}</span>

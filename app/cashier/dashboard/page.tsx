@@ -183,7 +183,7 @@ export default function CashierDashboardPage() {
     let discountAmt = 0;
     if (discountType === "percentage") discountAmt = Math.round(subtotal * ((discountValue || 0) / 100));
     else if (discountType === "flat") discountAmt = discountValue || 0;
-    const netTotal = Math.max(0, (subtotal + checkoutOrder.tax) - discountAmt);
+    const netTotal = Math.max(0, subtotal - discountAmt);
     const tendered = parseFloat(cashTendered) || netTotal;
     const change = Math.max(0, tendered - netTotal);
 
@@ -851,10 +851,7 @@ export default function CashierDashboardPage() {
                 <span>Subtotal:</span>
                 <span className="text-white">Rs. {checkoutOrder.subtotal}</span>
               </div>
-              <div className="flex justify-between text-zinc-400">
-                <span>GST Tax (18%):</span>
-                <span className="text-white">Rs. {checkoutOrder.tax}</span>
-              </div>
+
               {(() => {
                 const subtotal = checkoutOrder.subtotal || 0;
                 let discountAmt = 0;
@@ -863,7 +860,7 @@ export default function CashierDashboardPage() {
                 } else if (discountType === "flat") {
                   discountAmt = discountValue || 0;
                 }
-                const net = Math.max(0, (subtotal + checkoutOrder.tax) - discountAmt);
+                const net = Math.max(0, subtotal - discountAmt);
                 return (
                   <>
                     {discountAmt > 0 && (
@@ -1053,7 +1050,7 @@ export default function CashierDashboardPage() {
                   let discountAmt = 0;
                   if (discountType === "percentage") discountAmt = Math.round(subtotal * ((discountValue || 0) / 100));
                   else if (discountType === "flat") discountAmt = discountValue || 0;
-                  const net = Math.max(0, (subtotal + checkoutOrder.tax) - discountAmt);
+                  const net = Math.max(0, subtotal - discountAmt);
                   const change = tendered - net;
 
                   return (

@@ -86,7 +86,7 @@ export default function WaiterNewOrderPage() {
   };
 
   const subtotal = cart.reduce((sum, c) => sum + c.item.price * c.quantity, 0);
-  const tax = Math.round(subtotal * 0.18);
+  const tax = 0;
   const total = subtotal + tax;
 
   const handleSendOrder = async () => {
@@ -365,10 +365,7 @@ export default function WaiterNewOrderPage() {
                 <span>Subtotal</span>
                 <span className="font-mono text-zinc-200">Rs. {subtotal}</span>
               </div>
-              <div className="flex justify-between text-zinc-400">
-                <span>GST Tax (18%)</span>
-                <span className="font-mono text-zinc-200">Rs. {tax}</span>
-              </div>
+
               <div className="flex justify-between items-center text-sm font-black text-white pt-2 border-t border-zinc-800">
                 <span>Total Amount</span>
                 <span className="font-mono text-orange-400 text-base">Rs. {total}</span>

@@ -192,7 +192,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                 <span className="text-xs font-black uppercase tracking-wider text-zinc-950 block">
                   Net Amount
                 </span>
-                <span className="text-[10px] text-zinc-500">All Taxes Included</span>
+                
               </div>
               <div className="text-right">
                 <span className="text-xl font-black text-zinc-950 tracking-tight">
