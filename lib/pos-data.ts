@@ -5107,10 +5107,10 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
         ...order,
         order_number: totalCount - idx,
         table_number: order.tables?.table_number,
-        waiter_name: order.users?.name || "Staff",
+        waiter_name: order.users?.name || (order.order_type === "delivery" ? "Website Online" : "Staff"),
         items: order.order_items?.map((item: any) => ({
           ...item,
-          menu_item_name: item.menu_items?.name || "Item",
+          menu_item_name: item.menu_items?.name || item.notes || "Item",
         })),
       }));
     }
@@ -5684,3 +5684,4 @@ function addNotificationToMock(type: POSNotification["type"], message: string) {
     ...mockNotifications,
   ];
 }
+

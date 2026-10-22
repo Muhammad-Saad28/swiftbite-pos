@@ -71,8 +71,8 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             </div>
 
             <div className="text-[10px] text-zinc-500 leading-tight space-y-0.5 pt-0.5 font-medium">
-              <p>Main Boulevard, DHA Phase 5, Lahore</p>
-              <p>UAN: +92 (42) 111-474-558 &bull; NTN: 9482710-3</p>
+              <p>Main G.T. Road, near Orange Line Station, Dera Gujran, Lahore</p>
+              <p>Phone: 0321-2490006 / 0306-4656951</p>
             </div>
           </div>
 

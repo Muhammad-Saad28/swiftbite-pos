@@ -112,7 +112,11 @@ export default function KitchenDashboardPage() {
                         #{order.id.substring(0, 4)}
                       </span>
                       <span className="text-sm font-bold text-zinc-400 tracking-widest uppercase block mt-1">
-                        Table {order.table_number ? order.table_number.toString().padStart(2, "0") : "N/A"}
+                        {order.table_number 
+                          ? `Table ${order.table_number.toString().padStart(2, "0")}` 
+                          : order.order_type === "delivery"
+                          ? `🛵 Delivery: ${order.customer_name || "Online"}`
+                          : "🛍️ Takeaway"}
                       </span>
                     </div>
 

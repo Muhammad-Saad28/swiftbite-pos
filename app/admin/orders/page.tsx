@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,28 @@ import {
   updatePOSOrderPaymentAndDiscount, 
   POSOrder 
 } from "@/lib/pos-data";
+import { supabase } from "@/lib/supabase/client";
 import { ReceiptModal } from "@/components/receipt-modal";
-import { Search, CheckCircle, Clock, ChefHat, CheckSquare, XCircle, Printer, CreditCard, DollarSign, QrCode, Percent, Tag } from "lucide-react";
+import { 
+  Search, 
+  CheckCircle, 
+  Clock, 
+  ChefHat, 
+  CheckSquare, 
+  XCircle, 
+  Printer, 
+  CreditCard, 
+  DollarSign, 
+  QrCode, 
+  Percent, 
+  Tag, 
+  Phone, 
+  MapPin, 
+  User, 
+  MessageCircle, 
+  BellRing,
+  Bike
+} from "lucide-react";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<POSOrder[]>([]);
@@ -29,6 +49,9 @@ export default function AdminOrdersPage() {
   const [discountType, setDiscountType] = useState<"percentage" | "flat" | "none">("none");
   const [discountValue, setDiscountValue] = useState<number>(0);
 
+  // Audio & Notification State
+  const prevOrderCountRef = useRef<number>(0);
+
   const refreshData = async () => {
     const fetched = await getPOSOrders();
     setOrders(fetched);
@@ -37,8 +60,35 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     refreshData();
     const interval = setInterval(refreshData, 4000);
-    return () => clearInterval(interval);
+
+    // Supabase Realtime channel for instant live order updates
+    const channel = supabase
+      .channel("pos-orders-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders" },
+        () => {
+          refreshData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, []);
+
+  // Play audio chime when a new order arrives
+  useEffect(() => {
+    if (orders.length > prevOrderCountRef.current && prevOrderCountRef.current !== 0) {
+      try {
+        const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3");
+        audio.play().catch(() => {});
+      } catch (e) {}
+    }
+    prevOrderCountRef.current = orders.length;
+  }, [orders.length]);
 
   const handleStatusChange = async (orderId: string, status: POSOrder["status"]) => {
     await updateOrderStatus(orderId, status);
@@ -69,17 +119,29 @@ export default function AdminOrdersPage() {
   };
 
   const filteredOrders = orders.filter((o) => {
-    const matchesTab = activeTab === "all" || o.status === activeTab;
+    const matchesTab = 
+      activeTab === "all" || 
+      (activeTab === "delivery" ? o.order_type === "delivery" : o.status === activeTab);
+    
+    const search = searchQuery.toLowerCase();
     const matchesSearch =
-      o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (o.waiter_name && o.waiter_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (o.table_number && o.table_number.toString().includes(searchQuery));
+      o.id.toLowerCase().includes(search) ||
+      (o.order_number && o.order_number.toString().includes(search)) ||
+      (o.customer_name && o.customer_name.toLowerCase().includes(search)) ||
+      (o.customer_phone && o.customer_phone.includes(search)) ||
+      (o.delivery_address && o.delivery_address.toLowerCase().includes(search)) ||
+      (o.waiter_name && o.waiter_name.toLowerCase().includes(search)) ||
+      (o.table_number && o.table_number.toString().includes(search));
+
     return matchesTab && matchesSearch;
   });
+
+  const pendingDeliveryCount = orders.filter(o => o.order_type === "delivery" && o.status === "pending").length;
 
   const tabs = [
     { id: "all", label: "All Orders", count: orders.length },
     { id: "pending", label: "Pending", count: orders.filter(o => o.status === "pending").length },
+    { id: "delivery", label: "🛵 Online Deliveries", count: orders.filter(o => o.order_type === "delivery").length },
     { id: "accepted", label: "Accepted", count: orders.filter(o => o.status === "accepted").length },
     { id: "preparing", label: "Preparing", count: orders.filter(o => o.status === "preparing").length },
     { id: "ready", label: "Ready", count: orders.filter(o => o.status === "ready").length },
@@ -88,16 +150,28 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-6">
+      {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight">Order Management</h1>
-          <p className="text-xs text-zinc-400">Control order lifecycles, apply discounts, collect payments & print thermal receipts</p>
+          <div className="flex items-center space-x-3">
+            <h1 className="text-2xl font-black text-white tracking-tight">Order Management</h1>
+            {pendingDeliveryCount > 0 && (
+              <span className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-xs font-bold animate-pulse">
+                <BellRing className="h-3.5 w-3.5" />
+                <span>{pendingDeliveryCount} New Online</span>
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            Realtime live orders &bull; Connected with customer website and WhatsApp
+          </p>
         </div>
-        <div className="w-full sm:w-64">
+
+        <div className="w-full sm:w-72">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
             <Input
-              placeholder="Search by Order #, Table, Waiter..."
+              placeholder="Search by Order #, Customer, Phone..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 bg-zinc-900 border-zinc-800 text-xs"
@@ -118,7 +192,7 @@ export default function AdminOrdersPage() {
                 : "bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800"
             }`}
           >
-            <span className="capitalize">{tab.label}</span>
+            <span>{tab.label}</span>
             <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${activeTab === tab.id ? "bg-orange-700 text-white" : "bg-zinc-800 text-zinc-400"}`}>
               {tab.count}
             </span>
@@ -133,107 +207,180 @@ export default function AdminOrdersPage() {
             <p className="text-sm font-semibold text-zinc-400">No orders match the current filter</p>
           </div>
         ) : (
-          filteredOrders.map((order) => (
-            <Card key={order.id} className="bg-zinc-900 border-zinc-800 flex flex-col justify-between p-4 space-y-3">
-              <div className="space-y-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-base font-extrabold text-white">Order #{order.id}</span>
-                      <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded uppercase">
-                        {order.order_type || "Dine-In"}
-                      </span>
+          filteredOrders.map((order) => {
+            const shortOrderRef = order.order_number 
+              ? `#${order.order_number}` 
+              : `#${order.id.slice(0, 8).toUpperCase()}`;
+
+            const isDelivery = order.order_type === "delivery";
+
+            // WhatsApp formatting for contacting customer
+            const customerWaNumber = order.customer_phone
+              ? order.customer_phone.replace(/^0/, "92").replace(/[^0-9]/g, "")
+              : null;
+            const customerWaMsg = encodeURIComponent(
+              `Hello ${order.customer_name || "Customer"}, this is SwiftBite regarding your Order ${shortOrderRef}. Your order status is: ${order.status.toUpperCase()}.`
+            );
+
+            return (
+              <Card 
+                key={order.id} 
+                className={`bg-zinc-900 border flex flex-col justify-between p-4 space-y-3 transition-colors ${
+                  order.status === "pending" && isDelivery 
+                    ? "border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]" 
+                    : "border-zinc-800"
+                }`}
+              >
+                <div className="space-y-3">
+                  {/* Order Card Header */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-base font-extrabold text-white tracking-tight">
+                          Order {shortOrderRef}
+                        </span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${
+                          isDelivery
+                            ? "bg-blue-500/15 text-blue-400 border border-blue-500/30"
+                            : order.order_type === "takeaway"
+                            ? "bg-purple-500/15 text-purple-400 border border-purple-500/30"
+                            : "bg-orange-500/15 text-orange-400 border border-orange-500/30"
+                        }`}>
+                          {isDelivery ? "🛵 Online Delivery" : (order.order_type || "Dine-In")}
+                        </span>
+                      </div>
+
+                      {/* Customer / Table Details */}
+                      {isDelivery || order.customer_name ? (
+                        <div className="mt-2 space-y-1 text-xs">
+                          <div className="flex items-center space-x-1.5 text-zinc-200 font-bold">
+                            <User className="h-3.5 w-3.5 text-blue-400 shrink-0" />
+                            <span>{order.customer_name || "Online Customer"}</span>
+                            {order.customer_phone && (
+                              <a
+                                href={`tel:${order.customer_phone}`}
+                                className="text-zinc-400 hover:text-white font-normal underline ml-1 text-[11px]"
+                              >
+                                {order.customer_phone}
+                              </a>
+                            )}
+                          </div>
+
+                          {order.delivery_address && (
+                            <div className="flex items-start space-x-1.5 text-zinc-400 text-[11px]">
+                              <MapPin className="h-3.5 w-3.5 text-rose-400 shrink-0 mt-0.5" />
+                              <span className="line-clamp-2 leading-relaxed">{order.delivery_address}</span>
+                            </div>
+                          )}
+
+                          {customerWaNumber && (
+                            <div className="pt-1">
+                              <a
+                                href={`https://wa.me/${customerWaNumber}?text=${customerWaMsg}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center space-x-1 text-[10px] text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30 font-bold transition-colors"
+                              >
+                                <MessageCircle className="h-3 w-3" />
+                                <span>WhatsApp Customer</span>
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-zinc-400 mt-1">
+                          {order.table_number ? `Table ${order.table_number.toString().padStart(2, "0")}` : "Walk-In"} &bull; Server: {order.waiter_name}
+                        </p>
+                      )}
                     </div>
-                    <p className="text-xs text-zinc-400 mt-0.5">
-                      {order.table_number ? `Table ${order.table_number.toString().padStart(2, "0")}` : order.customer_name || "Walk-In"} &bull; Server: {order.waiter_name}
-                    </p>
+
+                    <Badge variant={order.status}>{order.status}</Badge>
                   </div>
-                  <Badge variant={order.status}>{order.status}</Badge>
+
+                  {/* Items Summary */}
+                  <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800/80 space-y-1.5 text-xs">
+                    {order.items?.map((item) => (
+                      <div key={item.id} className="flex justify-between text-zinc-300">
+                        <span>{item.menu_item_name} &times; {item.quantity}</span>
+                        <span className="text-zinc-400 font-mono">Rs. {item.price * item.quantity}</span>
+                      </div>
+                    ))}
+                    {order.notes && (
+                      <p className="text-[11px] text-amber-400/90 pt-1 italic border-t border-zinc-900">
+                        Note: "{order.notes}"
+                      </p>
+                    )}
+                    {order.rejection_reason && (
+                      <p className="text-[11px] text-rose-400 pt-1">
+                        Reason: {order.rejection_reason}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <span className="text-zinc-400">Total Bill</span>
+                    <span className="text-base font-extrabold text-orange-400 font-mono">Rs. {order.total}</span>
+                  </div>
                 </div>
 
-                {/* Items Summary */}
-                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800/80 space-y-1.5 text-xs">
-                  {order.items?.map((item) => (
-                    <div key={item.id} className="flex justify-between text-zinc-300">
-                      <span>{item.menu_item_name} &times; {item.quantity}</span>
-                      <span className="text-zinc-400">Rs. {item.price * item.quantity}</span>
+                {/* Status Action Buttons */}
+                <div className="pt-3 border-t border-zinc-800 space-y-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setSelectedReceiptOrder(order)}
+                    className="w-full border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-xs font-bold flex items-center justify-center space-x-1"
+                  >
+                    <Printer className="h-3.5 w-3.5 text-orange-400" />
+                    <span>Thermal Receipt</span>
+                  </Button>
+
+                  {order.status === "pending" && (
+                    <div className="flex space-x-2">
+                      <Button size="sm" onClick={() => handleStatusChange(order.id, "accepted")} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-xs font-bold">
+                        Accept Order
+                      </Button>
+                      <Button size="sm" variant="danger" onClick={() => setRejectingId(order.id)} className="flex-1 text-xs font-bold">
+                        Reject
+                      </Button>
                     </div>
-                  ))}
-                  {order.notes && (
-                    <p className="text-[11px] text-amber-400/90 pt-1 italic border-t border-zinc-900">
-                      Note: "{order.notes}"
-                    </p>
                   )}
-                  {order.rejection_reason && (
-                    <p className="text-[11px] text-rose-400 pt-1">
-                      Reason: {order.rejection_reason}
-                    </p>
+
+                  {order.status === "accepted" && (
+                    <Button size="sm" onClick={() => handleStatusChange(order.id, "preparing")} className="w-full bg-orange-600 hover:bg-orange-500 text-xs font-bold flex items-center justify-center space-x-1">
+                      <ChefHat className="h-3.5 w-3.5" />
+                      <span>Send to Kitchen (Preparing)</span>
+                    </Button>
+                  )}
+
+                  {order.status === "preparing" && (
+                    <Button size="sm" onClick={() => handleStatusChange(order.id, "ready")} className="w-full bg-emerald-600 hover:bg-emerald-500 text-xs font-bold flex items-center justify-center space-x-1">
+                      <CheckSquare className="h-3.5 w-3.5" />
+                      <span>{isDelivery ? "Mark Ready for Rider" : "Mark Ready for Waiter"}</span>
+                    </Button>
+                  )}
+
+                  {order.status === "ready" && (
+                    <Button size="sm" onClick={() => handleStatusChange(order.id, "served")} className="w-full bg-purple-600 hover:bg-purple-500 text-xs font-bold">
+                      {isDelivery ? "Out for Delivery" : "Mark Served"}
+                    </Button>
+                  )}
+
+                  {(order.status === "served" || order.status === "ready") && (
+                    <Button size="sm" onClick={() => openCheckoutModal(order)} className="w-full bg-emerald-600 hover:bg-emerald-500 text-xs font-bold">
+                      Checkout & Collect Payment
+                    </Button>
+                  )}
+
+                  {order.status === "completed" && (
+                    <div className="text-center py-1 text-[11px] text-zinc-500 font-medium">
+                      Payment Method: <span className="text-zinc-300 uppercase font-bold">{order.payment_method || "Cash"}</span>
+                    </div>
                   )}
                 </div>
-
-                <div className="flex items-center justify-between text-xs pt-1">
-                  <span className="text-zinc-400">Net Bill Total</span>
-                  <span className="text-base font-extrabold text-orange-400">Rs. {order.total}</span>
-                </div>
-              </div>
-
-              {/* Status Action Buttons */}
-              <div className="pt-3 border-t border-zinc-800 space-y-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setSelectedReceiptOrder(order)}
-                  className="w-full border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-xs font-bold flex items-center justify-center space-x-1"
-                >
-                  <Printer className="h-3.5 w-3.5 text-orange-400" />
-                  <span>Thermal Receipt</span>
-                </Button>
-
-                {order.status === "pending" && (
-                  <div className="flex space-x-2">
-                    <Button size="sm" onClick={() => handleStatusChange(order.id, "accepted")} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-xs font-bold">
-                      Accept
-                    </Button>
-                    <Button size="sm" variant="danger" onClick={() => setRejectingId(order.id)} className="flex-1 text-xs font-bold">
-                      Reject
-                    </Button>
-                  </div>
-                )}
-
-                {order.status === "accepted" && (
-                  <Button size="sm" onClick={() => handleStatusChange(order.id, "preparing")} className="w-full bg-orange-600 hover:bg-orange-500 text-xs font-bold flex items-center justify-center space-x-1">
-                    <ChefHat className="h-3.5 w-3.5" />
-                    <span>Send to Kitchen (Preparing)</span>
-                  </Button>
-                )}
-
-                {order.status === "preparing" && (
-                  <Button size="sm" onClick={() => handleStatusChange(order.id, "ready")} className="w-full bg-emerald-600 hover:bg-emerald-500 text-xs font-bold flex items-center justify-center space-x-1">
-                    <CheckSquare className="h-3.5 w-3.5" />
-                    <span>Mark Ready for Waiter</span>
-                  </Button>
-                )}
-
-                {order.status === "ready" && (
-                  <Button size="sm" onClick={() => handleStatusChange(order.id, "served")} className="w-full bg-purple-600 hover:bg-purple-500 text-xs font-bold">
-                    Mark Served
-                  </Button>
-                )}
-
-                {(order.status === "served" || order.status === "ready") && (
-                  <Button size="sm" onClick={() => openCheckoutModal(order)} className="w-full bg-emerald-600 hover:bg-emerald-500 text-xs font-bold">
-                    Checkout & Collect Payment
-                  </Button>
-                )}
-
-                {order.status === "completed" && (
-                  <div className="text-center py-1 text-[11px] text-zinc-500 font-medium">
-                    Payment Method: <span className="text-zinc-300 uppercase font-bold">{order.payment_method || "Cash"}</span>
-                  </div>
-                )}
-              </div>
-            </Card>
-          ))
+              </Card>
+            );
+          })
         )}
       </div>
 
@@ -245,7 +392,7 @@ export default function AdminOrdersPage() {
       />
 
       {/* Payment & Checkout Modal */}
-      <Modal isOpen={!!checkoutOrder} onClose={() => setCheckoutOrder(null)} title={`Checkout & Collect Payment - Order #${checkoutOrder?.id}`}>
+      <Modal isOpen={!!checkoutOrder} onClose={() => setCheckoutOrder(null)} title={`Checkout & Collect Payment - Order #${checkoutOrder?.order_number || checkoutOrder?.id.slice(0, 8)}`}>
         <div className="space-y-4">
           <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2 text-xs">
             <div className="flex justify-between text-zinc-400">
