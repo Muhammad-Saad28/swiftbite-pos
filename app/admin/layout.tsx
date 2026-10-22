@@ -189,10 +189,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Button
               variant="outline"
               size="sm"
-              onClick={() => router.push("/waiter/dashboard")}
+              onClick={() => router.push("/cashier/dashboard")}
               className="text-xs border-zinc-800 text-zinc-300 hover:bg-zinc-800"
             >
-              Switch to Waiter View
+              Switch to Cashier View
             </Button>
           </div>
         </header>
