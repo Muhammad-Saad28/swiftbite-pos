@@ -15,7 +15,7 @@ import {
   POSTable, 
   POSInventoryItem 
 } from "@/lib/pos-data";
-import { DollarSign, ShoppingBag, Utensils, AlertTriangle, CheckCircle, XCircle, ArrowUpRight, Clock, TrendingUp, TrendingDown } from "lucide-react";
+import { DollarSign, ShoppingBag, Utensils, AlertTriangle, CheckCircle, XCircle, ArrowUpRight, Clock, TrendingUp, TrendingDown, Calendar, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Cell, Tooltip } from "recharts";
 
@@ -136,9 +136,31 @@ export default function AdminDashboardPage() {
   }
 
   // Calculate Metrics
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+
+  const validOrders = orders.filter(
+    o => o.status !== "cancelled" && o.status !== "rejected"
+  );
+
   const todayRevenue = orders
     .filter(o => o.status === "completed" || o.status === "served" || o.status === "ready" || o.status === "preparing" || o.status === "accepted")
     .reduce((sum, o) => sum + o.total, 0);
+
+  const thisMonthRevenue = validOrders
+    .filter(o => {
+      const d = new Date(o.created_at);
+      return !isNaN(d.getTime()) && d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+    })
+    .reduce((sum, o) => sum + (o.total || 0), 0);
+
+  const thisYearRevenue = validOrders
+    .filter(o => {
+      const d = new Date(o.created_at);
+      return !isNaN(d.getTime()) && d.getFullYear() === currentYear;
+    })
+    .reduce((sum, o) => sum + (o.total || 0), 0);
 
   const activeOrdersCount = orders.filter(o => o.status !== "completed" && o.status !== "cancelled" && o.status !== "rejected").length;
   const pendingOrders = orders.filter(o => o.status === "pending");
@@ -244,6 +266,55 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </Card>
+      </div>
+
+      {/* Monthly and Yearly Revenue Highlight Banner */}
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 border border-zinc-800 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-full bg-gradient-to-l from-orange-500/10 via-amber-500/5 to-transparent pointer-events-none" />
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse" />
+              <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">Revenue Analytics</span>
+            </div>
+            <h2 className="text-2xl font-black text-white mt-1">Monthly & Yearly Revenue Summary</h2>
+            <p className="text-xs text-zinc-400 mt-1 max-w-lg">
+              Aggregate gross revenue calculated from fulfilled and valid orders across the current fiscal cycle.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:w-1/2">
+            <div className="p-4 rounded-xl bg-zinc-950/80 border border-zinc-800/80 flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center">
+                  <CalendarDays className="w-3.5 h-3.5 mr-1 text-orange-400" />
+                  This Month ({now.toLocaleString('default', { month: 'short' })})
+                </span>
+                <p className="text-2xl font-black text-white mt-1 font-mono">Rs. {thisMonthRevenue.toLocaleString()}</p>
+              </div>
+              <Link href="/admin/reports">
+                <Button size="sm" variant="ghost" className="text-xs text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 rounded-lg">
+                  Breakdown &rarr;
+                </Button>
+              </Link>
+            </div>
+
+            <div className="p-4 rounded-xl bg-zinc-950/80 border border-zinc-800/80 flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center">
+                  <Calendar className="w-3.5 h-3.5 mr-1 text-amber-400" />
+                  This Year ({currentYear})
+                </span>
+                <p className="text-2xl font-black text-amber-400 mt-1 font-mono">Rs. {thisYearRevenue.toLocaleString()}</p>
+              </div>
+              <Link href="/admin/reports">
+                <Button size="sm" variant="ghost" className="text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 rounded-lg">
+                  Full Ledger &rarr;
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
 
 
