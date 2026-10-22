@@ -42,6 +42,7 @@ export default function AdminMenuPage() {
   const [ingredients, setIngredients] = useState<POSMenuItemIngredient[]>([]);
   const [selectedInvId, setSelectedInvId] = useState("");
   const [qtyRequired, setQtyRequired] = useState("");
+  const [itemToDelete, setItemToDelete] = useState<POSMenuItem | null>(null);
 
   const refreshData = async () => {
     const [fetchedItems, fetchedCats, fetchedInv] = await Promise.all([
@@ -210,7 +211,7 @@ export default function AdminMenuPage() {
                 )}
               </div>
 
-              <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between gap-2">
+              <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between gap-1.5">
                 <button
                   onClick={() => handleToggleAvailability(item.id)}
                   className={`text-[11px] font-bold flex items-center space-x-1 px-2 py-1 rounded-lg transition-colors ${
@@ -220,18 +221,30 @@ export default function AdminMenuPage() {
                   }`}
                 >
                   {item.available ? <CheckCircle className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
-                  <span>{item.available ? "Available" : "Unavailable"}</span>
+                  <span>{item.available ? "Active" : "Off"}</span>
                 </button>
 
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => openRecipeModal(item)}
-                  className="border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-[11px] font-bold flex items-center space-x-1"
-                >
-                  <Layers className="h-3 w-3 text-orange-400" />
-                  <span>Recipe</span>
-                </Button>
+                <div className="flex items-center space-x-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openRecipeModal(item)}
+                    className="border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-[11px] font-bold flex items-center space-x-1 px-2 h-7"
+                  >
+                    <Layers className="h-3 w-3 text-orange-400" />
+                    <span>Recipe</span>
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setItemToDelete(item)}
+                    className="text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 p-1.5 h-7 w-7 rounded-lg"
+                    title="Delete Menu Item"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               </div>
             </div>
           </Card>

@@ -5015,16 +5015,26 @@ export async function getPOSCategories(): Promise<POSCategory[]> {
 }
 
 export async function getPOSMenuItems(): Promise<POSMenuItem[]> {
+  let deletedIds: string[] = [];
+  if (typeof window !== "undefined") {
+    try {
+      deletedIds = JSON.parse(localStorage.getItem("pos_deleted_menu_item_ids") || "[]");
+    } catch (e) {}
+  }
+
   try {
     const { data, error } = await supabase.from("menu_items").select("*, categories(name)").order("name");
     if (!error && data && data.length > 0) {
-      return data.map((item: any) => ({
-        ...item,
-        category_name: item.categories?.name || "General",
-      }));
+      return data
+        .filter((item: any) => !deletedIds.includes(item.id))
+        .map((item: any) => ({
+          ...item,
+          category_name: item.categories?.name || "General",
+        }));
     }
   } catch (e) {}
-  return mockMenuItems;
+
+  return mockMenuItems.filter(m => !deletedIds.includes(m.id));
 }
 
 export async function addPOSMenuItem(item: {
@@ -5083,10 +5093,31 @@ export async function togglePOSMenuItemAvailability(id: string, available: boole
 }
 
 export async function deletePOSMenuItem(id: string): Promise<boolean> {
+  // 1. Remove from in-memory mock data
   mockMenuItems = mockMenuItems.filter(m => m.id !== id);
+  mockIngredients = mockIngredients.filter(i => i.menu_item_id !== id);
+
+  // 2. Persist deleted IDs in localStorage so mock/cached items do not reappear on refresh
+  if (typeof window !== "undefined") {
+    try {
+      const deletedIds = JSON.parse(localStorage.getItem("pos_deleted_menu_item_ids") || "[]");
+      if (!deletedIds.includes(id)) {
+        deletedIds.push(id);
+        localStorage.setItem("pos_deleted_menu_item_ids", JSON.stringify(deletedIds));
+      }
+    } catch (e) {}
+  }
+
+  // 3. Remove dependent ingredient relations from Supabase
+  try {
+    await supabase.from("menu_item_ingredients").delete().eq("menu_item_id", id);
+  } catch (e) {}
+
+  // 4. Delete the item from Supabase
   try {
     await supabase.from("menu_items").delete().eq("id", id);
   } catch (e) {}
+
   return true;
 }
 
