@@ -205,7 +205,7 @@ export default function CashierDashboardPage() {
 
   // Filter queues
   const pendingOrders = orders.filter(o => o.status === "pending");
-  const readyForSettlement = orders.filter(o => (o.status === "served" || o.status === "ready") && o.delivery_status !== "handover_pending");
+  const readyForSettlement = orders.filter(o => o.status !== "completed" && o.status !== "rejected" && o.status !== "cancelled" && o.delivery_status !== "handover_pending");
   const rejectedOrCancelledOrders = orders.filter(o => o.status === "rejected" || o.status === "cancelled");
   const activeDeliveries = orders.filter(o => o.order_type === "delivery" && o.status !== "completed" && o.status !== "rejected" && o.status !== "cancelled");
   const riderHandovers = orders.filter(o => o.order_type === "delivery" && o.delivery_status === "handover_pending" && o.status !== "completed" && o.status !== "rejected" && o.status !== "cancelled");
@@ -214,7 +214,7 @@ export default function CashierDashboardPage() {
   const filteredOrders = orders.filter((o) => {
     let matchesTab = true;
     if (activeTab === "pending_confirmation") matchesTab = o.status === "pending";
-    else if (activeTab === "settlement") matchesTab = o.status === "ready" || o.status === "served";
+    else if (activeTab === "settlement") matchesTab = o.status !== "completed" && o.status !== "rejected" && o.status !== "cancelled" && o.delivery_status !== "handover_pending";
     else if (activeTab === "delivery") matchesTab = o.order_type === "delivery" && o.status !== "completed" && o.status !== "cancelled" && o.status !== "rejected";
     else if (activeTab === "rider_handover") matchesTab = o.delivery_status === "handover_pending" && o.status !== "completed";
     else if (activeTab === "completed") matchesTab = o.status === "completed";
@@ -542,38 +542,54 @@ export default function CashierDashboardPage() {
                     </Button>
                   )}
 
-                  {/* Settle Bill / Collect Payment */}
-                  {(order.status === "served" || order.status === "ready" || order.status === "accepted" || order.status === "preparing") && (
+                  {/* Settle Bill / Collect Payment (Primary in Bill Settlement) */}
+                  {activeTab === "settlement" && order.status !== "completed" && (
                     <Button
                       size="sm"
                       onClick={() => openCheckoutModal(order)}
-                      className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-9 flex items-center justify-center space-x-1.5 shadow-md shadow-emerald-600/20"
+                      className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-10 flex items-center justify-center space-x-1.5 shadow-md shadow-emerald-600/20"
                     >
                       <CreditCard className="h-4 w-4" />
                       <span>Collect Payment & Settle Bill</span>
                     </Button>
                   )}
 
-                  {/* Print Action Buttons (Kitchen KOT vs Final Thermal Receipt) */}
-                  <div className="grid grid-cols-2 gap-2">
+                  {/* Print Action Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => setSelectedKitchenOrder(order)}
-                      className="border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white text-[11px] font-bold flex items-center justify-center space-x-1"
+                      className="w-full border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white text-[11px] font-bold flex items-center justify-center space-x-1"
                     >
                       <ChefHat className="h-3.5 w-3.5 text-amber-400" />
                       <span>Kitchen KOT</span>
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setSelectedReceiptOrder(order)}
-                      className="border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white text-[11px] font-bold flex items-center justify-center space-x-1"
-                    >
-                      <Printer className="h-3.5 w-3.5 text-orange-400" />
-                      <span>Final Receipt</span>
-                    </Button>
+                    
+                    {/* Final Receipt: Only shown in Bill Settlement or Completed History tabs */}
+                    {(activeTab === "settlement" || activeTab === "completed") ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setSelectedReceiptOrder(order)}
+                        className="w-full border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white text-[11px] font-bold flex items-center justify-center space-x-1"
+                      >
+                        <Printer className="h-3.5 w-3.5 text-orange-400" />
+                        <span>Final Receipt</span>
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setActiveTab("settlement");
+                          openCheckoutModal(order);
+                        }}
+                        className="w-full bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold flex items-center justify-center space-x-1"
+                      >
+                        <CreditCard className="h-3.5 w-3.5" />
+                        <span>Go to Settle Bill</span>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </Card>

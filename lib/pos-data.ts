@@ -5125,7 +5125,7 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
   try {
     let query = supabase
       .from("orders")
-      .select("*, tables(table_number), users!orders_waiter_id_fkey(name), order_items(*, menu_items(name))")
+      .select("*, tables(table_number), users!orders_waiter_id_fkey(name), order_items(*, menu_items(name, description))")
       .order("created_at", { ascending: false });
 
     if (waiterId) {
@@ -5160,6 +5160,7 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
           items: order.order_items?.map((item: any) => ({
             ...item,
             menu_item_name: item.menu_items?.name || item.notes || "Item",
+            notes: item.notes || item.menu_items?.description || null,
           })),
         };
       });

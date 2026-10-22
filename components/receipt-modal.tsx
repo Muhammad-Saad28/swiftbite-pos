@@ -150,6 +150,11 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                     <p className="font-bold text-zinc-900 leading-tight">
                       {item.menu_item_name}
                     </p>
+                    {item.notes && (
+                      <p className="text-[10px] font-semibold text-zinc-600 mt-0.5 leading-snug bg-zinc-100 p-1 rounded border border-zinc-200">
+                        📦 Combo includes: {item.notes}
+                      </p>
+                    )}
                     <p className="text-[10px] text-zinc-500 mt-0.5">
                       {item.quantity} &times; Rs. {item.price.toLocaleString()}
                     </p>
