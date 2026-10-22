@@ -40,85 +40,73 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
         <div className="max-h-[70vh] overflow-y-auto pr-1">
           <div
             id="kitchen-receipt"
-            className="receipt-container bg-white text-zinc-950 p-6 sm:p-7 rounded-2xl shadow-xl border-2 border-zinc-950 mx-auto max-w-[380px] font-mono transition-all"
+            className="receipt-container bg-white text-black p-4 rounded-xl shadow-xl border-2 border-black mx-auto max-w-[340px] font-mono leading-tight transition-all"
           >
             {/* Header: Kitchen KOT */}
-            <div className="text-center pb-3 border-b-2 border-black">
-              <div className="inline-flex items-center justify-center p-1.5 rounded-xl bg-black text-white mb-1.5">
-                <ChefHat className="h-6 w-6" />
-              </div>
-              <h2 className="text-xl font-black tracking-tight text-black uppercase">
+            <div className="text-center pb-1.5 border-b-2 border-black">
+              <h2 className="text-lg font-black tracking-tight text-black uppercase">
                 *** KITCHEN ORDER TICKET ***
               </h2>
-              <p className="text-xs font-black tracking-widest text-zinc-800 uppercase mt-0.5">
+              <p className="text-[10px] font-black tracking-widest text-black uppercase mt-0.5">
                 SWIFTBITE KITCHEN DISPATCH
               </p>
             </div>
 
             {/* Prominent Order No & Order Type Banner */}
-            <div className="my-3 py-2.5 px-3 bg-zinc-100 border-2 border-black rounded-lg flex items-center justify-between">
+            <div className="my-1.5 py-1 px-2 border-y-2 border-black flex items-center justify-between font-black text-black">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-zinc-600 block">
-                  KOT # / ORDER #
-                </span>
-                <span className="text-xl font-black tracking-wider text-black">
-                  #{numericReceiptNo}
-                </span>
+                <span className="text-[9px] uppercase tracking-wider block">KOT #</span>
+                <span className="text-base font-black tracking-wider">#{numericReceiptNo}</span>
               </div>
               <div className="text-right">
-                <span className="inline-block px-2.5 py-1 rounded bg-black text-white font-black text-xs uppercase tracking-wider">
+                <span className="text-xs font-black uppercase tracking-wider">
                   {order.order_type ? order.order_type.replace("_", " ") : "DINE IN"}
                 </span>
               </div>
             </div>
 
             {/* Server / Customer Meta */}
-            <div className="py-2 border-y border-dashed border-black text-xs space-y-1.5">
-              <div className="flex justify-between items-center text-[11px]">
-                <span className="text-zinc-600">Time Placed:</span>
-                <span className="font-bold text-black">{formattedTime} ({formattedDate})</span>
+            <div className="py-1 border-b border-black text-[10px] space-y-0.5 font-bold text-black">
+              <div className="flex justify-between items-center">
+                <span>Time Placed:</span>
+                <span>{formattedTime} ({formattedDate})</span>
               </div>
-              <div className="flex justify-between items-center text-[11px]">
-                <span className="text-zinc-600">Punched By:</span>
-                <span className="font-bold text-black">{order.waiter_name || "Cashier Desk"}</span>
+              <div className="flex justify-between items-center">
+                <span>Punched By:</span>
+                <span>{order.waiter_name || "Cashier Desk"}</span>
               </div>
               {order.customer_name && (
-                <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-zinc-600">Customer:</span>
-                  <span className="font-bold text-black">{order.customer_name}</span>
+                <div className="flex justify-between items-center">
+                  <span>Customer:</span>
+                  <span className="font-black">{order.customer_name}</span>
                 </div>
               )}
             </div>
 
             {/* Kitchen Items to Prepare */}
-            <div className="pt-3 pb-2 space-y-2">
-              <div className="flex justify-between text-xs font-black uppercase tracking-wider text-black border-b-2 border-black pb-1">
+            <div className="py-1.5 space-y-1">
+              <div className="flex justify-between text-[10px] font-black uppercase text-black border-b border-black pb-0.5">
                 <span>QTY & ITEM NAME</span>
                 <span>STATUS</span>
               </div>
 
-              <div className="divide-y divide-dashed divide-zinc-300">
+              <div className="divide-y divide-dotted divide-zinc-400">
                 {order.items?.map((item, idx) => (
-                  <div key={item.id || idx} className="py-2.5 flex justify-between items-start">
+                  <div key={item.id || idx} className="py-1 flex justify-between items-start text-xs font-black text-black">
                     <div className="pr-2">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-base font-black px-1.5 py-0.5 rounded bg-black text-white">
-                          {item.quantity}x
+                      <div className="flex items-center space-x-1.5">
+                        <span className="text-sm underline underline-offset-2">
+                          {item.quantity}X
                         </span>
-                        <span className="text-sm font-black text-black">
-                          {item.menu_item_name}
-                        </span>
+                        <span className="text-xs uppercase">{item.menu_item_name}</span>
                       </div>
                       {item.notes && (
-                        <div className="mt-1 pl-7 text-xs font-black text-black bg-zinc-100 p-2 rounded-lg border-2 border-black space-y-1">
-                          <p className="text-[10px] uppercase font-black tracking-wider text-zinc-700">COMBO ITEMS TO PREPARE:</p>
-                          <p className="text-xs font-extrabold text-black leading-tight">
-                            {item.notes}
-                          </p>
+                        <div className="text-[9px] font-bold text-black mt-0.5 pl-4">
+                          <span>📦 Includes: {item.notes}</span>
                         </div>
                       )}
                     </div>
-                    <span className="text-[11px] font-bold text-zinc-500 pt-1">[ COOK ]</span>
+                    <span className="text-[10px] font-black text-black pt-0.5">[ COOK ]</span>
                   </div>
                 ))}
               </div>
@@ -126,21 +114,14 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
 
             {/* Special Instructions / Notes */}
             {order.notes && (
-              <div className="mt-3 p-2.5 rounded border-2 border-black bg-zinc-50 text-xs">
-                <p className="font-black text-black uppercase flex items-center gap-1 mb-0.5">
-                  <AlertCircle className="h-3.5 w-3.5 text-black" />
-                  <span>KITCHEN SPECIAL NOTES:</span>
-                </p>
-                <p className="font-bold text-black italic">"{order.notes}"</p>
+              <div className="mt-1.5 p-1.5 rounded border border-black text-[10px] font-black text-black">
+                <p className="uppercase">⚠️ NOTES: "{order.notes}"</p>
               </div>
             )}
 
             {/* Footer */}
-            <div className="pt-4 pb-1 text-center border-t-2 border-black mt-4 text-[10px] space-y-1">
-              <p className="font-black uppercase tracking-wider text-black">
-                === END OF KITCHEN ORDER TICKET ===
-              </p>
-              <p className="text-zinc-600">Send physical print to kitchen line</p>
+            <div className="pt-2 text-center border-t-2 border-black mt-2 text-[10px] font-black text-black">
+              <p>=== END OF KITCHEN ORDER TICKET ===</p>
             </div>
           </div>
         </div>
@@ -168,8 +149,15 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
             margin: 0;
             size: 80mm auto;
           }
+          *, *::before, *::after {
+            color: #000 !important;
+            border-color: #000 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
           body {
             background: #fff !important;
+            color: #000 !important;
             margin: 0 !important;
             padding: 0 !important;
           }
@@ -183,13 +171,16 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
             position: absolute;
             left: 0;
             top: 0;
-            width: 80mm !important;
-            max-width: 80mm !important;
-            padding: 12px 14px !important;
+            width: 76mm !important;
+            max-width: 76mm !important;
+            padding: 4mm 2mm !important;
             margin: 0 !important;
             box-shadow: none !important;
             border: none !important;
             border-radius: 0 !important;
+            color: #000 !important;
+            font-family: monospace, Courier, monospace !important;
+            font-weight: 900 !important;
           }
         }
       `}</style>
