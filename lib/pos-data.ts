@@ -5236,11 +5236,19 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
           assigned_rider_id: assignedRiderId,
           assigned_rider_name: assignedRiderName,
           delivery_status: deliveryStatus,
-          items: order.order_items?.map((item: any) => ({
-            ...item,
-            menu_item_name: item.menu_items?.name || item.notes || "Item",
-            notes: item.notes || item.menu_items?.description || null,
-          })),
+          items: order.order_items?.map((item: any) => {
+            const itemName = item.menu_items?.name || item.notes || "Item";
+            const desc = item.menu_items?.description || null;
+            let dealContents = desc;
+            if (item.notes && item.notes.trim() !== itemName.trim() && !item.notes.toLowerCase().startsWith("deal ")) {
+              dealContents = item.notes + (desc ? " | " + desc : "");
+            }
+            return {
+              ...item,
+              menu_item_name: itemName,
+              notes: dealContents || item.notes || null,
+            };
+          }),
         };
       });
     }

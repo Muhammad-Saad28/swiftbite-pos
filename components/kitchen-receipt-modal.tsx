@@ -116,8 +116,11 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
                         </span>
                       </div>
                       {item.notes && (
-                        <div className="mt-1 pl-7 text-[11px] font-black text-black bg-zinc-100 p-1.5 rounded border border-black">
-                          👉 INCLUDES: {item.notes}
+                        <div className="mt-1 pl-7 text-xs font-black text-black bg-zinc-100 p-2 rounded-lg border-2 border-black space-y-1">
+                          <p className="text-[10px] uppercase font-black tracking-wider text-zinc-700">COMBO ITEMS TO PREPARE:</p>
+                          <p className="text-xs font-extrabold text-black leading-tight">
+                            {item.notes}
+                          </p>
                         </div>
                       )}
                     </div>
