@@ -15,6 +15,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SwiftBite POS",
   description: "Restaurant POS & Order Management System",
+  icons: {
+    icon: [
+      { url: "/logo.jpeg", type: "image/jpeg" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: "/logo.jpeg",
+    apple: "/logo.jpeg",
+  },
 };
 
 export default function RootLayout({
