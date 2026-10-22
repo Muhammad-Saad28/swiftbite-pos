@@ -569,16 +569,23 @@ export default function CashierDashboardPage() {
                     </div>
                   )}
 
-                  {/* Delivery Rider Assignment Action */}
-                  {isDelivery && order.status !== "pending" && order.status !== "completed" && (
+                  {/* Delivery / COD Rider Assignment Action */}
+                  {isDelivery && order.status !== "completed" && order.status !== "cancelled" && order.status !== "rejected" && (
                     <Button
                       size="sm"
-                      variant="outline"
                       onClick={() => { setDispatchOrder(order); setSelectedRiderId(order.assigned_rider_id || ""); }}
-                      className="w-full border-sky-500/40 text-sky-400 hover:bg-sky-500/10 text-xs font-bold flex items-center justify-center space-x-1.5"
+                      className={`w-full text-xs font-bold flex items-center justify-center space-x-2 h-9 rounded-xl transition-all ${
+                        order.assigned_rider_name
+                          ? "bg-sky-500/15 border border-sky-500/40 text-sky-300 hover:bg-sky-500/25"
+                          : "bg-sky-600 hover:bg-sky-500 text-white shadow-md shadow-sky-600/20 font-black"
+                      }`}
                     >
                       <Bike className="h-4 w-4" />
-                      <span>{order.assigned_rider_name ? "Reassign Rider" : "Assign Rider"}</span>
+                      <span>
+                        {order.assigned_rider_name
+                          ? `Rider Assigned: ${order.assigned_rider_name} (Change)`
+                          : "Assign Delivery Rider"}
+                      </span>
                     </Button>
                   )}
 
