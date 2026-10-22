@@ -133,10 +133,10 @@ export default function CashierDashboardPage() {
     if (!cancellingOrder) return;
     setCancelError(null);
     if (cancelPin.trim() !== CANCELLATION_PIN) {
-      setCancelError("Incorrect PIN! Enter valid supervisor PIN (5566) or request Admin Approval.");
+      setCancelError("Incorrect PIN! Enter valid supervisor PIN or request Admin Approval.");
       return;
     }
-    await updateOrderStatus(cancellingOrder.id, "cancelled", cancelReason || "Cancelled with PIN 5566");
+    await updateOrderStatus(cancellingOrder.id, "cancelled", cancelReason || "Cancelled with Supervisor PIN");
     setCancellingOrder(null);
     await refreshData();
   };
@@ -574,7 +574,7 @@ export default function CashierDashboardPage() {
                   )}
 
 
-                  {/* Cancel Order Action (Requires PIN 5566 or Admin Approval) */}
+                  {/* Cancel Order Action (Requires PIN or Admin Approval) */}
                   {order.status !== "completed" && order.status !== "rejected" && order.status !== "cancelled" && (
                     <Button
                       size="sm"
@@ -657,7 +657,7 @@ export default function CashierDashboardPage() {
       </div>
 
 
-      {/* Cancel Order Modal with PIN (5566) or Admin Approval */}
+      {/* Cancel Order Modal with PIN or Admin Approval */}
       <Modal
         isOpen={!!cancellingOrder}
         onClose={() => setCancellingOrder(null)}
@@ -670,7 +670,7 @@ export default function CashierDashboardPage() {
               <span>Security Authorization Required to Cancel</span>
             </p>
             <p className="text-zinc-300 text-[11px]">
-              To cancel this active order, enter the authorization PIN <strong className="text-white font-mono">(5566)</strong> or send an instant Cancellation Request for Admin approval.
+              To cancel this active order, enter the supervisor authorization PIN or send an instant Cancellation Request for Admin approval.
             </p>
           </div>
 
@@ -701,7 +701,7 @@ export default function CashierDashboardPage() {
             <div className="flex items-center space-x-2">
               <KeyRound className="h-4 w-4 text-orange-400" />
               <label className="text-xs font-black uppercase text-zinc-200">
-                Method 1: Fast Authorization with PIN (5566)
+                Method 1: Fast Authorization with Supervisor PIN
               </label>
             </div>
             <div className="flex gap-2">
