@@ -130,6 +130,17 @@ export default function CashierDashboardPage() {
   };
 
 
+
+  const handleStopRiderTimer = async (orderId: string) => {
+    const stoppedTime = await setOrderTimer(orderId, "handover_completed_at");
+    setOrders((prev) =>
+      prev.map((o) =>
+        o.id === orderId ? { ...o, handover_completed_at: stoppedTime } : o
+      )
+    );
+    await refreshData();
+  };
+
   const handleRiderDeparted = async (orderId: string) => {
     const startedTime = await setOrderTimer(orderId, "ride_started_at");
     setOrders((prev) =>
@@ -593,17 +604,30 @@ export default function CashierDashboardPage() {
                           <span>🛵 RIDER LEFT (START TIMER)</span>
                         </Button>
                       ) : (
-                        <div className="p-2 rounded-xl bg-sky-950/40 border border-sky-500/40 flex items-center justify-between text-xs">
-                          <span className="text-sky-300 font-bold flex items-center gap-1.5">
-                            <Bike className="h-3.5 w-3.5 text-sky-400" />
-                            <span>Rider on Road:</span>
-                          </span>
-                          <LiveTimerBadge
-                            startTime={order.ride_started_at}
-                            endTime={order.handover_completed_at}
-                            label="Out"
-                            variant="ride"
-                          />
+                        <div className="space-y-1.5">
+                          <div className="p-2 rounded-xl bg-sky-950/40 border border-sky-500/40 flex items-center justify-between text-xs">
+                            <span className="text-sky-300 font-bold flex items-center gap-1.5">
+                              <Bike className="h-3.5 w-3.5 text-sky-400" />
+                              <span>Rider on Road:</span>
+                            </span>
+                            <LiveTimerBadge
+                              startTime={order.ride_started_at}
+                              endTime={order.handover_completed_at}
+                              label="Out"
+                              variant="ride"
+                            />
+                          </div>
+
+                          {!order.handover_completed_at && (
+                            <Button
+                              size="sm"
+                              onClick={() => handleStopRiderTimer(order.id)}
+                              className="w-full bg-rose-600 hover:bg-rose-500 text-white font-black text-xs h-9 rounded-xl shadow-md flex items-center justify-center space-x-1.5"
+                            >
+                              <Clock className="h-4 w-4" />
+                              <span>STOP RIDER TIMER</span>
+                            </Button>
+                          )}
                         </div>
                       )}
                     </div>
