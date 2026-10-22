@@ -487,33 +487,7 @@ export default function CashierDashboardPage() {
 
                 {/* Cashier Action Controls */}
                 <div className="pt-3 border-t border-zinc-800 space-y-2">
-                  {/* Step 1: CONFIRMATION (Held by Cashier) */}
-                  {isPending && (
-                    <div className="space-y-2">
-                      <p className="text-[11px] font-bold text-amber-400 tracking-wide text-center">
-                        ⚡ Action Required: Confirm or Reject Order
-                      </p>
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleConfirmOrder(order.id)}
-                          className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs"
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1.5" />
-                          <span>Confirm to Kitchen</span>
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          onClick={() => setRejectingId(order.id)}
-                          className="text-xs font-bold px-3"
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          <span>Reject</span>
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+
 
                   {/* Rider Cash Handover Action */}
                   {isDelivery && order.delivery_status === "handover_pending" && order.status !== "completed" && (
