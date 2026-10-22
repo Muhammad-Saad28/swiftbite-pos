@@ -251,6 +251,42 @@ export default function AdminMenuPage() {
         ))}
       </div>
 
+      {/* Delete Item Confirmation Modal */}
+      <Modal
+        isOpen={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        title="Remove Menu Item"
+      >
+        <div className="space-y-4">
+          <p className="text-xs text-zinc-300">
+            Are you sure you want to permanently remove <strong className="text-white">"{itemToDelete?.name}"</strong> (Rs. {itemToDelete?.price}) from the menu?
+          </p>
+          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 font-medium">
+            ⚠️ This item will be permanently removed from Supabase and will no longer appear in POS counter registers, online ordering, or waiter terminals.
+          </div>
+          <div className="flex justify-end space-x-2 pt-2 border-t border-zinc-800">
+            <Button variant="ghost" size="sm" onClick={() => setItemToDelete(null)}>
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={async () => {
+                if (itemToDelete) {
+                  const id = itemToDelete.id;
+                  setItemToDelete(null);
+                  await handleDeleteItem(id);
+                }
+              }}
+              className="font-bold flex items-center space-x-1.5"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span>Delete Permanently</span>
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
       {/* Add Menu Item Modal */}
       <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Add New Menu Item">
         <div className="space-y-4">
