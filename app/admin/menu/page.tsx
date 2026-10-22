@@ -186,7 +186,14 @@ export default function AdminMenuPage() {
           <Card key={item.id} className="bg-zinc-900 border-zinc-800 overflow-hidden flex flex-col justify-between p-0">
             {item.image && (
               <div className="h-32 w-full relative overflow-hidden bg-zinc-950">
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                <img 
+                  src={item.image} 
+                  alt={item.name} 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80';
+                  }}
+                />
                 <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-zinc-950/80 backdrop-blur-md text-orange-400 border border-zinc-800">
                   {item.category_name}
                 </span>

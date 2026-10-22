@@ -143,44 +143,1388 @@ let mockTables: POSTable[] = [
 ];
 
 let mockCategories: POSCategory[] = [
-  { id: "c0000000-0000-0000-0000-000000000001", name: "Burgers", active: true },
-  { id: "c0000000-0000-0000-0000-000000000002", name: "Pizza", active: true },
-  { id: "c0000000-0000-0000-0000-000000000003", name: "Wraps", active: true },
-  { id: "c0000000-0000-0000-0000-000000000004", name: "Fried Chicken", active: true },
-  { id: "c0000000-0000-0000-0000-000000000005", name: "Pasta", active: true },
-  { id: "c0000000-0000-0000-0000-000000000006", name: "Rice", active: true },
-  { id: "c0000000-0000-0000-0000-000000000007", name: "Appetizers", active: true },
-  { id: "c0000000-0000-0000-0000-000000000008", name: "Drinks", active: true },
-  { id: "c0000000-0000-0000-0000-000000000009", name: "Desserts", active: true },
-  { id: "c0000000-0000-0000-0000-000000000010", name: "Deals", active: true },
+  {
+    "id": "10000000-0000-0000-0000-000000000001",
+    "name": "Burgers",
+    "active": true
+  },
+  {
+    "id": "10000000-0000-0000-0000-000000000010",
+    "name": "Combo Deals",
+    "active": true
+  },
+  {
+    "id": "10000000-0000-0000-0000-000000000008",
+    "name": "Fries",
+    "active": true
+  },
+  {
+    "id": "10000000-0000-0000-0000-000000000003",
+    "name": "Paratha Rolls",
+    "active": true
+  },
+  {
+    "id": "10000000-0000-0000-0000-000000000007",
+    "name": "Pasta",
+    "active": true
+  },
+  {
+    "id": "10000000-0000-0000-0000-000000000004",
+    "name": "Pizza",
+    "active": true
+  },
+  {
+    "id": "10000000-0000-0000-0000-000000000006",
+    "name": "Sandwiches",
+    "active": true
+  },
+  {
+    "id": "10000000-0000-0000-0000-000000000009",
+    "name": "Sauces and Add-ons",
+    "active": true
+  },
+  {
+    "id": "10000000-0000-0000-0000-000000000002",
+    "name": "Shawarma",
+    "active": true
+  },
+  {
+    "id": "10000000-0000-0000-0000-000000000005",
+    "name": "Wraps",
+    "active": true
+  }
 ];
 
 let mockMenuItems: POSMenuItem[] = [
-  { id: "f0000000-0000-0000-0000-000000000001", category_id: "c0000000-0000-0000-0000-000000000001", category_name: "Burgers", name: "Classic Smash Burger", description: "Double beef patty with cheese", price: 450, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80", available: true, featured: true },
-  { id: "f0000000-0000-0000-0000-000000000002", category_id: "c0000000-0000-0000-0000-000000000001", category_name: "Burgers", name: "Spicy Crispy Chicken", description: "Crispy fried chicken breast", price: 400, image: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=400&q=80", available: true, featured: true },
-  { id: "f0000000-0000-0000-0000-000000000003", category_id: "c0000000-0000-0000-0000-000000000002", category_name: "Pizza", name: "Pepperoni Pizza", description: "12-inch classic pepperoni", price: 1200, image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=400&q=80", available: true, featured: true },
-  { id: "f0000000-0000-0000-0000-000000000004", category_id: "c0000000-0000-0000-0000-000000000002", category_name: "Pizza", name: "Margherita Pizza", description: "12-inch pizza with fresh tomatoes", price: 1000, image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=400&q=80", available: true, featured: false },
-  { id: "f0000000-0000-0000-0000-000000000005", category_id: "c0000000-0000-0000-0000-000000000003", category_name: "Wraps", name: "Grilled Chicken Wrap", description: "Tortilla wrap with chicken", price: 350, image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=400&q=80", available: true, featured: false },
-  { id: "f0000000-0000-0000-0000-000000000006", category_id: "c0000000-0000-0000-0000-000000000004", category_name: "Fried Chicken", name: "3pc Fried Chicken", description: "Crispy golden fried chicken", price: 600, image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=400&q=80", available: true, featured: true },
-  { id: "f0000000-0000-0000-0000-000000000007", category_id: "c0000000-0000-0000-0000-000000000005", category_name: "Pasta", name: "Fettuccine Alfredo", description: "Creamy pasta with chicken", price: 750, image: "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=400&q=80", available: true, featured: false },
-  { id: "f0000000-0000-0000-0000-000000000008", category_id: "c0000000-0000-0000-0000-000000000006", category_name: "Rice", name: "Spicy Rice Bowl", description: "Rice with chicken chunks", price: 550, image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80", available: true, featured: false },
-  { id: "f0000000-0000-0000-0000-000000000009", category_id: "c0000000-0000-0000-0000-000000000007", category_name: "Appetizers", name: "Loaded Fries", description: "Fries topped with cheese", price: 350, image: "https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=400&q=80", available: true, featured: true },
-  { id: "f0000000-0000-0000-0000-000000000010", category_id: "c0000000-0000-0000-0000-000000000008", category_name: "Drinks", name: "Cola 500ml", description: "Chilled soft drink", price: 150, image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=400&q=80", available: true, featured: false },
-  { id: "f0000000-0000-0000-0000-000000000011", category_id: "c0000000-0000-0000-0000-000000000009", category_name: "Desserts", name: "Chocolate Brownie", description: "Warm brownie with syrup", price: 250, image: "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=400&q=80", available: true, featured: false },
-  { id: "f0000000-0000-0000-0000-000000000012", category_id: "c0000000-0000-0000-0000-000000000010", category_name: "Deals", name: "Family Deal 1", description: "2 Burgers, 1 Pizza, 4 Drinks", price: 2500, image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80", available: true, featured: true },
+  {
+    "id": "f0000000-0000-0000-0000-000000000008",
+    "category_id": "10000000-0000-0000-0000-000000000001",
+    "category_name": "Burgers",
+    "name": "Beef Burger",
+    "description": "100% prime beef patty flame-grilled with melted cheddar and pickles.",
+    "price": 600,
+    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000001e",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Cheese Crust Malai",
+    "description": "Malai booti, onion, tomato, jalapeño",
+    "price": 1400,
+    "image": "https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000001a",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Cheese Lover",
+    "description": "Cheese blast",
+    "price": 600,
+    "image": "https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000001",
+    "category_id": "10000000-0000-0000-0000-000000000001",
+    "category_name": "Burgers",
+    "name": "Chicken Burger",
+    "description": "Tender chicken patty burger with fresh crisp lettuce and signature sauce.",
+    "price": 300,
+    "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000007",
+    "category_id": "10000000-0000-0000-0000-000000000001",
+    "category_name": "Burgers",
+    "name": "Chicken Grill Burger",
+    "description": "Charcoal-grilled juicy chicken breast with BBQ glaze and fresh veggies.",
+    "price": 450,
+    "image": "https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000000f",
+    "category_id": "10000000-0000-0000-0000-000000000003",
+    "category_name": "Paratha Rolls",
+    "name": "Chicken Paratha Roll",
+    "description": "Golden crispy fried paratha rolled with seasoned grilled chicken and chutney.",
+    "price": 350,
+    "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000002",
+    "category_id": "10000000-0000-0000-0000-000000000001",
+    "category_name": "Burgers",
+    "name": "Chicken Patty Burger",
+    "description": "Classic chicken patty served on a toasted bun with house mayo.",
+    "price": 300,
+    "image": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000000a",
+    "category_id": "10000000-0000-0000-0000-000000000002",
+    "category_name": "Shawarma",
+    "name": "Chicken Shawarma",
+    "description": "Traditional slow-roasted spiced chicken wrapped in warm pita with garlic mayo.",
+    "price": 300,
+    "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000014",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Chicken Tikka Delight",
+    "description": "Chicken, tomato, capsicum, onion, black olives",
+    "price": 550,
+    "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000023",
+    "category_id": "10000000-0000-0000-0000-000000000007",
+    "category_name": "Pasta",
+    "name": "Creamy Pasta",
+    "description": "Rich and velvety white sauce pasta with herbs and tender chicken chunks.",
+    "price": 350,
+    "image": "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000024",
+    "category_id": "10000000-0000-0000-0000-000000000007",
+    "category_name": "Pasta",
+    "name": "Crispy Crunch Pasta",
+    "description": "Creamy spiced pasta topped with golden crispy fried chicken strips.",
+    "price": 450,
+    "image": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000030",
+    "category_id": "10000000-0000-0000-0000-000000000010",
+    "category_name": "Combo Deals",
+    "name": "Deal 1 — Zinger Combo",
+    "description": "1 Zinger Burger + 1 Regular Fries + 1 Regular Drink",
+    "price": 550,
+    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000031",
+    "category_id": "10000000-0000-0000-0000-000000000010",
+    "category_name": "Combo Deals",
+    "name": "Deal 2 — Patty Burger Combo",
+    "description": "1 Chicken Patty Burger + 1 Regular Fries + 1 Regular Drink + 2 Pc Nuggets",
+    "price": 550,
+    "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000032",
+    "category_id": "10000000-0000-0000-0000-000000000010",
+    "category_name": "Combo Deals",
+    "name": "Deal 3 — Wings Combo",
+    "description": "6 Pc Chicken Wings + 1 Regular Drink + 1 Dip Sauce",
+    "price": 630,
+    "image": "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000033",
+    "category_id": "10000000-0000-0000-0000-000000000010",
+    "category_name": "Combo Deals",
+    "name": "Deal 4 — Small Pizza Deal",
+    "description": "2 Small Pizzas + 1 Half-Litre Drink",
+    "price": 1099,
+    "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000034",
+    "category_id": "10000000-0000-0000-0000-000000000010",
+    "category_name": "Combo Deals",
+    "name": "Deal 5 — Medium Pizza Deal",
+    "description": "2 Medium Pizzas + 1 One-Litre Drink",
+    "price": 2499,
+    "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000035",
+    "category_id": "10000000-0000-0000-0000-000000000010",
+    "category_name": "Combo Deals",
+    "name": "Deal 6 — Burger & Pizza Combo",
+    "description": "1 Zinger Burger + 1 Small Pizza + 1 Half-Litre Drink",
+    "price": 999,
+    "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000036",
+    "category_id": "10000000-0000-0000-0000-000000000010",
+    "category_name": "Combo Deals",
+    "name": "Deal 7 — Large Pizza Deal",
+    "description": "2 Large Pizzas + 1 One-Litre Drink",
+    "price": 3099,
+    "image": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000002f",
+    "category_id": "10000000-0000-0000-0000-000000000009",
+    "category_name": "Sauces and Add-ons",
+    "name": "Dynamite Sauce",
+    "description": "Rich, spicy and creamy explosive dynamite dip.",
+    "price": 70,
+    "image": "https://images.unsplash.com/photo-1528750997573-59b89d56f4f7?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000001c",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Garden Fresh",
+    "description": "Capsicum, onion, tomato, black olives",
+    "price": 600,
+    "image": "https://images.unsplash.com/photo-1528137871618-79d2761e3fd5?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000002c",
+    "category_id": "10000000-0000-0000-0000-000000000009",
+    "category_name": "Sauces and Add-ons",
+    "name": "Garlic Mayo",
+    "description": "Creamy whipped garlic mayonnaise dip.",
+    "price": 70,
+    "image": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000021",
+    "category_id": "10000000-0000-0000-0000-000000000006",
+    "category_name": "Sandwiches",
+    "name": "Grill Sandwich",
+    "description": "Golden pressed grilled sandwich with savory chicken filling and gooey melted cheese.",
+    "price": 550,
+    "image": "https://images.unsplash.com/photo-1553909489-cd47e0907980?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000025",
+    "category_id": "10000000-0000-0000-0000-000000000008",
+    "category_name": "Fries",
+    "name": "Half Fries",
+    "description": "Regular portion of hot crispy golden French fries.",
+    "price": 200,
+    "image": "https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000002d",
+    "category_id": "10000000-0000-0000-0000-000000000009",
+    "category_name": "Sauces and Add-ons",
+    "name": "Honey Mustard",
+    "description": "Sweet and zesty honey mustard dressing.",
+    "price": 70,
+    "image": "https://images.unsplash.com/photo-1528750997573-59b89d56f4f7?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000018",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Kabab Blast",
+    "description": "Chicken kabab, tomato, onion, jalapeño",
+    "price": 1550,
+    "image": "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000012",
+    "category_id": "10000000-0000-0000-0000-000000000003",
+    "category_name": "Paratha Rolls",
+    "name": "Kabab Paratha Roll",
+    "description": "Juicy chicken seekh kabab wrapped in a flaky paratha with spiced yoghurt sauce.",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000000e",
+    "category_id": "10000000-0000-0000-0000-000000000002",
+    "category_name": "Shawarma",
+    "name": "Kabab Shawarma",
+    "description": "Tender spiced chicken seekh kababs rolled with fresh salad and garlic toum.",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000026",
+    "category_id": "10000000-0000-0000-0000-000000000008",
+    "category_name": "Fries",
+    "name": "Large Fries",
+    "description": "Large bucket of crispy salted golden French fries.",
+    "price": 350,
+    "image": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000002a",
+    "category_id": "10000000-0000-0000-0000-000000000008",
+    "category_name": "Fries",
+    "name": "Loaded Fries",
+    "description": "Fries loaded with cheddar cheese sauce, chicken chunks, jalapeños, and secret sauce.",
+    "price": 650,
+    "image": "https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000013",
+    "category_id": "10000000-0000-0000-0000-000000000003",
+    "category_name": "Paratha Rolls",
+    "name": "Malai + Tikka Paratha Roll",
+    "description": "Dual flavor blast combining rich malai boti and spicy red tikka in hot paratha.",
+    "price": 450,
+    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000000d",
+    "category_id": "10000000-0000-0000-0000-000000000002",
+    "category_name": "Shawarma",
+    "name": "Malai + Tikka Shawarma",
+    "description": "Best of both worlds: creamy malai booti and spicy red tikka chunks in one wrap.",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000011",
+    "category_id": "10000000-0000-0000-0000-000000000003",
+    "category_name": "Paratha Rolls",
+    "name": "Malai Booti Paratha Roll",
+    "description": "Melt-in-mouth creamy malai boti pieces rolled with onions and green chutney.",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000000b",
+    "category_id": "10000000-0000-0000-0000-000000000002",
+    "category_name": "Shawarma",
+    "name": "Malai Booti Shawarma",
+    "description": "Creamy malai chicken tikka wrapped with onions and mild garlic sauce.",
+    "price": 350,
+    "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000028",
+    "category_id": "10000000-0000-0000-0000-000000000008",
+    "category_name": "Fries",
+    "name": "Masala Fries",
+    "description": "Crispy French fries tossed in our signature zesty chaat masala spice blend.",
+    "price": 350,
+    "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000029",
+    "category_id": "10000000-0000-0000-0000-000000000008",
+    "category_name": "Fries",
+    "name": "Mayo Fries",
+    "description": "Hot fries generously drizzled with garlic mayonnaise.",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000015",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Mexican Fire Fajita",
+    "description": "Chicken, tomato, capsicum, onion, jalapeño",
+    "price": 550,
+    "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000022",
+    "category_id": "10000000-0000-0000-0000-000000000007",
+    "category_name": "Pasta",
+    "name": "Oven Bake Pasta",
+    "description": "Penne pasta baked to golden perfection with mozzarella, marinara, and grilled chicken.",
+    "price": 450,
+    "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000001b",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Peri Peri",
+    "description": "Peri peri sauce, chicken, onion, tomato, olives, jalapeño",
+    "price": 650,
+    "image": "https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000002e",
+    "category_id": "10000000-0000-0000-0000-000000000009",
+    "category_name": "Sauces and Add-ons",
+    "name": "Peri Peri Sauce",
+    "description": "Fiery peri-peri chili dipping sauce.",
+    "price": 70,
+    "image": "https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000004",
+    "category_id": "10000000-0000-0000-0000-000000000001",
+    "category_name": "Burgers",
+    "name": "Philly Burger",
+    "description": "Savory Philly-style burger with caramelized onions and melted cheese.",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000005",
+    "category_id": "10000000-0000-0000-0000-000000000001",
+    "category_name": "Burgers",
+    "name": "Pizza Burger",
+    "description": "Fusion delight packed with pizza sauce, mozzarella cheese, herbs, and crispy patty.",
+    "price": 450,
+    "image": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000027",
+    "category_id": "10000000-0000-0000-0000-000000000008",
+    "category_name": "Fries",
+    "name": "Plain Fries",
+    "description": "Classic lightly salted crispy fries.",
+    "price": 350,
+    "image": "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000017",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Royal Crown Crust",
+    "description": "Chicken, tomato, capsicum, onion, black olives",
+    "price": 1400,
+    "image": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000016",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Royal Malai Booti",
+    "description": "Malai booti, tomato, onion, black olives",
+    "price": 650,
+    "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000019",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Smoky Kabab Crust",
+    "description": "Chicken kabab, onion, capsicum, tomato, black olives",
+    "price": 1550,
+    "image": "https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000001f",
+    "category_id": "10000000-0000-0000-0000-000000000005",
+    "category_name": "Wraps",
+    "name": "Special Tortilla Wrap",
+    "description": "Grilled chicken, fresh lettuce, melted cheese, and signature dressing in a toasted tortilla wrap.",
+    "price": 600,
+    "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000002b",
+    "category_id": "10000000-0000-0000-0000-000000000009",
+    "category_name": "Sauces and Add-ons",
+    "name": "Sriracha Sauce",
+    "description": "Spicy and tangy sriracha dipping sauce.",
+    "price": 70,
+    "image": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000020",
+    "category_id": "10000000-0000-0000-0000-000000000006",
+    "category_name": "Sandwiches",
+    "name": "Swift Club Sandwich",
+    "description": "Triple-decker toasted sandwich loaded with grilled chicken, egg, cheese, and crunchy veggies.",
+    "price": 650,
+    "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000001d",
+    "category_id": "10000000-0000-0000-0000-000000000004",
+    "category_name": "Pizza",
+    "name": "Swift Special",
+    "description": "Half malai and half tikka",
+    "price": 1500,
+    "image": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000009",
+    "category_id": "10000000-0000-0000-0000-000000000001",
+    "category_name": "Burgers",
+    "name": "Swift Special Mighty",
+    "description": "Colossal double patty burger with double cheese, crispy bacon-style toppings, and secret Swift sauce.",
+    "price": 700,
+    "image": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000006",
+    "category_id": "10000000-0000-0000-0000-000000000001",
+    "category_name": "Burgers",
+    "name": "Tandoori Burger",
+    "description": "Smoky tandoori-spiced chicken fillet with refreshing mint mayo.",
+    "price": 450,
+    "image": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": false
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000003",
+    "category_id": "10000000-0000-0000-0000-000000000001",
+    "category_name": "Burgers",
+    "name": "Zinger Burger",
+    "description": "Crispy deep-fried spicy zinger fillet topped with crunchy lettuce and spicy mayo.",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-000000000010",
+    "category_id": "10000000-0000-0000-0000-000000000003",
+    "category_name": "Paratha Rolls",
+    "name": "Zinger Paratha Roll",
+    "description": "Crispy zinger chicken fillet rolled in flaky golden paratha with special sauce.",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  },
+  {
+    "id": "f0000000-0000-0000-0000-00000000000c",
+    "category_id": "10000000-0000-0000-0000-000000000002",
+    "category_name": "Shawarma",
+    "name": "Zinger Shawarma",
+    "description": "Crunchy zinger strips wrapped in soft pita with zesty sauce and pickles.",
+    "price": 380,
+    "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80",
+    "available": true,
+    "featured": true
+  }
 ];
 
 let mockOrders: POSOrder[] = [];
 let mockNotifications: POSNotification[] = [];
 
 let mockInventory: POSInventoryItem[] = [
-  { id: "e0000000-0000-0000-0000-000000000001", name: "Chicken", unit: "kg", quantity: 20.0, minimum_quantity: 5.0, updated_at: new Date().toISOString(), status: "in_stock" },
-  { id: "e0000000-0000-0000-0000-000000000002", name: "Beef", unit: "kg", quantity: 15.0, minimum_quantity: 3.0, updated_at: new Date().toISOString(), status: "in_stock" },
-  { id: "e0000000-0000-0000-0000-000000000003", name: "Pizza Dough", unit: "pcs", quantity: 50.0, minimum_quantity: 10.0, updated_at: new Date().toISOString(), status: "in_stock" },
-  { id: "e0000000-0000-0000-0000-000000000004", name: "Cheese", unit: "kg", quantity: 10.0, minimum_quantity: 2.0, updated_at: new Date().toISOString(), status: "in_stock" },
-  { id: "e0000000-0000-0000-0000-000000000005", name: "Burger Buns", unit: "pcs", quantity: 100.0, minimum_quantity: 20.0, updated_at: new Date().toISOString(), status: "in_stock" },
-  { id: "e0000000-0000-0000-0000-000000000006", name: "Fries", unit: "kg", quantity: 30.0, minimum_quantity: 5.0, updated_at: new Date().toISOString(), status: "in_stock" },
-  { id: "e0000000-0000-0000-0000-000000000007", name: "Soft Drinks", unit: "pcs", quantity: 100.0, minimum_quantity: 24.0, updated_at: new Date().toISOString(), status: "in_stock" },
+  {
+    "id": "e0000000-0000-0000-0000-000000000001",
+    "name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity": 15000.0,
+    "minimum_quantity": 3000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000002",
+    "name": "Chicken fillet raw (CHK_FILLET)",
+    "unit": "g",
+    "quantity": 15000.0,
+    "minimum_quantity": 3000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000003",
+    "name": "Chicken mince (CHK_MINCE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000004",
+    "name": "Beef mince (BEEF_MINCE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000005",
+    "name": "Ready-made beef patty (BEEF_PATTY)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 10.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000006",
+    "name": "Ready-made chicken patty (CHK_PATTY)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 10.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000007",
+    "name": "Chicken wings (WINGS)",
+    "unit": "pcs",
+    "quantity": 150.0,
+    "minimum_quantity": 30.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000008",
+    "name": "Chicken nuggets (NUGGET)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000009",
+    "name": "Ready-made chicken kabab (KABAB)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000000a",
+    "name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000000b",
+    "name": "Sesame burger bun (SESAME_BUN)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000000c",
+    "name": "Shawarma bread (SHAWARMA_BREAD)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000000d",
+    "name": "Paratha (PARATHA)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000000e",
+    "name": "Tortilla wrap (TORTILLA)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 10.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000000f",
+    "name": "Sandwich bread (BREAD)",
+    "unit": "slices",
+    "quantity": 150.0,
+    "minimum_quantity": 30.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000010",
+    "name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity": 10000.0,
+    "minimum_quantity": 2000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000011",
+    "name": "Small pizza base (PIZZA_BASE_S)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 10.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000012",
+    "name": "Medium pizza base (PIZZA_BASE_M)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 10.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000013",
+    "name": "Large pizza base (PIZZA_BASE_L)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 10.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000014",
+    "name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity": 15000.0,
+    "minimum_quantity": 3000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000015",
+    "name": "Cheddar cheese (CHEDDAR)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000016",
+    "name": "Cheese slice (CHEESE_SLICE)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000017",
+    "name": "Cream cheese / crust cheese (CREAM_CHEESE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000018",
+    "name": "Cooking cream (CREAM)",
+    "unit": "ml",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000019",
+    "name": "Milk (MILK)",
+    "unit": "ml",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000001a",
+    "name": "Butter (BUTTER)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000001b",
+    "name": "Egg (EGG)",
+    "unit": "pcs",
+    "quantity": 150.0,
+    "minimum_quantity": 30.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000001c",
+    "name": "Onion (ONION)",
+    "unit": "g",
+    "quantity": 10000.0,
+    "minimum_quantity": 2000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000001d",
+    "name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity": 10000.0,
+    "minimum_quantity": 2000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000001e",
+    "name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000001f",
+    "name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000020",
+    "name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000021",
+    "name": "Carrot (CARROT)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000022",
+    "name": "Jalapenos (JALAPENO)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 300.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000023",
+    "name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 300.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000024",
+    "name": "Pickled cucumber (PICKLE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 300.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000025",
+    "name": "Frozen fries (POTATO_FRIES)",
+    "unit": "g",
+    "quantity": 25000.0,
+    "minimum_quantity": 5000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000026",
+    "name": "Raw potatoes (POTATO_RAW)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 0.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000027",
+    "name": "Flour / maida (MAIDA)",
+    "unit": "g",
+    "quantity": 10000.0,
+    "minimum_quantity": 2000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000028",
+    "name": "Cornflour (CORN_FLOUR)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000029",
+    "name": "Breadcrumbs (BREADCRUMB)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000002a",
+    "name": "Baking powder (BAKING_POWDER)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 100.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000002b",
+    "name": "Dry pasta (DRY_PASTA)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000002c",
+    "name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000002d",
+    "name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000002e",
+    "name": "Ketchup (KETCHUP)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000002f",
+    "name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000030",
+    "name": "Sriracha sauce (SRIRACHA)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 300.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000031",
+    "name": "Honey mustard sauce (HONEY_MUSTARD)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 300.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000032",
+    "name": "Peri peri sauce (PERI_PERI_SAUCE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 300.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000033",
+    "name": "Dynamite sauce (DYNAMITE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 300.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000034",
+    "name": "Chilli garlic sauce (CHILLI_GARLIC)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000035",
+    "name": "Yogurt (YOGURT)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000036",
+    "name": "Ginger garlic paste (GINGER_GARLIC)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 500.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000037",
+    "name": "Salt (SALT)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 1000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000038",
+    "name": "Black pepper (BLACK_PEPPER)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 100.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000039",
+    "name": "Red chilli powder (RED_CHILLI)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 100.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000003a",
+    "name": "Paprika / chilli seasoning (PAPRIKA)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 100.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000003b",
+    "name": "Tikka masala (TIKKA_MASALA)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 200.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000003c",
+    "name": "Malai boti marinade / seasoning (MALAI_MARINADE)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 300.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000003d",
+    "name": "Fajita seasoning (FAJITA_SEASONING)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 100.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000003e",
+    "name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 100.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000003f",
+    "name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 100.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000040",
+    "name": "Fries masala (FRIES_MASALA)",
+    "unit": "g",
+    "quantity": 5000.0,
+    "minimum_quantity": 200.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000041",
+    "name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity": 25000.0,
+    "minimum_quantity": 5000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000042",
+    "name": "Cooking oil (COOKING_OIL)",
+    "unit": "ml",
+    "quantity": 10000.0,
+    "minimum_quantity": 2000.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000043",
+    "name": "Regular drink can/cup (REG_DRINK)",
+    "unit": "pcs",
+    "quantity": 120.0,
+    "minimum_quantity": 24.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000044",
+    "name": "Drink bottle 500 ml (DRINK_500)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 12.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000045",
+    "name": "Drink bottle 1 litre (DRINK_1L)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 12.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000046",
+    "name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity": 250.0,
+    "minimum_quantity": 50.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000047",
+    "name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity": 250.0,
+    "minimum_quantity": 50.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000048",
+    "name": "Small pizza box (PACK_PIZZA_S)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000049",
+    "name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000004a",
+    "name": "Large pizza box (PACK_PIZZA_L)",
+    "unit": "pcs",
+    "quantity": 100.0,
+    "minimum_quantity": 20.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000004b",
+    "name": "Fries box (PACK_FRIES)",
+    "unit": "pcs",
+    "quantity": 250.0,
+    "minimum_quantity": 50.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000004c",
+    "name": "Pasta container (PACK_PASTA)",
+    "unit": "pcs",
+    "quantity": 150.0,
+    "minimum_quantity": 30.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000004d",
+    "name": "Sandwich box/wrapper (PACK_SANDWICH)",
+    "unit": "pcs",
+    "quantity": 150.0,
+    "minimum_quantity": 30.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000004e",
+    "name": "Tortilla wrap packaging (PACK_WRAP)",
+    "unit": "pcs",
+    "quantity": 150.0,
+    "minimum_quantity": 30.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-00000000004f",
+    "name": "Sauce cup + lid (SAUCE_CUP)",
+    "unit": "pcs",
+    "quantity": 500.0,
+    "minimum_quantity": 100.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000050",
+    "name": "Takeaway bag (BAG)",
+    "unit": "pcs",
+    "quantity": 250.0,
+    "minimum_quantity": 50.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  },
+  {
+    "id": "e0000000-0000-0000-0000-000000000051",
+    "name": "Aluminium foil usage (FOIL)",
+    "unit": "kg",
+    "quantity": 50.0,
+    "minimum_quantity": 10.0,
+    "updated_at": "2026-10-22T14:00:00.000Z",
+    "status": "in_stock"
+  }
 ];
 
 let mockUsers: POSUser[] = [
@@ -193,14 +1537,3374 @@ let mockUsers: POSUser[] = [
 ];
 
 let mockIngredients: POSMenuItemIngredient[] = [
-  { id: "ing1", menu_item_id: "f0000000-0000-0000-0000-000000000001", inventory_id: "e0000000-0000-0000-0000-000000000002", inventory_name: "Beef", unit: "kg", quantity_required: 0.20 },
-  { id: "ing2", menu_item_id: "f0000000-0000-0000-0000-000000000001", inventory_id: "e0000000-0000-0000-0000-000000000005", inventory_name: "Burger Buns", unit: "pcs", quantity_required: 1.0 },
-  { id: "ing3", menu_item_id: "f0000000-0000-0000-0000-000000000002", inventory_id: "e0000000-0000-0000-0000-000000000001", inventory_name: "Chicken", unit: "kg", quantity_required: 0.15 },
-  { id: "ing4", menu_item_id: "f0000000-0000-0000-0000-000000000002", inventory_id: "e0000000-0000-0000-0000-000000000005", inventory_name: "Burger Buns", unit: "pcs", quantity_required: 1.0 },
-  { id: "ing5", menu_item_id: "f0000000-0000-0000-0000-000000000003", inventory_id: "e0000000-0000-0000-0000-000000000003", inventory_name: "Pizza Dough", unit: "pcs", quantity_required: 1.0 },
-  { id: "ing6", menu_item_id: "f0000000-0000-0000-0000-000000000003", inventory_id: "e0000000-0000-0000-0000-000000000004", inventory_name: "Cheese", unit: "kg", quantity_required: 0.20 },
-  { id: "ing7", menu_item_id: "f0000000-0000-0000-0000-000000000009", inventory_id: "e0000000-0000-0000-0000-000000000006", inventory_name: "Fries", unit: "kg", quantity_required: 0.25 },
-  { id: "ing8", menu_item_id: "f0000000-0000-0000-0000-000000000010", inventory_id: "e0000000-0000-0000-0000-000000000007", inventory_name: "Soft Drinks", unit: "pcs", quantity_required: 1.0 },
+  {
+    "id": "b0000000-0000-0000-0000-000000000001",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000001",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000002",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000001",
+    "inventory_id": "e0000000-0000-0000-0000-000000000006",
+    "inventory_name": "Ready-made chicken patty (CHK_PATTY)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000003",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000001",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000004",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000001",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 12.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000005",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000001",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 13.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000006",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000001",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000007",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000001",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002e",
+    "inventory_name": "Ketchup (KETCHUP)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000008",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000002",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000009",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000002",
+    "inventory_id": "e0000000-0000-0000-0000-000000000006",
+    "inventory_name": "Ready-made chicken patty (CHK_PATTY)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000000a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000002",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000000b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000002",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 12.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000000c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000002",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 13.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000000d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000002",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000000e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000002",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002e",
+    "inventory_name": "Ketchup (KETCHUP)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000000f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000003",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000010",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000003",
+    "inventory_id": "e0000000-0000-0000-0000-000000000002",
+    "inventory_name": "Chicken fillet raw (CHK_FILLET)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000011",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000003",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000012",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000003",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 7.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000013",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000003",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 8.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000014",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000003",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000015",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000003",
+    "inventory_id": "e0000000-0000-0000-0000-000000000027",
+    "inventory_name": "Flour / maida (MAIDA)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000016",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000003",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000017",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000003",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000018",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000004",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000019",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000004",
+    "inventory_id": "e0000000-0000-0000-0000-000000000004",
+    "inventory_name": "Beef mince (BEEF_MINCE)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000001a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000004",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000001b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000004",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000001c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000004",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000001d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000004",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000001e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000004",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000001f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000005",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000020",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000005",
+    "inventory_id": "e0000000-0000-0000-0000-000000000006",
+    "inventory_name": "Ready-made chicken patty (CHK_PATTY)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000021",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000005",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000022",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000005",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 5.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000023",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000005",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 5.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000024",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000005",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000025",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000005",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000026",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000006",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000027",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000006",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000028",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000006",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000029",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000006",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000002a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000006",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000002b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000006",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000002c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000006",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003b",
+    "inventory_name": "Tikka masala (TIKKA_MASALA)",
+    "unit": "g",
+    "quantity_required": 5.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000002d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000006",
+    "inventory_id": "e0000000-0000-0000-0000-000000000035",
+    "inventory_name": "Yogurt (YOGURT)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000002e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000007",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000002f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000007",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000030",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000007",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000031",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000007",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000032",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000007",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000033",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000007",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000034",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000007",
+    "inventory_id": "e0000000-0000-0000-0000-000000000042",
+    "inventory_name": "Cooking oil (COOKING_OIL)",
+    "unit": "ml",
+    "quantity_required": 5.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000035",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000008",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000036",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000008",
+    "inventory_id": "e0000000-0000-0000-0000-000000000005",
+    "inventory_name": "Ready-made beef patty (BEEF_PATTY)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000037",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000008",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000038",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000008",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000039",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000008",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000003a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000008",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000003b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000009",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000b",
+    "inventory_name": "Sesame burger bun (SESAME_BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000003c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000009",
+    "inventory_id": "e0000000-0000-0000-0000-000000000006",
+    "inventory_name": "Ready-made chicken patty (CHK_PATTY)",
+    "unit": "pcs",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000003d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000009",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000003e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000009",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 12.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000003f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000009",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 13.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000040",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000009",
+    "inventory_id": "e0000000-0000-0000-0000-000000000016",
+    "inventory_name": "Cheese slice (CHEESE_SLICE)",
+    "unit": "pcs",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000041",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000009",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000042",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000c",
+    "inventory_name": "Shawarma bread (SHAWARMA_BREAD)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000043",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000044",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000045",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000046",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000047",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000048",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000049",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000c",
+    "inventory_name": "Shawarma bread (SHAWARMA_BREAD)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000004a",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000004b",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000004c",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000004d",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000004e",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000004f",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003c",
+    "inventory_name": "Malai boti marinade / seasoning (MALAI_MARINADE)",
+    "unit": "g",
+    "quantity_required": 8.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000050",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000c",
+    "inventory_name": "Shawarma bread (SHAWARMA_BREAD)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000051",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000c",
+    "inventory_id": "e0000000-0000-0000-0000-000000000002",
+    "inventory_name": "Chicken fillet raw (CHK_FILLET)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000052",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000053",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000054",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000055",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000c",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000056",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000c",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000057",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000d",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000c",
+    "inventory_name": "Shawarma bread (SHAWARMA_BREAD)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000058",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000d",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 60.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000059",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000d",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000005a",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000d",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000005b",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000d",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000005c",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000d",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000005d",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000d",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003c",
+    "inventory_name": "Malai boti marinade / seasoning (MALAI_MARINADE)",
+    "unit": "g",
+    "quantity_required": 8.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000005e",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000c",
+    "inventory_name": "Shawarma bread (SHAWARMA_BREAD)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000005f",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000e",
+    "inventory_id": "e0000000-0000-0000-0000-000000000009",
+    "inventory_name": "Ready-made chicken kabab (KABAB)",
+    "unit": "pcs",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000060",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000061",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000062",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000063",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000e",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000064",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000f",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000d",
+    "inventory_name": "Paratha (PARATHA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000065",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000f",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000066",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000f",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000067",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000f",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000068",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000f",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000069",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000000f",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000006a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000010",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000d",
+    "inventory_name": "Paratha (PARATHA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000006b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000010",
+    "inventory_id": "e0000000-0000-0000-0000-000000000002",
+    "inventory_name": "Chicken fillet raw (CHK_FILLET)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000006c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000010",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000006d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000010",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000006e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000010",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000006f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000010",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000070",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000010",
+    "inventory_id": "e0000000-0000-0000-0000-000000000027",
+    "inventory_name": "Flour / maida (MAIDA)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000071",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000010",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000072",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000011",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000d",
+    "inventory_name": "Paratha (PARATHA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000073",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000011",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000074",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000011",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000075",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000011",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000076",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000011",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000077",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000011",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000078",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000011",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003c",
+    "inventory_name": "Malai boti marinade / seasoning (MALAI_MARINADE)",
+    "unit": "g",
+    "quantity_required": 8.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000079",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000012",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000d",
+    "inventory_name": "Paratha (PARATHA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000007a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000012",
+    "inventory_id": "e0000000-0000-0000-0000-000000000009",
+    "inventory_name": "Ready-made chicken kabab (KABAB)",
+    "unit": "pcs",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000007b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000012",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000007c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000012",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000007d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000012",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000007e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000012",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000007f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000013",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000d",
+    "inventory_name": "Paratha (PARATHA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000080",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000013",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000081",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000013",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000082",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000013",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000083",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000013",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001f",
+    "inventory_name": "Cabbage (CABBAGE)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000084",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000013",
+    "inventory_id": "e0000000-0000-0000-0000-000000000047",
+    "inventory_name": "Shawarma/roll wrapper (PACK_SHAWARMA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000085",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000013",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003c",
+    "inventory_name": "Malai boti marinade / seasoning (MALAI_MARINADE)",
+    "unit": "g",
+    "quantity_required": 8.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000086",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000013",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003b",
+    "inventory_name": "Tikka masala (TIKKA_MASALA)",
+    "unit": "g",
+    "quantity_required": 5.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000087",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000088",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000089",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000008a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 100.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000008b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000008c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001e",
+    "inventory_name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000008d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000008e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000008f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000090",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000091",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000014",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000092",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000093",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000094",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000095",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 100.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000096",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000097",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001e",
+    "inventory_name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000098",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000099",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-000000000022",
+    "inventory_name": "Jalapenos (JALAPENO)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000009a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000009b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000009c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000009d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000015",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003d",
+    "inventory_name": "Fajita seasoning (FAJITA_SEASONING)",
+    "unit": "g",
+    "quantity_required": 5.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000009e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000009f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a0",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a1",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a2",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a3",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a4",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a5",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-000000000017",
+    "inventory_name": "Cream cheese / crust cheese (CREAM_CHEESE)",
+    "unit": "g",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a6",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a7",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a8",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000016",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000a9",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000aa",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ab",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ac",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 100.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ad",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ae",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001e",
+    "inventory_name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000af",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b0",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b1",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-000000000017",
+    "inventory_name": "Cream cheese / crust cheese (CREAM_CHEESE)",
+    "unit": "g",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b2",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b3",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b4",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000017",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b5",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b6",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b7",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b8",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-000000000009",
+    "inventory_name": "Ready-made chicken kabab (KABAB)",
+    "unit": "pcs",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000b9",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ba",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000bb",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-000000000022",
+    "inventory_name": "Jalapenos (JALAPENO)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000bc",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000bd",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000be",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000018",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000bf",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c0",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c1",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c2",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-000000000009",
+    "inventory_name": "Ready-made chicken kabab (KABAB)",
+    "unit": "pcs",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c3",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c4",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001e",
+    "inventory_name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c5",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c6",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c7",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c8",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000c9",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000019",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ca",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000cb",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000cc",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 200.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000cd",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ce",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000cf",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d0",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d1",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d2",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d3",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 100.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d4",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d5",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d6",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d7",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000022",
+    "inventory_name": "Jalapenos (JALAPENO)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d8",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000d9",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000da",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000db",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000032",
+    "inventory_name": "Peri peri sauce (PERI_PERI_SAUCE)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000dc",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000dd",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000de",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000df",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001e",
+    "inventory_name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity_required": 40.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e0",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 40.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e1",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 40.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e2",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e3",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e4",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e5",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001c",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e6",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001d",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e7",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001d",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e8",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001d",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000e9",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001d",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 60.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ea",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001d",
+    "inventory_id": "e0000000-0000-0000-0000-000000000017",
+    "inventory_name": "Cream cheese / crust cheese (CREAM_CHEESE)",
+    "unit": "g",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000eb",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001d",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ec",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001d",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ed",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001d",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ee",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ef",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f0",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f1",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f2",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f3",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f4",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-000000000022",
+    "inventory_name": "Jalapenos (JALAPENO)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f5",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-000000000017",
+    "inventory_name": "Cream cheese / crust cheese (CREAM_CHEESE)",
+    "unit": "g",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f6",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f7",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f8",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001e",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000f9",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001f",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000e",
+    "inventory_name": "Tortilla wrap (TORTILLA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000fa",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001f",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 120.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000fb",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001f",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000fc",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001f",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000fd",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001f",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000fe",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001f",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000000ff",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000001f",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004e",
+    "inventory_name": "Tortilla wrap packaging (PACK_WRAP)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000100",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000020",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000f",
+    "inventory_name": "Sandwich bread (BREAD)",
+    "unit": "slices",
+    "quantity_required": 3.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000101",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000020",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 100.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000102",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000020",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000103",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000020",
+    "inventory_id": "e0000000-0000-0000-0000-000000000016",
+    "inventory_name": "Cheese slice (CHEESE_SLICE)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000104",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000020",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000105",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000020",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000106",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000020",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004d",
+    "inventory_name": "Sandwich box/wrapper (PACK_SANDWICH)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000107",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000020",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001b",
+    "inventory_name": "Egg (EGG)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000108",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000021",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000f",
+    "inventory_name": "Sandwich bread (BREAD)",
+    "unit": "slices",
+    "quantity_required": 3.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000109",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000021",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 100.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000010a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000021",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000010b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000021",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000010c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000021",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000010d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000021",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004d",
+    "inventory_name": "Sandwich box/wrapper (PACK_SANDWICH)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000010e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000021",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001a",
+    "inventory_name": "Butter (BUTTER)",
+    "unit": "g",
+    "quantity_required": 5.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000010f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000022",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002b",
+    "inventory_name": "Dry pasta (DRY_PASTA)",
+    "unit": "g",
+    "quantity_required": 100.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000110",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000022",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 80.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000111",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000022",
+    "inventory_id": "e0000000-0000-0000-0000-000000000042",
+    "inventory_name": "Cooking oil (COOKING_OIL)",
+    "unit": "ml",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000112",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000022",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000113",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000022",
+    "inventory_id": "e0000000-0000-0000-0000-000000000018",
+    "inventory_name": "Cooking cream (CREAM)",
+    "unit": "ml",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000114",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000022",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000115",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000022",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000116",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000022",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004c",
+    "inventory_name": "Pasta container (PACK_PASTA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000117",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000023",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002b",
+    "inventory_name": "Dry pasta (DRY_PASTA)",
+    "unit": "g",
+    "quantity_required": 100.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000118",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000023",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000119",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000023",
+    "inventory_id": "e0000000-0000-0000-0000-000000000042",
+    "inventory_name": "Cooking oil (COOKING_OIL)",
+    "unit": "ml",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000011a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000023",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000011b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000023",
+    "inventory_id": "e0000000-0000-0000-0000-000000000018",
+    "inventory_name": "Cooking cream (CREAM)",
+    "unit": "ml",
+    "quantity_required": 80.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000011c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000023",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001a",
+    "inventory_name": "Butter (BUTTER)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000011d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000023",
+    "inventory_id": "e0000000-0000-0000-0000-000000000015",
+    "inventory_name": "Cheddar cheese (CHEDDAR)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000011e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000023",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004c",
+    "inventory_name": "Pasta container (PACK_PASTA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000011f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000024",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002b",
+    "inventory_name": "Dry pasta (DRY_PASTA)",
+    "unit": "g",
+    "quantity_required": 100.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000120",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000024",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 80.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000121",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000024",
+    "inventory_id": "e0000000-0000-0000-0000-000000000042",
+    "inventory_name": "Cooking oil (COOKING_OIL)",
+    "unit": "ml",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000122",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000024",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000123",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000024",
+    "inventory_id": "e0000000-0000-0000-0000-000000000027",
+    "inventory_name": "Flour / maida (MAIDA)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000124",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000024",
+    "inventory_id": "e0000000-0000-0000-0000-000000000029",
+    "inventory_name": "Breadcrumbs (BREADCRUMB)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000125",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000024",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000126",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000024",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004c",
+    "inventory_name": "Pasta container (PACK_PASTA)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000127",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000025",
+    "inventory_id": "e0000000-0000-0000-0000-000000000025",
+    "inventory_name": "Frozen fries (POTATO_FRIES)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000128",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000025",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000129",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000025",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000012a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000025",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004b",
+    "inventory_name": "Fries box (PACK_FRIES)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000012b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000026",
+    "inventory_id": "e0000000-0000-0000-0000-000000000025",
+    "inventory_name": "Frozen fries (POTATO_FRIES)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000012c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000026",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000012d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000026",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000012e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000026",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004b",
+    "inventory_name": "Fries box (PACK_FRIES)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000012f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000027",
+    "inventory_id": "e0000000-0000-0000-0000-000000000025",
+    "inventory_name": "Frozen fries (POTATO_FRIES)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000130",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000027",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000131",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000027",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000132",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000027",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004b",
+    "inventory_name": "Fries box (PACK_FRIES)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000133",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000028",
+    "inventory_id": "e0000000-0000-0000-0000-000000000025",
+    "inventory_name": "Frozen fries (POTATO_FRIES)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000134",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000028",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000135",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000028",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000136",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000028",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004b",
+    "inventory_name": "Fries box (PACK_FRIES)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000137",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000028",
+    "inventory_id": "e0000000-0000-0000-0000-000000000040",
+    "inventory_name": "Fries masala (FRIES_MASALA)",
+    "unit": "g",
+    "quantity_required": 5.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000138",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000029",
+    "inventory_id": "e0000000-0000-0000-0000-000000000025",
+    "inventory_name": "Frozen fries (POTATO_FRIES)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000139",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000029",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000013a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000029",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000013b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000029",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004b",
+    "inventory_name": "Fries box (PACK_FRIES)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000013c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000029",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000013d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000029",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002e",
+    "inventory_name": "Ketchup (KETCHUP)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000013e",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000025",
+    "inventory_name": "Frozen fries (POTATO_FRIES)",
+    "unit": "g",
+    "quantity_required": 250.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000013f",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000140",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000141",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004b",
+    "inventory_name": "Fries box (PACK_FRIES)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000142",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000143",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002a",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000144",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000145",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002e",
+    "inventory_name": "Ketchup (KETCHUP)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000146",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002a",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000147",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002b",
+    "inventory_id": "e0000000-0000-0000-0000-000000000030",
+    "inventory_name": "Sriracha sauce (SRIRACHA)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000148",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002b",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004f",
+    "inventory_name": "Sauce cup + lid (SAUCE_CUP)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000149",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002f",
+    "inventory_name": "Garlic mayo (GARLIC_MAYO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000014a",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002c",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004f",
+    "inventory_name": "Sauce cup + lid (SAUCE_CUP)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000014b",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002d",
+    "inventory_id": "e0000000-0000-0000-0000-000000000031",
+    "inventory_name": "Honey mustard sauce (HONEY_MUSTARD)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000014c",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002d",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004f",
+    "inventory_name": "Sauce cup + lid (SAUCE_CUP)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000014d",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002e",
+    "inventory_id": "e0000000-0000-0000-0000-000000000032",
+    "inventory_name": "Peri peri sauce (PERI_PERI_SAUCE)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000014e",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002e",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004f",
+    "inventory_name": "Sauce cup + lid (SAUCE_CUP)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000014f",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002f",
+    "inventory_id": "e0000000-0000-0000-0000-000000000033",
+    "inventory_name": "Dynamite sauce (DYNAMITE)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000150",
+    "menu_item_id": "f0000000-0000-0000-0000-00000000002f",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004f",
+    "inventory_name": "Sauce cup + lid (SAUCE_CUP)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000151",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000152",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-000000000002",
+    "inventory_name": "Chicken fillet raw (CHK_FILLET)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000153",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000154",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 7.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000155",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 8.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000156",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000157",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-000000000027",
+    "inventory_name": "Flour / maida (MAIDA)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000158",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000159",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 4.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000015a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-000000000025",
+    "inventory_name": "Frozen fries (POTATO_FRIES)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000015b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004b",
+    "inventory_name": "Fries box (PACK_FRIES)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000015c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000030",
+    "inventory_id": "e0000000-0000-0000-0000-000000000043",
+    "inventory_name": "Regular drink can/cup (REG_DRINK)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000015d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000015e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-000000000006",
+    "inventory_name": "Ready-made chicken patty (CHK_PATTY)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000015f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000160",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 12.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000161",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 13.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000162",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000163",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002e",
+    "inventory_name": "Ketchup (KETCHUP)",
+    "unit": "g",
+    "quantity_required": 10.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000164",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-000000000025",
+    "inventory_name": "Frozen fries (POTATO_FRIES)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000165",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000166",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000167",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004b",
+    "inventory_name": "Fries box (PACK_FRIES)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000168",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-000000000043",
+    "inventory_name": "Regular drink can/cup (REG_DRINK)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000169",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000031",
+    "inventory_id": "e0000000-0000-0000-0000-000000000008",
+    "inventory_name": "Chicken nuggets (NUGGET)",
+    "unit": "pcs",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000016a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000032",
+    "inventory_id": "e0000000-0000-0000-0000-000000000007",
+    "inventory_name": "Chicken wings (WINGS)",
+    "unit": "pcs",
+    "quantity_required": 6.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000016b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000032",
+    "inventory_id": "e0000000-0000-0000-0000-000000000043",
+    "inventory_name": "Regular drink can/cup (REG_DRINK)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000016c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000032",
+    "inventory_id": "e0000000-0000-0000-0000-00000000004f",
+    "inventory_name": "Sauce cup + lid (SAUCE_CUP)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000016d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000032",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000016e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 350.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000016f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 98.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000170",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 210.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000171",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 140.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000172",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 42.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000173",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001e",
+    "inventory_name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity_required": 42.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000174",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 35.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000175",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 14.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000176",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 1.4
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000177",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 1.4
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000178",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 1.4
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000179",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000033",
+    "inventory_id": "e0000000-0000-0000-0000-000000000044",
+    "inventory_name": "Drink bottle 500 ml (DRINK_500)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000017a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 500.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000017b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 140.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000017c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 300.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000017d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 200.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000017e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 60.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000017f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001e",
+    "inventory_name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity_required": 60.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000180",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 50.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000181",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000182",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000183",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000184",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000185",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000034",
+    "inventory_id": "e0000000-0000-0000-0000-000000000045",
+    "inventory_name": "Drink bottle 1 litre (DRINK_1L)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000186",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-00000000000a",
+    "inventory_name": "Burger bun (BUN)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000187",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000002",
+    "inventory_name": "Chicken fillet raw (CHK_FILLET)",
+    "unit": "g",
+    "quantity_required": 150.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000188",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002d",
+    "inventory_name": "Mayonnaise (MAYO)",
+    "unit": "g",
+    "quantity_required": 20.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000189",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000020",
+    "inventory_name": "Lettuce (LETTUCE)",
+    "unit": "g",
+    "quantity_required": 7.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000018a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 25.5
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000018b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000046",
+    "inventory_name": "Burger box/wrapper (PACK_BURGER)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000018c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000027",
+    "inventory_name": "Flour / maida (MAIDA)",
+    "unit": "g",
+    "quantity_required": 25.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000018d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000041",
+    "inventory_name": "Frying oil usage (FRY_OIL)",
+    "unit": "ml",
+    "quantity_required": 15.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000018e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000037",
+    "inventory_name": "Salt (SALT)",
+    "unit": "g",
+    "quantity_required": 2.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000018f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 175.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000190",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 49.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000191",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 105.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000192",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 70.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000193",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 21.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000194",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001e",
+    "inventory_name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity_required": 21.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000195",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 7.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000196",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 0.7
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000197",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 0.7
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000198",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 0.7
+  },
+  {
+    "id": "b0000000-0000-0000-0000-000000000199",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000035",
+    "inventory_id": "e0000000-0000-0000-0000-000000000044",
+    "inventory_name": "Drink bottle 500 ml (DRINK_500)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000019a",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-000000000010",
+    "inventory_name": "Pizza dough (PIZZA_DOUGH)",
+    "unit": "g",
+    "quantity_required": 750.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000019b",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-00000000002c",
+    "inventory_name": "Pizza sauce (PIZZA_SAUCE)",
+    "unit": "g",
+    "quantity_required": 210.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000019c",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-000000000014",
+    "inventory_name": "Mozzarella cheese (MOZZARELLA)",
+    "unit": "g",
+    "quantity_required": 450.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000019d",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-000000000001",
+    "inventory_name": "Chicken boneless raw (CHK_RAW)",
+    "unit": "g",
+    "quantity_required": 300.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000019e",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001d",
+    "inventory_name": "Tomato (TOMATO)",
+    "unit": "g",
+    "quantity_required": 90.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-00000000019f",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001e",
+    "inventory_name": "Capsicum (CAPSICUM)",
+    "unit": "g",
+    "quantity_required": 90.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000001a0",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-00000000001c",
+    "inventory_name": "Onion (ONION)",
+    "unit": "g",
+    "quantity_required": 75.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000001a1",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-000000000023",
+    "inventory_name": "Black olives (OLIVES)",
+    "unit": "g",
+    "quantity_required": 30.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000001a2",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003e",
+    "inventory_name": "Oregano (OREGANO)",
+    "unit": "g",
+    "quantity_required": 3.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000001a3",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-00000000003f",
+    "inventory_name": "Chilli flakes (CHILLI_FLAKES)",
+    "unit": "g",
+    "quantity_required": 3.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000001a4",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-000000000049",
+    "inventory_name": "Medium pizza box (PACK_PIZZA_M)",
+    "unit": "pcs",
+    "quantity_required": 3.0
+  },
+  {
+    "id": "b0000000-0000-0000-0000-0000000001a5",
+    "menu_item_id": "f0000000-0000-0000-0000-000000000036",
+    "inventory_id": "e0000000-0000-0000-0000-000000000045",
+    "inventory_name": "Drink bottle 1 litre (DRINK_1L)",
+    "unit": "pcs",
+    "quantity_required": 1.0
+  }
 ];
 
 // Data Fetchers & Manipulators
