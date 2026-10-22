@@ -63,6 +63,8 @@ export interface POSOrder {
   completed_at: string | null;
   items?: POSOrderItem[];
   rejection_reason?: string;
+  cancellation_requested?: boolean;
+  cancellation_reason?: string;
   assigned_rider_id?: string | null;
   assigned_rider_name?: string | null;
   delivery_status?: "unassigned" | "assigned" | "picked_up" | "handover_pending" | "delivered" | "failed";
@@ -5363,6 +5365,27 @@ export async function updateOrderStatus(
     return true;
   }
   return false;
+}
+
+export const CANCELLATION_PIN = "5566";
+
+export async function requestOrderCancellation(orderId: string, reason: string): Promise<boolean> {
+  const target = mockOrders.find(o => o.id === orderId);
+  if (target) {
+    target.cancellation_requested = true;
+    target.cancellation_reason = reason;
+  }
+  try {
+    await supabase.from("orders").update({
+      notes: target?.notes ? target.notes + " [Cancellation Requested: " + reason + "]" : "[Cancellation Requested: " + reason + "]"
+    }).eq("id", orderId);
+  } catch (e) {}
+  addNotificationToMock("order_rejected", "Order #" + orderId + " cancellation requested: " + reason);
+  return true;
+}
+
+export async function approveOrderCancellation(orderId: string): Promise<boolean> {
+  return await updateOrderStatus(orderId, "cancelled", "Cancelled with Admin Approval");
 }
 
 export async function assignOrderRider(

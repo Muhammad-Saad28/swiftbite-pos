@@ -11,10 +11,12 @@ import {
   updateOrderStatus, 
   updatePOSOrderPaymentAndDiscount, 
   confirmRiderCashHandover,
+  approveOrderCancellation,
   POSOrder 
 } from "@/lib/pos-data";
 import { supabase } from "@/lib/supabase/client";
 import { ReceiptModal } from "@/components/receipt-modal";
+import { KitchenReceiptModal } from "@/components/kitchen-receipt-modal";
 import { 
   Search, 
   CheckCircle, 
@@ -33,7 +35,10 @@ import {
   User, 
   MessageCircle, 
   BellRing,
-  Bike
+  Bike,
+  Ban,
+  ShieldAlert,
+  CheckCircle2
 } from "lucide-react";
 
 export default function AdminOrdersPage() {
@@ -43,6 +48,7 @@ export default function AdminOrdersPage() {
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [selectedReceiptOrder, setSelectedReceiptOrder] = useState<POSOrder | null>(null);
+  const [selectedKitchenOrder, setSelectedKitchenOrder] = useState<POSOrder | null>(null);
 
   // Payment Checkout Modal State
   const [checkoutOrder, setCheckoutOrder] = useState<POSOrder | null>(null);
@@ -96,6 +102,12 @@ export default function AdminOrdersPage() {
     await refreshData();
   };
 
+
+  const handleApproveCancellation = async (orderId: string) => {
+    await approveOrderCancellation(orderId);
+    await refreshData();
+  };
+
   const handleReject = async () => {
     if (!rejectingId) return;
     await updateOrderStatus(rejectingId, "rejected", rejectReason || "Rejected by Admin");
@@ -120,9 +132,12 @@ export default function AdminOrdersPage() {
   };
 
   const filteredOrders = orders.filter((o) => {
-    const matchesTab = 
-      activeTab === "all" || 
-      (activeTab === "delivery" ? o.order_type === "delivery" : o.status === activeTab);
+    let matchesTab = true;
+    if (activeTab === "all") matchesTab = true;
+    else if (activeTab === "delivery") matchesTab = o.order_type === "delivery";
+    else if (activeTab === "cancellation_requests") matchesTab = !!o.cancellation_requested && o.status !== "cancelled" && o.status !== "rejected";
+    else if (activeTab === "rejected") matchesTab = o.status === "rejected" || o.status === "cancelled";
+    else matchesTab = o.status === activeTab;
     
     const search = searchQuery.toLowerCase();
     const matchesSearch =
@@ -146,6 +161,8 @@ export default function AdminOrdersPage() {
     { id: "accepted", label: "Accepted", count: orders.filter(o => o.status === "accepted").length },
     { id: "preparing", label: "Preparing", count: orders.filter(o => o.status === "preparing").length },
     { id: "ready", label: "Ready", count: orders.filter(o => o.status === "ready").length },
+    { id: "cancellation_requests", label: "⚠️ Cancel Requests", count: orders.filter(o => o.cancellation_requested && o.status !== "cancelled" && o.status !== "rejected").length },
+    { id: "rejected", label: "Rejected / Cancelled", count: orders.filter(o => o.status === "rejected" || o.status === "cancelled").length },
     { id: "completed", label: "Completed", count: orders.filter(o => o.status === "completed").length },
   ];
 
@@ -298,6 +315,30 @@ export default function AdminOrdersPage() {
                     <Badge variant={order.status}>{order.status}</Badge>
                   </div>
 
+
+                  {/* Cancellation Request Alert Banner */}
+                  {order.cancellation_requested && order.status !== "cancelled" && order.status !== "rejected" && (
+                    <div className="p-3 rounded-xl bg-rose-500/20 border-2 border-rose-500/60 text-xs space-y-2">
+                      <div className="flex items-center justify-between text-rose-300 font-black">
+                        <span className="flex items-center gap-1.5">
+                          <ShieldAlert className="h-4 w-4 text-rose-400" />
+                          <span>CANCELLATION APPROVAL REQUESTED</span>
+                        </span>
+                      </div>
+                      <p className="text-zinc-200 text-[11px]">
+                        Cashier requested to cancel this order. Reason: <strong className="text-white italic">"{order.cancellation_reason || "Customer request"}"</strong>
+                      </p>
+                      <Button
+                        size="sm"
+                        onClick={() => handleApproveCancellation(order.id)}
+                        className="w-full bg-rose-600 hover:bg-rose-500 text-white font-black text-xs h-9 rounded-lg shadow flex items-center justify-center space-x-1"
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                        <span>APPROVE & CANCEL ORDER NOW</span>
+                      </Button>
+                    </div>
+                  )}
+
                   {/* Items Summary */}
                   <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800/80 space-y-1.5 text-xs">
                     {order.items?.map((item) => (
@@ -326,15 +367,26 @@ export default function AdminOrdersPage() {
 
                 {/* Status Action Buttons */}
                 <div className="pt-3 border-t border-zinc-800 space-y-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setSelectedReceiptOrder(order)}
-                    className="w-full border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-xs font-bold flex items-center justify-center space-x-1"
-                  >
-                    <Printer className="h-3.5 w-3.5 text-orange-400" />
-                    <span>Thermal Receipt</span>
-                  </Button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedKitchenOrder(order)}
+                      className="border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-xs font-bold flex items-center justify-center space-x-1"
+                    >
+                      <ChefHat className="h-3.5 w-3.5 text-amber-400" />
+                      <span>Kitchen KOT</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedReceiptOrder(order)}
+                      className="border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-xs font-bold flex items-center justify-center space-x-1"
+                    >
+                      <Printer className="h-3.5 w-3.5 text-orange-400" />
+                      <span>Final Receipt</span>
+                    </Button>
+                  </div>
 
                   {order.status === "pending" && (
                     <div className="flex space-x-2">
@@ -399,11 +451,18 @@ export default function AdminOrdersPage() {
         )}
       </div>
 
-      {/* Receipt Modal */}
+      {/* Final Receipt Modal */}
       <ReceiptModal
         isOpen={!!selectedReceiptOrder}
         onClose={() => setSelectedReceiptOrder(null)}
         order={selectedReceiptOrder}
+      />
+
+      {/* Kitchen KOT Receipt Modal */}
+      <KitchenReceiptModal
+        isOpen={!!selectedKitchenOrder}
+        onClose={() => setSelectedKitchenOrder(null)}
+        order={selectedKitchenOrder}
       />
 
       {/* Payment & Checkout Modal */}

@@ -13,10 +13,13 @@ import {
   getPOSUsers,
   assignOrderRider,
   confirmRiderCashHandover,
+  CANCELLATION_PIN,
+  requestOrderCancellation,
   POSOrder, 
   POSUser 
 } from "@/lib/pos-data";
 import { ReceiptModal } from "@/components/receipt-modal";
+import { KitchenReceiptModal } from "@/components/kitchen-receipt-modal";
 import { 
   Search, 
   CheckCircle, 
@@ -33,7 +36,11 @@ import {
   ShoppingBag,
   Truck,
   CheckCircle2,
-  HandCoins
+  HandCoins,
+  ChefHat,
+  Ban,
+  ShieldAlert,
+  KeyRound
 } from "lucide-react";
 import Link from "next/link";
 
@@ -45,6 +52,12 @@ export default function CashierDashboardPage() {
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [selectedReceiptOrder, setSelectedReceiptOrder] = useState<POSOrder | null>(null);
+  const [selectedKitchenOrder, setSelectedKitchenOrder] = useState<POSOrder | null>(null);
+  const [cancellingOrder, setCancellingOrder] = useState<POSOrder | null>(null);
+  const [cancelPin, setCancelPin] = useState("");
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelError, setCancelError] = useState<string | null>(null);
+  const [cancelSuccess, setCancelSuccess] = useState<string | null>(null);
 
   // Settlement Checkout Modal State
   const [checkoutOrder, setCheckoutOrder] = useState<POSOrder | null>(null);
@@ -84,7 +97,43 @@ export default function CashierDashboardPage() {
   // Confirm order and send to kitchen
   const handleConfirmOrder = async (orderId: string) => {
     await updateOrderStatus(orderId, "accepted");
+    const targetOrder = orders.find(o => o.id === orderId);
+    if (targetOrder) {
+      setSelectedKitchenOrder({ ...targetOrder, status: "accepted" });
+    }
     await refreshData();
+  };
+
+
+  const handleOpenCancelModal = (order: POSOrder) => {
+    setCancellingOrder(order);
+    setCancelPin("");
+    setCancelReason("");
+    setCancelError(null);
+    setCancelSuccess(null);
+  };
+
+  const handleCancelWithPin = async () => {
+    if (!cancellingOrder) return;
+    setCancelError(null);
+    if (cancelPin.trim() !== CANCELLATION_PIN) {
+      setCancelError("Incorrect PIN! Enter valid supervisor PIN (5566) or request Admin Approval.");
+      return;
+    }
+    await updateOrderStatus(cancellingOrder.id, "cancelled", cancelReason || "Cancelled with PIN 5566");
+    setCancellingOrder(null);
+    await refreshData();
+  };
+
+  const handleRequestAdminApproval = async () => {
+    if (!cancellingOrder) return;
+    setCancelError(null);
+    await requestOrderCancellation(cancellingOrder.id, cancelReason || "Customer cancellation requested by cashier");
+    setCancelSuccess("Cancellation request submitted to Admin! Waiting for Admin confirmation.");
+    setTimeout(async () => {
+      setCancellingOrder(null);
+      await refreshData();
+    }, 1200);
   };
 
   const handleRejectOrder = async () => {
@@ -157,6 +206,7 @@ export default function CashierDashboardPage() {
   // Filter queues
   const pendingOrders = orders.filter(o => o.status === "pending");
   const readyForSettlement = orders.filter(o => (o.status === "served" || o.status === "ready") && o.delivery_status !== "handover_pending");
+  const rejectedOrCancelledOrders = orders.filter(o => o.status === "rejected" || o.status === "cancelled");
   const activeDeliveries = orders.filter(o => o.order_type === "delivery" && o.status !== "completed" && o.status !== "rejected" && o.status !== "cancelled");
   const riderHandovers = orders.filter(o => o.order_type === "delivery" && o.delivery_status === "handover_pending" && o.status !== "completed" && o.status !== "rejected" && o.status !== "cancelled");
   const totalRiderCashOwed = riderHandovers.reduce((sum, o) => sum + (o.total || 0), 0);
@@ -168,6 +218,7 @@ export default function CashierDashboardPage() {
     else if (activeTab === "delivery") matchesTab = o.order_type === "delivery" && o.status !== "completed" && o.status !== "cancelled" && o.status !== "rejected";
     else if (activeTab === "rider_handover") matchesTab = o.delivery_status === "handover_pending" && o.status !== "completed";
     else if (activeTab === "completed") matchesTab = o.status === "completed";
+    else if (activeTab === "rejected") matchesTab = o.status === "rejected" || o.status === "cancelled";
 
     const matchesSearch =
       o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -314,6 +365,23 @@ export default function CashierDashboardPage() {
             </span>
           </button>
 
+
+          <button
+            onClick={() => setActiveTab("rejected")}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center space-x-1.5 ${
+              activeTab === "rejected"
+                ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
+                : "bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800"
+            }`}
+          >
+            <Ban className="h-3.5 w-3.5" />
+            <span>Rejected / Cancelled</span>
+            {rejectedOrCancelledOrders.length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-rose-950 text-rose-300 font-black">
+                {rejectedOrCancelledOrders.length}
+              </span>
+            )}
+          </button>
           <button
             onClick={() => setActiveTab("completed")}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
@@ -486,6 +554,20 @@ export default function CashierDashboardPage() {
                     </Button>
                   )}
 
+
+                  {/* Cancel Order Action (Requires PIN 5566 or Admin Approval) */}
+                  {order.status !== "completed" && order.status !== "rejected" && order.status !== "cancelled" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleOpenCancelModal(order)}
+                      className="w-full border-rose-500/30 text-rose-400 hover:bg-rose-500/10 text-xs font-bold flex items-center justify-center space-x-1"
+                    >
+                      <Ban className="h-3.5 w-3.5" />
+                      <span>{order.cancellation_requested ? "Cancellation Pending Approval" : "Cancel Order (PIN / Approval)"}</span>
+                    </Button>
+                  )}
+
                   {/* Settle Bill / Collect Payment */}
                   {(order.status === "served" || order.status === "ready" || order.status === "accepted" || order.status === "preparing") && (
                     <Button
@@ -498,22 +580,131 @@ export default function CashierDashboardPage() {
                     </Button>
                   )}
 
-                  {/* Thermal Receipt Print */}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setSelectedReceiptOrder(order)}
-                    className="w-full text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 text-xs font-semibold flex items-center justify-center space-x-1"
-                  >
-                    <Printer className="h-3.5 w-3.5 text-orange-400" />
-                    <span>Print Thermal Receipt</span>
-                  </Button>
+                  {/* Print Action Buttons (Kitchen KOT vs Final Thermal Receipt) */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedKitchenOrder(order)}
+                      className="border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white text-[11px] font-bold flex items-center justify-center space-x-1"
+                    >
+                      <ChefHat className="h-3.5 w-3.5 text-amber-400" />
+                      <span>Kitchen KOT</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedReceiptOrder(order)}
+                      className="border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white text-[11px] font-bold flex items-center justify-center space-x-1"
+                    >
+                      <Printer className="h-3.5 w-3.5 text-orange-400" />
+                      <span>Final Receipt</span>
+                    </Button>
+                  </div>
                 </div>
               </Card>
             );
           })
         )}
       </div>
+
+
+      {/* Cancel Order Modal with PIN (5566) or Admin Approval */}
+      <Modal
+        isOpen={!!cancellingOrder}
+        onClose={() => setCancellingOrder(null)}
+        title={`Cancel Order #${cancellingOrder?.id}`}
+      >
+        <div className="space-y-4">
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs space-y-1 text-rose-300">
+            <p className="font-bold flex items-center gap-1.5">
+              <ShieldAlert className="h-4 w-4 text-rose-400" />
+              <span>Security Authorization Required to Cancel</span>
+            </p>
+            <p className="text-zinc-300 text-[11px]">
+              To cancel this active order, enter the authorization PIN <strong className="text-white font-mono">(5566)</strong> or send an instant Cancellation Request for Admin approval.
+            </p>
+          </div>
+
+          {cancelError && (
+            <div className="p-2.5 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-semibold">
+              ⚠️ {cancelError}
+            </div>
+          )}
+
+          {cancelSuccess && (
+            <div className="p-2.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold">
+              ✓ {cancelSuccess}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
+              Reason for Cancellation
+            </label>
+            <Input
+              placeholder="e.g. Customer changed mind, wrong punch, item out of stock"
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+            />
+          </div>
+
+          <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-3">
+            <div className="flex items-center space-x-2">
+              <KeyRound className="h-4 w-4 text-orange-400" />
+              <label className="text-xs font-black uppercase text-zinc-200">
+                Method 1: Fast Authorization with PIN (5566)
+              </label>
+            </div>
+            <div className="flex gap-2">
+              <Input
+                type="password"
+                placeholder="Enter 4-digit PIN"
+                value={cancelPin}
+                onChange={(e) => setCancelPin(e.target.value)}
+                className="font-mono tracking-widest text-base"
+              />
+              <Button
+                onClick={handleCancelWithPin}
+                className="bg-rose-600 hover:bg-rose-500 text-white font-black text-xs px-4 shrink-0"
+              >
+                Cancel with PIN
+              </Button>
+            </div>
+          </div>
+
+          <div className="relative flex py-1 items-center">
+            <div className="flex-grow border-t border-zinc-800"></div>
+            <span className="flex-shrink mx-4 text-zinc-500 text-[11px] font-bold uppercase">OR</span>
+            <div className="flex-grow border-t border-zinc-800"></div>
+          </div>
+
+          <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
+            <div className="flex items-center space-x-2">
+              <ShieldAlert className="h-4 w-4 text-sky-400" />
+              <label className="text-xs font-black uppercase text-zinc-200">
+                Method 2: Request Admin Approval
+              </label>
+            </div>
+            <p className="text-[11px] text-zinc-400">
+              If PIN is unavailable, click below to notify the Admin dashboard. The order will be cancelled as soon as Admin confirms it.
+            </p>
+            <Button
+              variant="outline"
+              onClick={handleRequestAdminApproval}
+              className="w-full border-sky-500/40 text-sky-400 hover:bg-sky-500/10 font-bold text-xs"
+            >
+              Send Cancellation Request to Admin
+            </Button>
+          </div>
+
+          <div className="flex justify-end pt-2 border-t border-zinc-800">
+            <Button variant="ghost" size="sm" onClick={() => setCancellingOrder(null)}>
+              Dismiss
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Reject Order Modal */}
       <Modal
@@ -914,11 +1105,18 @@ export default function CashierDashboardPage() {
         )}
       </Modal>
 
-      {/* Thermal Receipt Print Modal */}
+      {/* Thermal Final Receipt Print Modal */}
       <ReceiptModal
         isOpen={!!selectedReceiptOrder}
         onClose={() => setSelectedReceiptOrder(null)}
         order={selectedReceiptOrder}
+      />
+
+      {/* Kitchen KOT Receipt Print Modal */}
+      <KitchenReceiptModal
+        isOpen={!!selectedKitchenOrder}
+        onClose={() => setSelectedKitchenOrder(null)}
+        order={selectedKitchenOrder}
       />
     </div>
   );
