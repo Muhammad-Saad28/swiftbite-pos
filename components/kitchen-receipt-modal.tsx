@@ -15,7 +15,77 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
   if (!order) return null;
 
   const handlePrint = () => {
-    window.print();
+    const printContent = document.getElementById("kitchen-receipt");
+    if (!printContent) {
+      window.print();
+      return;
+    }
+
+    // Open a dedicated isolated print window to prevent double printing and unwanted gaps
+    const printWindow = window.open("", "_blank", "width=400,height=600");
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>KOT #${numericReceiptNo}</title>
+          <style>
+            @page {
+              size: 80mm auto;
+              margin: 0;
+            }
+            * {
+              box-sizing: border-box;
+              margin: 0;
+              padding: 0;
+              color: #000000 !important;
+              background: transparent !important;
+              font-family: 'Courier New', Courier, monospace !important;
+              font-weight: 900 !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            body {
+              width: 76mm;
+              max-width: 76mm;
+              margin: 0 auto;
+              padding: 4mm 2mm;
+              background: #ffffff !important;
+              color: #000000 !important;
+              font-size: 11px;
+              line-height: 1.2;
+            }
+            .border-b { border-bottom: 1.5px solid #000 !important; }
+            .border-t { border-top: 1.5px solid #000 !important; }
+            .border-t-2 { border-top: 2px solid #000 !important; }
+            .border-y { border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
+            .border-y-2 { border-top: 2px solid #000 !important; border-bottom: 2px solid #000 !important; }
+            .border-dashed { border-style: dashed !important; }
+            .border-dotted { border-style: dotted !important; }
+            .flex { display: flex !important; }
+            .justify-between { justify-content: space-between !important; }
+            .items-center { align-items: center !important; }
+            .text-center { text-align: center !important; }
+            .text-right { text-align: right !important; }
+            .uppercase { text-transform: uppercase !important; }
+            .whitespace-nowrap { white-space: nowrap !important; }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
   };
 
   const numericReceiptNo = formatOrderNumber(order.order_number || order.id);
