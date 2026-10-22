@@ -17,6 +17,7 @@ import {
   requestOrderCancellation,
   startOrderKitchenTimer,
   stopOrderKitchenTimer,
+  setOrderTimer,
   POSOrder, 
   POSUser 
 } from "@/lib/pos-data";
@@ -111,17 +112,31 @@ export default function CashierDashboardPage() {
 
 
   const handleOpenKitchenKOT = async (order: POSOrder) => {
-    const startedTime = await startOrderKitchenTimer(order.id);
-    // Optimistically update local order state immediately so timer displays without waiting
-    setOrders((prev) =>
-      prev.map((o) =>
-        o.id === order.id ? { ...o, kitchen_started_at: o.kitchen_started_at || startedTime } : o
-      )
-    );
+    let startedTime: string | null = null;
+    // Only start kitchen timer for Dine-In / Takeaway, not for COD delivery
+    if (order.order_type !== "delivery") {
+      startedTime = await startOrderKitchenTimer(order.id);
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === order.id ? { ...o, kitchen_started_at: o.kitchen_started_at || startedTime } : o
+        )
+      );
+    }
     setSelectedKitchenOrder({
       ...order,
       kitchen_started_at: order.kitchen_started_at || startedTime,
     });
+    await refreshData();
+  };
+
+
+  const handleRiderDeparted = async (orderId: string) => {
+    const startedTime = await setOrderTimer(orderId, "ride_started_at");
+    setOrders((prev) =>
+      prev.map((o) =>
+        o.id === orderId ? { ...o, ride_started_at: startedTime, delivery_status: "picked_up" } : o
+      )
+    );
     await refreshData();
   };
 
@@ -492,7 +507,8 @@ export default function CashierDashboardPage() {
 
                   {/* Active Timers Display */}
                   <div className="flex flex-wrap gap-1.5 pt-1">
-                    {order.kitchen_started_at && (
+                    {/* Kitchen Prep Timer (Only for non-delivery or when KOT explicitly started) */}
+                    {!isDelivery && order.kitchen_started_at && (
                       <LiveTimerBadge
                         startTime={order.kitchen_started_at}
                         endTime={order.served_at}
@@ -500,20 +516,14 @@ export default function CashierDashboardPage() {
                         variant="kitchen"
                       />
                     )}
-                    {order.ride_started_at && (
+
+                    {/* Rider Out / COD Timer: starts when Rider Leaves, ends when Cash is Submitted */}
+                    {isDelivery && order.ride_started_at && (
                       <LiveTimerBadge
                         startTime={order.ride_started_at}
-                        endTime={order.delivered_at}
-                        label="Trip"
-                        variant="ride"
-                      />
-                    )}
-                    {order.return_started_at && (
-                      <LiveTimerBadge
-                        startTime={order.return_started_at}
                         endTime={order.handover_completed_at}
-                        label="Return"
-                        variant="return"
+                        label="Rider Left"
+                        variant="ride"
                       />
                     )}
                   </div>
@@ -566,6 +576,36 @@ export default function CashierDashboardPage() {
                         <CheckCircle2 className="h-4 w-4" />
                         <span>CONFIRM CASH RECEIVED & CLOSE ORDER</span>
                       </Button>
+                    </div>
+                  )}
+
+                  
+                  {/* Rider Left / Dispatch Departure Button (Starts Rider Out Timer) */}
+                  {isDelivery && order.status !== "completed" && order.status !== "cancelled" && order.status !== "rejected" && (
+                    <div className="pt-1">
+                      {!order.ride_started_at ? (
+                        <Button
+                          size="sm"
+                          onClick={() => handleRiderDeparted(order.id)}
+                          className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-black text-xs h-10 rounded-xl shadow-md flex items-center justify-center space-x-2"
+                        >
+                          <Bike className="h-4 w-4" />
+                          <span>🛵 RIDER LEFT (START TIMER)</span>
+                        </Button>
+                      ) : (
+                        <div className="p-2 rounded-xl bg-sky-950/40 border border-sky-500/40 flex items-center justify-between text-xs">
+                          <span className="text-sky-300 font-bold flex items-center gap-1.5">
+                            <Bike className="h-3.5 w-3.5 text-sky-400" />
+                            <span>Rider on Road:</span>
+                          </span>
+                          <LiveTimerBadge
+                            startTime={order.ride_started_at}
+                            endTime={order.handover_completed_at}
+                            label="Out"
+                            variant="ride"
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
 
