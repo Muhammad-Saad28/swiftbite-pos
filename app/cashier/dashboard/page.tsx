@@ -113,15 +113,13 @@ export default function CashierDashboardPage() {
 
   const handleOpenKitchenKOT = async (order: POSOrder) => {
     let startedTime: string | null = null;
-    // Only start kitchen timer for Dine-In / Takeaway, not for COD delivery
-    if (order.order_type !== "delivery") {
-      startedTime = await startOrderKitchenTimer(order.id);
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.id === order.id ? { ...o, kitchen_started_at: o.kitchen_started_at || startedTime } : o
-        )
-      );
-    }
+    // Start kitchen timer when KOT receipt is opened/printed
+    startedTime = await startOrderKitchenTimer(order.id);
+    setOrders((prev) =>
+      prev.map((o) =>
+        o.id === order.id ? { ...o, kitchen_started_at: o.kitchen_started_at || startedTime } : o
+      )
+    );
     setSelectedKitchenOrder({
       ...order,
       kitchen_started_at: order.kitchen_started_at || startedTime,
@@ -142,10 +140,22 @@ export default function CashierDashboardPage() {
   };
 
   const handleRiderDeparted = async (orderId: string) => {
-    const startedTime = await setOrderTimer(orderId, "ride_started_at");
+    // Start rider trip timer & stop kitchen preparation timer when rider leaves
+    const [startedTime] = await Promise.all([
+      setOrderTimer(orderId, "ride_started_at"),
+      stopOrderKitchenTimer(orderId),
+    ]);
+    const nowIso = new Date().toISOString();
     setOrders((prev) =>
       prev.map((o) =>
-        o.id === orderId ? { ...o, ride_started_at: startedTime, delivery_status: "picked_up" } : o
+        o.id === orderId
+          ? {
+              ...o,
+              ride_started_at: startedTime,
+              delivery_status: "picked_up",
+              served_at: o.served_at || nowIso,
+            }
+          : o
       )
     );
     await refreshData();
@@ -518,8 +528,8 @@ export default function CashierDashboardPage() {
 
                   {/* Active Timers Display */}
                   <div className="flex flex-wrap gap-1.5 pt-1">
-                    {/* Kitchen Prep Timer (Only for non-delivery or when KOT explicitly started) */}
-                    {!isDelivery && order.kitchen_started_at && (
+                    {/* Kitchen Prep Timer (starts when KOT clicked, stops when Rider Left for delivery or Mark Served) */}
+                    {order.kitchen_started_at && (
                       <LiveTimerBadge
                         startTime={order.kitchen_started_at}
                         endTime={order.served_at}
