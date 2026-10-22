@@ -12,6 +12,7 @@ import {
   updatePOSOrderPaymentAndDiscount, 
   getPOSUsers,
   assignOrderRider,
+  confirmRiderCashHandover,
   POSOrder, 
   POSUser 
 } from "@/lib/pos-data";
@@ -31,7 +32,8 @@ import {
   Utensils,
   ShoppingBag,
   Truck,
-  CheckCircle2
+  CheckCircle2,
+  HandCoins
 } from "lucide-react";
 import Link from "next/link";
 
@@ -136,6 +138,11 @@ export default function CashierDashboardPage() {
     await refreshData();
   };
 
+  const handleConfirmRiderCashHandover = async (orderId: string) => {
+    await confirmRiderCashHandover(orderId);
+    await refreshData();
+  };
+
   const handleAssignRider = async () => {
     if (!dispatchOrder || !selectedRiderId) return;
     const rider = riders.find(r => r.id === selectedRiderId);
@@ -149,14 +156,17 @@ export default function CashierDashboardPage() {
 
   // Filter queues
   const pendingOrders = orders.filter(o => o.status === "pending");
-  const readyForSettlement = orders.filter(o => o.status === "served" || o.status === "ready");
+  const readyForSettlement = orders.filter(o => (o.status === "served" || o.status === "ready") && o.delivery_status !== "handover_pending");
   const activeDeliveries = orders.filter(o => o.order_type === "delivery" && o.status !== "completed" && o.status !== "rejected" && o.status !== "cancelled");
+  const riderHandovers = orders.filter(o => o.order_type === "delivery" && o.delivery_status === "handover_pending" && o.status !== "completed" && o.status !== "rejected" && o.status !== "cancelled");
+  const totalRiderCashOwed = riderHandovers.reduce((sum, o) => sum + (o.total || 0), 0);
 
   const filteredOrders = orders.filter((o) => {
     let matchesTab = true;
     if (activeTab === "pending_confirmation") matchesTab = o.status === "pending";
     else if (activeTab === "settlement") matchesTab = o.status === "ready" || o.status === "served";
     else if (activeTab === "delivery") matchesTab = o.order_type === "delivery" && o.status !== "completed" && o.status !== "cancelled" && o.status !== "rejected";
+    else if (activeTab === "rider_handover") matchesTab = o.delivery_status === "handover_pending" && o.status !== "completed";
     else if (activeTab === "completed") matchesTab = o.status === "completed";
 
     const matchesSearch =
@@ -270,6 +280,22 @@ export default function CashierDashboardPage() {
             }`}>
               {readyForSettlement.length}
             </span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("rider_handover")}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center space-x-2 ${
+              activeTab === "rider_handover"
+                ? "bg-amber-500 text-zinc-950 shadow-md font-black"
+                : "bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800"
+            }`}
+          >
+            <span>💵 Rider Cash Handover</span>
+            {riderHandovers.length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-black bg-zinc-950 text-amber-400 animate-pulse">
+                {riderHandovers.length}
+              </span>
+            )}
           </button>
 
           <button
@@ -418,6 +444,32 @@ export default function CashierDashboardPage() {
                           <span>Reject</span>
                         </Button>
                       </div>
+                    </div>
+                  )}
+
+                  {/* Rider Cash Handover Action */}
+                  {isDelivery && order.delivery_status === "handover_pending" && order.status !== "completed" && (
+                    <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-xl space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-amber-400 font-black uppercase text-[10px] flex items-center gap-1">
+                          <HandCoins className="h-3.5 w-3.5" />
+                          <span>Rider Cash Handover</span>
+                        </span>
+                        <span className="font-mono font-black text-white text-sm">
+                          Rs. {order.total}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-zinc-300">
+                        Rider <strong className="text-white">{order.assigned_rider_name || order.waiter_name || "Rider"}</strong> has delivered this order. Collect physical cash from rider and confirm below to close.
+                      </p>
+                      <Button
+                        size="sm"
+                        onClick={() => handleConfirmRiderCashHandover(order.id)}
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-10 rounded-xl shadow-md flex items-center justify-center space-x-1.5"
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                        <span>CONFIRM CASH RECEIVED & CLOSE ORDER</span>
+                      </Button>
                     </div>
                   )}
 

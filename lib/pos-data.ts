@@ -65,7 +65,7 @@ export interface POSOrder {
   rejection_reason?: string;
   assigned_rider_id?: string | null;
   assigned_rider_name?: string | null;
-  delivery_status?: "unassigned" | "assigned" | "picked_up" | "delivered" | "failed";
+  delivery_status?: "unassigned" | "assigned" | "picked_up" | "handover_pending" | "delivered" | "failed";
 }
 
 export function formatOrderNumber(orderIdOrNumber: string | number | undefined, indexFallback: number = 1): string {
@@ -5402,7 +5402,7 @@ export async function assignOrderRider(
 
 export async function updateOrderDeliveryStatus(
   orderId: string,
-  deliveryStatus: "unassigned" | "assigned" | "picked_up" | "delivered" | "failed"
+  deliveryStatus: "unassigned" | "assigned" | "picked_up" | "handover_pending" | "delivered" | "failed"
 ): Promise<boolean> {
   const target = mockOrders.find(o => o.id === orderId);
   if (target) {
@@ -5410,7 +5410,7 @@ export async function updateOrderDeliveryStatus(
     if (deliveryStatus === "delivered") {
       target.status = "completed";
       target.completed_at = new Date().toISOString();
-    } else if (deliveryStatus === "picked_up") {
+    } else if (deliveryStatus === "picked_up" || deliveryStatus === "handover_pending") {
       target.status = "served";
     }
   }
@@ -5433,7 +5433,7 @@ export async function updateOrderDeliveryStatus(
       payload.status = "completed";
       payload.completed_at = new Date().toISOString();
       payload.payment_method = "cash";
-    } else if (deliveryStatus === "picked_up") {
+    } else if (deliveryStatus === "picked_up" || deliveryStatus === "handover_pending") {
       payload.status = "served";
     } else if (deliveryStatus === "failed") {
       payload.status = "cancelled";
@@ -5445,6 +5445,11 @@ export async function updateOrderDeliveryStatus(
   } catch (e) {}
 
   return true;
+}
+
+/** Confirm cash receipt from rider at cashier desk and officially close order */
+export async function confirmRiderCashHandover(orderId: string): Promise<boolean> {
+  return await updateOrderDeliveryStatus(orderId, "delivered");
 }
 
 export async function getPOSInventory(): Promise<POSInventoryItem[]> {

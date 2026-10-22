@@ -10,6 +10,7 @@ import {
   getPOSOrders, 
   updateOrderStatus, 
   updatePOSOrderPaymentAndDiscount, 
+  confirmRiderCashHandover,
   POSOrder 
 } from "@/lib/pos-data";
 import { supabase } from "@/lib/supabase/client";
@@ -366,7 +367,21 @@ export default function AdminOrdersPage() {
                     </Button>
                   )}
 
-                  {(order.status === "served" || order.status === "ready") && (
+                  {isDelivery && order.delivery_status === "handover_pending" && order.status !== "completed" && (
+                    <Button
+                      size="sm"
+                      onClick={async () => {
+                        await confirmRiderCashHandover(order.id);
+                        await refreshData();
+                      }}
+                      className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-10 rounded-xl shadow-md flex items-center justify-center space-x-1.5"
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                      <span>Confirm Rider Cash Received & Close Order</span>
+                    </Button>
+                  )}
+
+                  {(order.status === "served" || order.status === "ready") && order.delivery_status !== "handover_pending" && (
                     <Button size="sm" onClick={() => openCheckoutModal(order)} className="w-full bg-emerald-600 hover:bg-emerald-500 text-xs font-bold">
                       Checkout & Collect Payment
                     </Button>

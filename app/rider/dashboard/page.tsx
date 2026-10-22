@@ -26,7 +26,8 @@ import {
   AlertTriangle, 
   Sparkles,
   ExternalLink,
-  MessageCircle
+  MessageCircle,
+  HandCoins
 } from "lucide-react";
 
 export default function RiderDashboardPage() {
@@ -81,15 +82,24 @@ export default function RiderDashboardPage() {
   // Filter delivery orders
   const allDeliveryOrders = orders.filter((o) => o.order_type === "delivery");
 
-  // Orders specifically assigned to this rider that are in transit / active
-  const myActiveDeliveries = allDeliveryOrders.filter((o) => {
+  // Orders specifically assigned to this rider
+  const myRiderOrders = allDeliveryOrders.filter((o) => {
     const isMine = 
       o.assigned_rider_id === activeRider.id || 
       o.waiter_id === activeRider.id || 
       (o.assigned_rider_name && o.assigned_rider_name.toLowerCase() === activeRider.name.toLowerCase());
-    const isCompleted = o.status === "completed" || o.status === "cancelled" || o.status === "rejected" || o.delivery_status === "delivered";
-    return isMine && !isCompleted;
+    const isTerminal = o.status === "completed" || o.status === "cancelled" || o.status === "rejected" || o.delivery_status === "delivered";
+    return isMine && !isTerminal;
   });
+
+  // Active in-transit deliveries
+  const inProgressDeliveries = myRiderOrders.filter((o) => o.delivery_status !== "handover_pending");
+
+  // Delivered orders where cash handover to cashier is pending
+  const pendingHandoverDeliveries = myRiderOrders.filter((o) => o.delivery_status === "handover_pending");
+
+  // Total cash currently in rider's pocket to handover
+  const totalCashToHandover = pendingHandoverDeliveries.reduce((sum, o) => sum + (o.total || 0), 0);
 
   // Orders available for any rider to claim
   const availableOrders = allDeliveryOrders.filter((o) => {
@@ -118,11 +128,14 @@ export default function RiderDashboardPage() {
 
   const handleConfirmDelivered = async () => {
     if (!selectedOrder) return;
-    await updateOrderDeliveryStatus(selectedOrder.id, "delivered");
+    // Set to handover_pending so cash handover to cashier is required to finalize
+    await updateOrderDeliveryStatus(selectedOrder.id, "handover_pending");
     setIsDeliverModalOpen(false);
     setSelectedOrder(null);
     setCodCollected("");
+    setActionSuccessMsg(`Payment recorded! Please submit Rs. ${selectedOrder.total} cash to the cashier desk.`);
     await refreshData();
+    setTimeout(() => setActionSuccessMsg(null), 6000);
   };
 
   const handleConfirmFailed = async () => {
@@ -146,7 +159,7 @@ export default function RiderDashboardPage() {
             Welcome, {activeRider.name}
           </h1>
           <p className="text-xs text-zinc-400">
-            Accept online delivery orders, navigate to customer doorsteps, & collect Cash On Delivery
+            Accept deliveries, navigate to customer doorsteps, & handover COD cash to the cashier
           </p>
         </div>
         <div className="h-12 w-12 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center border border-sky-500/20">
@@ -162,32 +175,83 @@ export default function RiderDashboardPage() {
       )}
 
       {/* Quick Metrics */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
           <span className="text-[11px] font-bold text-sky-400 uppercase tracking-wider block">My Active Trips</span>
-          <p className="text-2xl font-black text-white mt-1">{myActiveDeliveries.length}</p>
+          <p className="text-2xl font-black text-white mt-1">{inProgressDeliveries.length}</p>
         </div>
+
+        <div className="bg-zinc-900 border border-amber-500/30 rounded-2xl p-4">
+          <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">Cash in Pocket</span>
+          <p className="text-2xl font-black text-amber-400 mt-1 font-mono">Rs. {totalCashToHandover}</p>
+          <span className="text-[10px] text-zinc-500 mt-0.5 block">{pendingHandoverDeliveries.length} handovers due</span>
+        </div>
+
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
-          <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">Available to Pick Up</span>
-          <p className="text-2xl font-black text-amber-400 mt-1">{availableOrders.length}</p>
+          <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">Available to Pick Up</span>
+          <p className="text-2xl font-black text-white mt-1">{availableOrders.length}</p>
         </div>
       </div>
 
-      {/* Section 1: MY ACTIVE DELIVERIES */}
+      {/* Section 1: DELIVERIES AWAITING CASHIER HANDOVER */}
+      {pendingHandoverDeliveries.length > 0 && (
+        <div className="space-y-3 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-black text-amber-400 flex items-center space-x-2">
+              <HandCoins className="h-4 w-4" />
+              <span>Cash Handover Due to Cashier ({pendingHandoverDeliveries.length})</span>
+            </h2>
+            <span className="text-xs font-bold font-mono text-white bg-amber-500/20 px-2 py-0.5 rounded">
+              Total to submit: Rs. {totalCashToHandover}
+            </span>
+          </div>
+          <p className="text-xs text-zinc-400">
+            You collected payment for the orders below. Give the physical cash to the restaurant cashier so they can officially mark the orders as closed.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            {pendingHandoverDeliveries.map((order) => {
+              const shortOrderRef = order.order_number 
+                ? `#${order.order_number}` 
+                : `#${order.id.slice(0, 8).toUpperCase()}`;
+
+              return (
+                <div key={order.id} className="p-3 bg-zinc-950 border border-amber-500/40 rounded-xl space-y-1.5 text-xs">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-white">Order {shortOrderRef}</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                      Handover Pending
+                    </span>
+                  </div>
+                  <p className="text-zinc-400">
+                    Customer: <strong className="text-zinc-200">{order.customer_name}</strong>
+                  </p>
+                  <div className="pt-1 border-t border-zinc-900 flex justify-between font-mono">
+                    <span className="text-zinc-400">Cash in Pocket:</span>
+                    <span className="text-amber-400 font-black text-sm">Rs. {order.total}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Section 2: MY ACTIVE DELIVERIES (IN TRANSIT) */}
       <div className="space-y-4">
         <h2 className="text-base font-black text-white flex items-center space-x-2">
           <Bike className="h-4 w-4 text-sky-400" />
-          <span>My Active Route ({myActiveDeliveries.length})</span>
+          <span>My Active Route ({inProgressDeliveries.length})</span>
         </h2>
 
-        {myActiveDeliveries.length === 0 ? (
+        {inProgressDeliveries.length === 0 ? (
           <div className="p-8 text-center bg-zinc-900/40 border border-dashed border-zinc-800 rounded-2xl space-y-1">
             <CheckCircle2 className="h-6 w-6 text-zinc-600 mx-auto" />
             <p className="text-xs font-semibold text-zinc-400">No active deliveries on your route right now</p>
             <p className="text-[11px] text-zinc-600">Claim an available order below to start your trip.</p>
           </div>
         ) : (
-          myActiveDeliveries.map((order) => {
+          inProgressDeliveries.map((order) => {
             const isPickedUp = order.delivery_status === "picked_up" || order.status === "served";
             const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.delivery_address || "Lahore")}`;
             const shortOrderRef = order.order_number 
@@ -330,7 +394,7 @@ export default function RiderDashboardPage() {
         )}
       </div>
 
-      {/* Section 2: AVAILABLE DISPATCH QUEUE */}
+      {/* Section 3: AVAILABLE DISPATCH QUEUE */}
       <div className="space-y-3 pt-4 border-t border-zinc-800">
         <h2 className="text-base font-black text-white flex items-center space-x-2">
           <Clock className="h-4 w-4 text-amber-400" />
@@ -373,7 +437,7 @@ export default function RiderDashboardPage() {
         )}
       </div>
 
-      {/* Mark Delivered & Collect Cash Modal */}
+      {/* Mark Delivered & Record Cash Collection Modal */}
       <Modal
         isOpen={isDeliverModalOpen}
         onClose={() => setIsDeliverModalOpen(false)}
@@ -384,13 +448,23 @@ export default function RiderDashboardPage() {
             <p className="text-zinc-400">Customer: <strong className="text-white">{selectedOrder?.customer_name}</strong></p>
             <p className="text-zinc-400">Phone: <strong className="text-zinc-200">{selectedOrder?.customer_phone}</strong></p>
             <div className="pt-2 border-t border-zinc-800 flex justify-between items-baseline font-mono">
-              <span className="text-zinc-400">COD Total:</span>
+              <span className="text-zinc-400">COD Total Collected:</span>
               <span className="text-xl font-black text-emerald-400">Rs. {selectedOrder?.total}</span>
             </div>
           </div>
 
+          <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-300 space-y-1">
+            <span className="font-bold flex items-center gap-1.5">
+              <HandCoins className="h-4 w-4" />
+              <span>Next Step: Cashier Desk Handover</span>
+            </span>
+            <p className="text-[11px] text-zinc-300 leading-relaxed">
+              Once you confirm delivery, this cash will be logged under your route. Please hand over the physical cash to the restaurant cashier to officially close this order.
+            </p>
+          </div>
+
           <Input
-            label="Cash Amount Received from Customer (Rs.)"
+            label="Cash Amount Collected from Customer (Rs.)"
             type="number"
             value={codCollected}
             onChange={(e) => setCodCollected(e.target.value)}
@@ -405,7 +479,7 @@ export default function RiderDashboardPage() {
               onClick={handleConfirmDelivered}
               className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
             >
-              Confirm Delivery & Handover
+              Confirm Delivered & Submit to Cashier
             </Button>
           </div>
         </div>
