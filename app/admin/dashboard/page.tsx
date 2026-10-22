@@ -246,64 +246,7 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
 
-      {/* Analytics Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Revenue Chart */}
-        <Card className="lg:col-span-2 bg-zinc-900/50 border-zinc-800/80 backdrop-blur-sm shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center justify-between">
-              <span>Weekly Revenue Trend</span>
-              <Badge variant="outline" className="border-orange-500/30 text-orange-400 bg-orange-500/5">This Week</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px] w-full mt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#FFB800" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="#FFB800" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#292929" vertical={false} />
-                  <XAxis dataKey="name" stroke="#A3A3A3" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#A3A3A3" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `Rs.${val/1000}k`} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="revenue" stroke="#FFB800" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Popular Items Chart */}
-        <Card className="bg-zinc-900/50 border-zinc-800/80 backdrop-blur-sm shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center justify-between">
-              <span>Popular Items</span>
-              <Utensils className="h-4 w-4 text-zinc-500" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px] w-full mt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={popularItemsData} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#292929" horizontal={true} vertical={false} />
-                  <XAxis type="number" stroke="#A3A3A3" fontSize={12} tickLine={false} axisLine={false} hide />
-                  <YAxis dataKey="name" type="category" stroke="#E4E4E7" fontSize={12} tickLine={false} axisLine={false} width={100} />
-                  <Tooltip content={<CustomBarTooltip />} cursor={{fill: '#1C1C1C'}} />
-                  <Bar dataKey="sales" radius={[0, 4, 4, 0]}>
-                    {popularItemsData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={index === 0 ? "#FFB800" : index === 1 ? "#F59E0B" : "#D97706"} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Pending Orders Action Section */}
       <Card className="bg-gradient-to-b from-zinc-900 to-zinc-950 border-zinc-800 shadow-xl overflow-hidden">
