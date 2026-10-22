@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   assignOrderRider, 
   POSOrder 
 } from "@/lib/pos-data";
+import { supabase } from "@/lib/supabase/client";
 import { 
   Bike, 
   Phone, 
@@ -24,17 +25,31 @@ import {
   Package, 
   AlertTriangle, 
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  MessageCircle
 } from "lucide-react";
 
 export default function RiderDashboardPage() {
   const { user } = useAuth();
+
+  // If user is not logged in through auth provider, default to a registered Rider profile
+  const activeRider = useMemo(() => {
+    if (user && user.id) return user;
+    return {
+      id: "45c4adc6-62aa-42ac-b081-859d94273753",
+      name: "Zubair Rider",
+      email: "rider@swiftbite",
+      role: "rider" as const
+    };
+  }, [user]);
+
   const [orders, setOrders] = useState<POSOrder[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<POSOrder | null>(null);
   const [deliveryFailReason, setDeliveryFailReason] = useState("");
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   const [isDeliverModalOpen, setIsDeliverModalOpen] = useState(false);
   const [codCollected, setCodCollected] = useState("");
+  const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
 
   const refreshData = async () => {
     const fetched = await getPOSOrders();
@@ -44,27 +59,56 @@ export default function RiderDashboardPage() {
   useEffect(() => {
     refreshData();
     const interval = setInterval(refreshData, 3000);
-    return () => clearInterval(interval);
+
+    // Supabase Realtime channel for live dispatch updates
+    const channel = supabase
+      .channel("rider-orders-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders" },
+        () => {
+          refreshData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  // Filter deliveries
+  // Filter delivery orders
   const allDeliveryOrders = orders.filter((o) => o.order_type === "delivery");
 
-  // Orders available for any rider to claim
-  const availableOrders = allDeliveryOrders.filter(
-    (o) => (!o.assigned_rider_id || o.delivery_status === "unassigned") && o.status !== "completed" && o.status !== "cancelled" && o.status !== "rejected"
-  );
+  // Orders specifically assigned to this rider that are in transit / active
+  const myActiveDeliveries = allDeliveryOrders.filter((o) => {
+    const isMine = 
+      o.assigned_rider_id === activeRider.id || 
+      o.waiter_id === activeRider.id || 
+      (o.assigned_rider_name && o.assigned_rider_name.toLowerCase() === activeRider.name.toLowerCase());
+    const isCompleted = o.status === "completed" || o.status === "cancelled" || o.status === "rejected" || o.delivery_status === "delivered";
+    return isMine && !isCompleted;
+  });
 
-  // Orders specifically assigned to this rider that are in transit
-  const myActiveDeliveries = allDeliveryOrders.filter(
-    (o) => (o.assigned_rider_id === user?.id || (user?.email && o.assigned_rider_name?.toLowerCase() === user.name.toLowerCase())) &&
-      o.status !== "completed" && o.status !== "cancelled" && o.status !== "rejected"
-  );
+  // Orders available for any rider to claim
+  const availableOrders = allDeliveryOrders.filter((o) => {
+    const isMine = 
+      o.assigned_rider_id === activeRider.id || 
+      o.waiter_id === activeRider.id || 
+      (o.assigned_rider_name && o.assigned_rider_name.toLowerCase() === activeRider.name.toLowerCase());
+    
+    const isAssigned = (o.assigned_rider_id && o.delivery_status !== "unassigned") || o.waiter_id;
+    const isCompleted = o.status === "completed" || o.status === "cancelled" || o.status === "rejected";
+
+    return !isMine && !isAssigned && !isCompleted;
+  });
 
   const handleClaimDelivery = async (orderId: string) => {
-    if (!user) return;
-    await assignOrderRider(orderId, user.id, user.name);
+    setActionSuccessMsg(`Delivery Order #${orderId.slice(0, 8)} claimed successfully!`);
+    await assignOrderRider(orderId, activeRider.id, activeRider.name);
     await refreshData();
+    setTimeout(() => setActionSuccessMsg(null), 4000);
   };
 
   const handleMarkPickedUp = async (orderId: string) => {
@@ -99,16 +143,23 @@ export default function RiderDashboardPage() {
             Live Dispatch Radar
           </span>
           <h1 className="text-xl sm:text-2xl font-black text-white mt-1">
-            Welcome, {user?.name || "Rider"}
+            Welcome, {activeRider.name}
           </h1>
           <p className="text-xs text-zinc-400">
-            Accept delivery orders, navigate to customer doorsteps, & collect Cash On Delivery
+            Accept online delivery orders, navigate to customer doorsteps, & collect Cash On Delivery
           </p>
         </div>
         <div className="h-12 w-12 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center border border-sky-500/20">
           <Bike className="h-6 w-6" />
         </div>
       </div>
+
+      {actionSuccessMsg && (
+        <div className="p-3 bg-emerald-500/15 border border-emerald-500/40 rounded-xl text-emerald-400 text-xs font-bold flex items-center gap-2 animate-bounce">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          <span>{actionSuccessMsg}</span>
+        </div>
+      )}
 
       {/* Quick Metrics */}
       <div className="grid grid-cols-2 gap-3">
@@ -118,15 +169,15 @@ export default function RiderDashboardPage() {
         </div>
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
           <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">Available to Pick Up</span>
-          <p className="text-2xl font-black text-white mt-1">{availableOrders.length}</p>
+          <p className="text-2xl font-black text-amber-400 mt-1">{availableOrders.length}</p>
         </div>
       </div>
 
       {/* Section 1: MY ACTIVE DELIVERIES */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <h2 className="text-base font-black text-white flex items-center space-x-2">
-          <Package className="h-4 w-4 text-sky-400" />
-          <span>My Ongoing Deliveries ({myActiveDeliveries.length})</span>
+          <Bike className="h-4 w-4 text-sky-400" />
+          <span>My Active Route ({myActiveDeliveries.length})</span>
         </h2>
 
         {myActiveDeliveries.length === 0 ? (
@@ -137,8 +188,19 @@ export default function RiderDashboardPage() {
           </div>
         ) : (
           myActiveDeliveries.map((order) => {
-            const isPickedUp = order.delivery_status === "picked_up";
+            const isPickedUp = order.delivery_status === "picked_up" || order.status === "served";
             const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.delivery_address || "Lahore")}`;
+            const shortOrderRef = order.order_number 
+              ? `#${order.order_number}` 
+              : `#${order.id.slice(0, 8).toUpperCase()}`;
+
+            // WhatsApp link for customer
+            const customerWaNumber = order.customer_phone
+              ? order.customer_phone.replace(/^0/, "92").replace(/[^0-9]/g, "")
+              : null;
+            const customerWaMsg = encodeURIComponent(
+              `Hello ${order.customer_name || "Customer"}, your SwiftBite delivery rider (${activeRider.name}) is on the way with your Order ${shortOrderRef}!`
+            );
 
             return (
               <Card
@@ -147,9 +209,9 @@ export default function RiderDashboardPage() {
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-lg font-black text-white">Order #{order.id}</span>
+                    <span className="text-lg font-black text-white">Order {shortOrderRef}</span>
                     <p className="text-xs text-zinc-400 mt-0.5">
-                      Customer: <strong className="text-white">{order.customer_name || "Guest"}</strong>
+                      Customer: <strong className="text-white">{order.customer_name || "Online Guest"}</strong>
                     </p>
                   </div>
                   <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase ${
@@ -165,25 +227,38 @@ export default function RiderDashboardPage() {
                     <div className="flex items-start space-x-2">
                       <MapPin className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
                       <div className="flex-1">
-                        <span className="text-zinc-500 text-[10px] block">DELIVERY ADDRESS:</span>
-                        <span className="font-bold text-zinc-100">{order.delivery_address}</span>
+                        <span className="text-zinc-500 text-[10px] block font-bold uppercase">DELIVERY ADDRESS:</span>
+                        <span className="font-bold text-zinc-100 leading-relaxed">{order.delivery_address}</span>
                       </div>
                     </div>
                   )}
 
                   {order.customer_phone && (
-                    <div className="flex items-center justify-between pt-1 border-t border-zinc-900">
+                    <div className="flex items-center justify-between pt-1 border-t border-zinc-900 gap-2">
                       <div className="flex items-center space-x-2">
                         <Phone className="h-3.5 w-3.5 text-emerald-400" />
                         <span className="font-mono text-zinc-300">{order.customer_phone}</span>
                       </div>
-                      <a
-                        href={`tel:${order.customer_phone}`}
-                        className="px-2 py-1 rounded-md bg-emerald-500/20 text-emerald-400 font-bold text-[10px] flex items-center space-x-1 hover:bg-emerald-500/30"
-                      >
-                        <Phone className="h-3 w-3" />
-                        <span>Call Customer</span>
-                      </a>
+                      <div className="flex items-center space-x-1.5">
+                        <a
+                          href={`tel:${order.customer_phone}`}
+                          className="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 font-bold text-[10px] flex items-center space-x-1 hover:bg-emerald-500/30 transition-colors"
+                        >
+                          <Phone className="h-3 w-3" />
+                          <span>Call</span>
+                        </a>
+                        {customerWaNumber && (
+                          <a
+                            href={`https://wa.me/${customerWaNumber}?text=${customerWaMsg}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] font-bold text-[10px] flex items-center space-x-1 hover:bg-[#25D366]/30 transition-colors"
+                          >
+                            <MessageCircle className="h-3 w-3" />
+                            <span>WhatsApp</span>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -191,7 +266,7 @@ export default function RiderDashboardPage() {
                 {/* Item Summary & COD Total */}
                 <div className="p-3 bg-zinc-950/60 border border-zinc-800/80 rounded-xl flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-zinc-500 text-[10px] block">CASH TO COLLECT (COD):</span>
+                    <span className="text-zinc-500 text-[10px] block font-bold uppercase">CASH TO COLLECT (COD):</span>
                     <span className="text-lg font-black text-orange-400 font-mono">Rs. {order.total}</span>
                   </div>
                   <div className="text-right text-[11px] text-zinc-400">
@@ -206,7 +281,7 @@ export default function RiderDashboardPage() {
                     href={mapsUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full h-10 rounded-xl bg-zinc-800 hover:bg-zinc-750 text-white font-bold text-xs flex items-center justify-center space-x-2 border border-zinc-700"
+                    className="w-full h-10 rounded-xl bg-zinc-800 hover:bg-zinc-750 text-white font-bold text-xs flex items-center justify-center space-x-2 border border-zinc-700 transition-colors"
                   >
                     <Navigation className="h-4 w-4 text-sky-400" />
                     <span>Open in Google Maps Navigation</span>
@@ -219,24 +294,31 @@ export default function RiderDashboardPage() {
                       onClick={() => handleMarkPickedUp(order.id)}
                       className="w-full h-11 bg-sky-600 hover:bg-sky-500 text-white font-black text-xs rounded-xl shadow-lg shadow-sky-600/20 flex items-center justify-center space-x-2"
                     >
-                      <Package className="h-4 w-4" />
-                      <span>I HAVE PICKED UP FOOD FROM RESTAURANT</span>
+                      <Bike className="h-4 w-4" />
+                      <span>START TRIP (FOOD PICKED UP FROM KITCHEN)</span>
                     </Button>
                   ) : (
-                    /* Final Delivery Completion */
                     <div className="grid grid-cols-2 gap-2">
                       <Button
-                        onClick={() => { setSelectedOrder(order); setCodCollected(order.total.toString()); setIsDeliverModalOpen(true); }}
-                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs h-11 rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-1.5"
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          setCodCollected(order.total.toString());
+                          setIsDeliverModalOpen(true);
+                        }}
+                        className="h-11 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-1.5"
                       >
                         <CheckCircle2 className="h-4 w-4" />
-                        <span>Delivered & Paid</span>
+                        <span>Confirm Delivered</span>
                       </Button>
                       <Button
                         variant="danger"
-                        onClick={() => { setSelectedOrder(order); setIsFailModalOpen(true); }}
-                        className="text-xs font-bold h-11 rounded-xl"
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          setIsFailModalOpen(true);
+                        }}
+                        className="h-11 text-xs font-bold rounded-xl"
                       >
+                        <AlertTriangle className="h-4 w-4 mr-1" />
                         <span>Delivery Failed</span>
                       </Button>
                     </div>
@@ -258,30 +340,36 @@ export default function RiderDashboardPage() {
         {availableOrders.length === 0 ? (
           <p className="text-xs text-zinc-500 py-3">No unassigned delivery orders awaiting pickup right now.</p>
         ) : (
-          availableOrders.map((order) => (
-            <Card
-              key={order.id}
-              className="bg-zinc-900 border-zinc-800 p-4 space-y-3 flex flex-col justify-between"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <span className="text-base font-bold text-white">Order #{order.id}</span>
-                  <p className="text-xs text-zinc-400 mt-0.5">
-                    Customer: {order.customer_name || "Guest"} &bull; Destination: {order.delivery_address || "Lahore"}
-                  </p>
-                </div>
-                <span className="text-base font-mono font-black text-orange-400">Rs. {order.total}</span>
-              </div>
+          availableOrders.map((order) => {
+            const shortOrderRef = order.order_number 
+              ? `#${order.order_number}` 
+              : `#${order.id.slice(0, 8).toUpperCase()}`;
 
-              <Button
-                onClick={() => handleClaimDelivery(order.id)}
-                className="w-full bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-bold text-xs h-9 rounded-xl flex items-center justify-center space-x-2"
+            return (
+              <Card
+                key={order.id}
+                className="bg-zinc-900 border-zinc-800 p-4 space-y-3 flex flex-col justify-between hover:border-zinc-700 transition-colors"
               >
-                <Bike className="h-4 w-4" />
-                <span>ACCEPT & CLAIM THIS DELIVERY</span>
-              </Button>
-            </Card>
-          ))
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-base font-bold text-white">Order {shortOrderRef}</span>
+                    <p className="text-xs text-zinc-400 mt-0.5">
+                      Customer: <strong className="text-zinc-200">{order.customer_name || "Guest"}</strong> &bull; {order.delivery_address || "Lahore"}
+                    </p>
+                  </div>
+                  <span className="text-base font-mono font-black text-orange-400">Rs. {order.total}</span>
+                </div>
+
+                <Button
+                  onClick={() => handleClaimDelivery(order.id)}
+                  className="w-full bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-bold text-xs h-10 rounded-xl flex items-center justify-center space-x-2 shadow-md shadow-sky-600/20"
+                >
+                  <Bike className="h-4 w-4" />
+                  <span>ACCEPT & CLAIM THIS DELIVERY</span>
+                </Button>
+              </Card>
+            );
+          })
         )}
       </div>
 
@@ -289,7 +377,7 @@ export default function RiderDashboardPage() {
       <Modal
         isOpen={isDeliverModalOpen}
         onClose={() => setIsDeliverModalOpen(false)}
-        title={`Confirm Delivery for Order #${selectedOrder?.id}`}
+        title={`Confirm Delivery for Order #${selectedOrder?.order_number || selectedOrder?.id.slice(0, 8)}`}
       >
         <div className="space-y-4">
           <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2 text-xs">
@@ -327,7 +415,7 @@ export default function RiderDashboardPage() {
       <Modal
         isOpen={isFailModalOpen}
         onClose={() => setIsFailModalOpen(false)}
-        title={`Report Delivery Issue: Order #${selectedOrder?.id}`}
+        title={`Report Delivery Issue: Order #${selectedOrder?.order_number || selectedOrder?.id.slice(0, 8)}`}
       >
         <div className="space-y-4">
           <p className="text-xs text-zinc-400">

@@ -19,7 +19,7 @@ export const SYSTEM_USERS: { email: string; password: string; role: "admin" | "w
   { id: "10000000-0000-0000-0000-000000000003", email: "afaq@swiftbite", password: "afaq1@123", role: "waiter", name: "Afaq Ahmed" },
   { id: "10000000-0000-0000-0000-000000000004", email: "rehan@swiftbite", password: "rehan@123", role: "kitchen", name: "Chef Rehan" },
   { id: "10000000-0000-0000-0000-000000000005", email: "cashier@swiftbite", password: "cashier123", role: "cashier", name: "Sara Cashier" },
-  { id: "10000000-0000-0000-0000-000000000006", email: "rider@swiftbite", password: "rider123", role: "rider", name: "Zubair Rider" },
+  { id: "45c4adc6-62aa-42ac-b081-859d94273753", email: "rider@swiftbite", password: "rider123", role: "rider", name: "Zubair Rider" },
 ];
 
 export function useAuth() {

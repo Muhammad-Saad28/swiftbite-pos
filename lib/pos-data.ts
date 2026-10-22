@@ -5101,18 +5101,35 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
 
     const { data, error } = await query;
 
+    let localAssignments: Record<string, any> = {};
+    if (typeof window !== "undefined") {
+      try {
+        localAssignments = JSON.parse(localStorage.getItem("pos_rider_assignments") || "{}");
+      } catch (e) {}
+    }
+
     if (!error && data) {
       const totalCount = data.length;
-      return data.map((order: any, idx: number) => ({
-        ...order,
-        order_number: totalCount - idx,
-        table_number: order.tables?.table_number,
-        waiter_name: order.users?.name || (order.order_type === "delivery" ? "Website Online" : "Staff"),
-        items: order.order_items?.map((item: any) => ({
-          ...item,
-          menu_item_name: item.menu_items?.name || item.notes || "Item",
-        })),
-      }));
+      return data.map((order: any, idx: number) => {
+        const local = localAssignments[order.id];
+        const assignedRiderId = local?.assigned_rider_id || (order.waiter_id ? order.waiter_id : null);
+        const assignedRiderName = local?.assigned_rider_name || (order.users?.name ? order.users?.name : null);
+        const deliveryStatus = local?.delivery_status || (order.status === "completed" ? "delivered" : order.status === "served" ? "picked_up" : assignedRiderId ? "assigned" : "unassigned");
+
+        return {
+          ...order,
+          order_number: totalCount - idx,
+          table_number: order.tables?.table_number,
+          waiter_name: order.users?.name || (order.order_type === "delivery" ? "Website Online" : "Staff"),
+          assigned_rider_id: assignedRiderId,
+          assigned_rider_name: assignedRiderName,
+          delivery_status: deliveryStatus,
+          items: order.order_items?.map((item: any) => ({
+            ...item,
+            menu_item_name: item.menu_items?.name || item.notes || "Item",
+          })),
+        };
+      });
     }
   } catch (e) {}
 
@@ -5358,16 +5375,25 @@ export async function assignOrderRider(
     target.assigned_rider_id = riderId;
     target.assigned_rider_name = riderName;
     target.delivery_status = "assigned";
+    target.status = "accepted";
+  }
+
+  if (typeof window !== "undefined") {
+    try {
+      const assignments = JSON.parse(localStorage.getItem("pos_rider_assignments") || "{}");
+      assignments[orderId] = {
+        assigned_rider_id: riderId,
+        assigned_rider_name: riderName,
+        delivery_status: "assigned",
+      };
+      localStorage.setItem("pos_rider_assignments", JSON.stringify(assignments));
+    } catch (e) {}
   }
 
   try {
     await supabase
       .from("orders")
-      .update({
-        assigned_rider_id: riderId,
-        assigned_rider_name: riderName,
-        delivery_status: "assigned",
-      })
+      .update({ waiter_id: riderId, status: "accepted" })
       .eq("id", orderId);
   } catch (e) {}
 
@@ -5384,16 +5410,38 @@ export async function updateOrderDeliveryStatus(
     if (deliveryStatus === "delivered") {
       target.status = "completed";
       target.completed_at = new Date().toISOString();
+    } else if (deliveryStatus === "picked_up") {
+      target.status = "served";
     }
   }
 
+  if (typeof window !== "undefined") {
+    try {
+      const assignments = JSON.parse(localStorage.getItem("pos_rider_assignments") || "{}");
+      if (assignments[orderId]) {
+        assignments[orderId].delivery_status = deliveryStatus;
+      } else {
+        assignments[orderId] = { delivery_status: deliveryStatus };
+      }
+      localStorage.setItem("pos_rider_assignments", JSON.stringify(assignments));
+    } catch (e) {}
+  }
+
   try {
-    const payload: any = { delivery_status: deliveryStatus };
+    const payload: any = {};
     if (deliveryStatus === "delivered") {
       payload.status = "completed";
       payload.completed_at = new Date().toISOString();
+      payload.payment_method = "cash";
+    } else if (deliveryStatus === "picked_up") {
+      payload.status = "served";
+    } else if (deliveryStatus === "failed") {
+      payload.status = "cancelled";
+      payload.rejection_reason = "Delivery Failed";
     }
-    await supabase.from("orders").update(payload).eq("id", orderId);
+    if (Object.keys(payload).length > 0) {
+      await supabase.from("orders").update(payload).eq("id", orderId);
+    }
   } catch (e) {}
 
   return true;
