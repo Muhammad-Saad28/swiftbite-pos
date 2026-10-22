@@ -15,76 +15,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
   if (!order) return null;
 
   const handlePrint = () => {
-    const printContent = document.getElementById("thermal-receipt");
-    if (!printContent) {
-      window.print();
-      return;
-    }
-
-    // Open a dedicated isolated print window to prevent double printing and unwanted gaps
-    const printWindow = window.open("", "_blank", "width=400,height=600");
-    if (!printWindow) {
-      window.print();
-      return;
-    }
-
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Receipt #${numericReceiptNo}</title>
-          <style>
-            @page {
-              size: 80mm auto;
-              margin: 0;
-            }
-            * {
-              box-sizing: border-box;
-              margin: 0;
-              padding: 0;
-              color: #000000 !important;
-              background: transparent !important;
-              font-family: 'Courier New', Courier, monospace !important;
-              font-weight: 900 !important;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-            body {
-              width: 76mm;
-              max-width: 76mm;
-              margin: 0 auto;
-              padding: 4mm 2mm;
-              background: #ffffff !important;
-              color: #000000 !important;
-              font-size: 11px;
-              line-height: 1.2;
-            }
-            .border-b { border-bottom: 1.5px solid #000 !important; }
-            .border-t { border-top: 1.5px solid #000 !important; }
-            .border-t-2 { border-top: 2px solid #000 !important; }
-            .border-y { border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
-            .border-dashed { border-style: dashed !important; }
-            .border-dotted { border-style: dotted !important; }
-            .flex { display: flex !important; }
-            .justify-between { justify-content: space-between !important; }
-            .items-center { align-items: center !important; }
-            .text-center { text-align: center !important; }
-            .text-right { text-align: right !important; }
-            .uppercase { text-transform: uppercase !important; }
-            .whitespace-nowrap { white-space: nowrap !important; }
-          </style>
-        </head>
-        <body>
-          ${printContent.innerHTML}
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 250);
+    window.print();
   };
 
   const discountAmount = order.discount_amount || 0;
@@ -116,134 +47,175 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
         <div className="max-h-[70vh] overflow-y-auto pr-1">
           <div
             id="thermal-receipt"
-            className="receipt-container bg-white text-black p-4 rounded-xl shadow-xl border border-zinc-300 mx-auto max-w-[340px] font-mono leading-tight transition-all"
+            className="receipt-container bg-white text-zinc-950 p-6 sm:p-7 rounded-2xl shadow-xl border border-zinc-200/80 mx-auto max-w-[380px] font-sans transition-all"
           >
-          {/* Top Brand Logo & Restaurant Header - Compact & Crisp Black & White */}
-          <div className="text-center pb-2 border-b border-black">
-            <h2 className="text-lg font-black tracking-tighter text-black uppercase">
-              SWIFTBITE POS
-            </h2>
-            <p className="text-[10px] font-black text-black tracking-wider uppercase">
-              GOURMET BURGERS & FAST FOOD
-            </p>
-            <p className="text-[9px] text-black font-semibold mt-0.5 leading-tight">
-              Main G.T. Road, near Orange Line Station, Lahore
-            </p>
-            <p className="text-[9px] text-black font-bold">
-              Tel: 0321-2490006 / 0306-4656951
-            </p>
+          {/* Top Brand Logo & Restaurant Header */}
+          <div className="text-center space-y-2 pb-4 border-b border-zinc-200">
+            <div className="relative inline-block">
+              <div className="h-16 w-16 mx-auto rounded-full p-1 bg-gradient-to-tr from-orange-500 to-amber-400 shadow-md flex items-center justify-center">
+                <img
+                  src="/logo.jpeg"
+                  alt="SwiftBite Logo"
+                  className="h-full w-full object-cover rounded-full bg-black"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-black tracking-tight text-zinc-950 uppercase font-sans">
+                SWIFTBITE POS
+              </h2>
+              <p className="text-xs font-black text-orange-600 tracking-wider uppercase">
+                Gourmet Burgers & Fast Food
+              </p>
+            </div>
+
+            <div className="text-[11px] text-zinc-900 leading-tight space-y-0.5 pt-0.5 font-bold">
+              <p>Main G.T. Road, near Orange Line Station, Dera Gujran, Lahore</p>
+              <p>Phone: 0321-2490006 / 0306-4656951</p>
+            </div>
           </div>
 
-          {/* Receipt Number & Type Bar */}
-          <div className="my-1.5 py-1 px-2 border-y border-black flex items-center justify-between font-black text-black text-xs">
-            <span>RECEIPT #{numericReceiptNo}</span>
-            <span className="uppercase tracking-wider">
-              {order.order_type ? order.order_type.replace("_", " ") : "DINE-IN"}
-            </span>
+          {/* Receipt Number Highlight Banner */}
+          <div className="my-3 py-2 px-3 rounded-xl bg-zinc-200 border border-zinc-400 flex items-center justify-between">
+            <div className="text-left">
+              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-800 block">
+                Receipt Number
+              </span>
+              <span className="text-lg font-black font-mono tracking-wider text-black">
+                #{numericReceiptNo}
+              </span>
+            </div>
+            <div className="text-right">
+              <span className="inline-block px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-sm">
+                {order.order_type ? order.order_type.replace("_", " ") : "Dine-In"}
+              </span>
+            </div>
           </div>
 
-          {/* Metadata Grid - Compact Single-Line Black Text */}
-          <div className="py-1 text-[10px] space-y-0.5 font-bold text-black border-b border-dashed border-black">
+          {/* Metadata Grid */}
+          <div className="py-2.5 border-y-2 border-dashed border-zinc-700 text-xs space-y-1.5 font-mono">
             <div className="flex justify-between items-center">
-              <span>Date:</span>
-              <span>{formattedDate} {formattedTime}</span>
+              <span className="text-zinc-800 font-black">Date & Time:</span>
+              <span className="font-black text-black">{formattedDate}, {formattedTime}</span>
             </div>
 
             <div className="flex justify-between items-center">
-              <span>Cashier:</span>
-              <span>{order.waiter_name || "Admin"}</span>
+              <span className="text-zinc-800 font-black">Server / Cashier:</span>
+              <span className="font-black text-black">{order.waiter_name || "Admin Manager"}</span>
             </div>
 
             {order.customer_name && (
-              <div className="flex justify-between items-center">
-                <span>Customer:</span>
-                <span className="font-black">{order.customer_name}</span>
-              </div>
-            )}
-
-            {order.customer_phone && (
-              <div className="flex justify-between items-center">
-                <span>Phone:</span>
-                <span>{order.customer_phone}</span>
-              </div>
-            )}
-
-            {order.delivery_address && (
-              <div className="flex justify-between items-start pt-0.5">
-                <span className="shrink-0 mr-2">Address:</span>
-                <span className="text-right font-semibold">{order.delivery_address}</span>
+              <div className="pt-1.5 mt-1.5 border-t border-dotted border-zinc-600 space-y-1">
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-800 font-black">Customer:</span>
+                  <span className="font-black text-black">{order.customer_name}</span>
+                </div>
+                {order.customer_phone && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-800 font-black">Phone:</span>
+                    <span className="font-black text-black">{order.customer_phone}</span>
+                  </div>
+                )}
+                {order.delivery_address && (
+                  <div className="text-[11px] text-zinc-900 pt-0.5 flex justify-between font-bold">
+                    <span className="text-zinc-800 font-black">Address:</span>
+                    <span className="text-right max-w-[65%] font-sans font-black">{order.delivery_address}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
-          {/* Items Table - Dense & High Contrast Black */}
-          <div className="py-1 space-y-1">
-            <div className="flex justify-between text-[10px] font-black uppercase text-black border-b border-black pb-0.5">
-              <span>ITEM</span>
-              <span>QTY &times; RATE</span>
-              <span>AMOUNT</span>
+          {/* Items Table */}
+          <div className="pt-3 pb-2 space-y-2">
+            <div className="flex justify-between text-xs font-black uppercase tracking-wider text-zinc-900 border-b-2 border-zinc-800 pb-1.5">
+              <span>Item Description</span>
+              <span>Amount</span>
             </div>
 
-            <div className="divide-y divide-dotted divide-zinc-400">
+            <div className="divide-y divide-dashed divide-zinc-500">
               {order.items?.map((item) => (
-                <div key={item.id} className="py-1 text-xs text-black">
-                  <div className="flex justify-between items-start font-black">
-                    <span className="pr-2">{item.menu_item_name}</span>
-                    <span className="whitespace-nowrap">
-                      Rs. {(item.price * item.quantity).toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-[10px] font-bold text-black mt-0.5">
-                    <span>{item.quantity} &times; Rs. {item.price.toLocaleString()}</span>
-                  </div>
-                  {item.notes && (
-                    <p className="text-[9px] font-bold text-black mt-0.5 leading-tight italic">
-                      + {item.notes}
+                <div key={item.id} className="py-2.5 flex justify-between items-start text-sm font-mono">
+                  <div className="pr-3 text-left">
+                    <p className="font-black text-black leading-tight text-sm">
+                      {item.menu_item_name}
                     </p>
-                  )}
+                    {item.notes && (
+                      <p className="text-[11px] font-black text-zinc-900 mt-1 leading-snug bg-zinc-200 p-1.5 rounded border border-zinc-400">
+                        📦 Combo includes: {item.notes}
+                      </p>
+                    )}
+                    <p className="text-xs font-black text-zinc-800 mt-0.5">
+                      {item.quantity} &times; Rs. {item.price.toLocaleString()}
+                    </p>
+                  </div>
+                  <span className="font-black text-black whitespace-nowrap pt-0.5 text-sm">
+                    Rs. {(item.price * item.quantity).toLocaleString()}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Financial Breakdown */}
-          <div className="pt-1.5 border-t-2 border-black space-y-0.5 text-xs font-black text-black">
-            <div className="flex justify-between">
+          <div className="pt-2 border-t-2 border-black space-y-2 text-sm font-mono">
+            <div className="flex justify-between text-zinc-900 font-black">
               <span>Subtotal:</span>
-              <span>Rs. {order.subtotal.toLocaleString()}</span>
+              <span className="font-black text-black">Rs. {order.subtotal.toLocaleString()}</span>
             </div>
 
             {calcDiscountValue > 0 && (
-              <div className="flex justify-between">
-                <span>Discount ({isPercentage ? `${discountAmount}%` : "Flat"}):</span>
+              <div className="flex justify-between text-emerald-800 font-black">
+                <span>Discount ({isPercentage ? `${discountAmount}%` : "Special"}):</span>
                 <span>- Rs. {calcDiscountValue.toLocaleString()}</span>
               </div>
             )}
 
             {/* Total Highlight */}
-            <div className="pt-1 mt-1 border-t border-black flex justify-between items-baseline text-sm font-black">
-              <span className="uppercase tracking-wider">NET TOTAL</span>
-              <span className="text-base tracking-tight">
-                Rs. {order.total.toLocaleString()}
-              </span>
+            <div className="pt-3 mt-2 border-t-2 border-dashed border-zinc-700 flex justify-between items-baseline">
+              <div>
+                <span className="text-sm font-black uppercase tracking-wider text-black block">
+                  Net Amount
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-2xl font-black text-black tracking-tight">
+                  Rs. {order.total.toLocaleString()}
+                </span>
+              </div>
             </div>
 
             {order.payment_method && (
-              <div className="pt-1 flex justify-between text-[10px] uppercase font-black">
-                <span>Payment:</span>
-                <span>{order.payment_method.replace("_", " ")}</span>
+              <div className="pt-2 border-t border-dotted border-zinc-600 flex justify-between text-xs items-center font-bold">
+                <span className="text-zinc-800 font-black">Paid Via:</span>
+                <span className="font-black uppercase tracking-wider text-black bg-zinc-200 border border-zinc-400 px-2 py-0.5 rounded">
+                  {order.payment_method.replace("_", " ")}
+                </span>
               </div>
             )}
           </div>
 
-          {/* Footer - Minimal Compact */}
-          <div className="pt-2 text-center text-black border-t border-dashed border-black mt-1.5 space-y-0.5">
-            <p className="text-[10px] font-black uppercase">
-              *** THANK YOU FOR YOUR VISIT ***
+          {/* Barcode & Footer Greeting */}
+          <div className="pt-5 pb-1 text-center space-y-2 border-t-2 border-dashed border-zinc-700 mt-3">
+            {/* Decorative Barcode Lines */}
+            <div className="flex justify-center items-center space-x-[2px] h-9 py-1 opacity-90">
+              {[3, 1, 4, 1, 2, 5, 2, 1, 3, 2, 4, 1, 2, 4, 1, 3, 2, 4, 1, 2, 3, 1, 4, 2, 3].map((w, i) => (
+                <span
+                  key={i}
+                  className="bg-black inline-block h-full"
+                  style={{ width: `${w}px` }}
+                />
+              ))}
+            </div>
+            <p className="text-[10px] font-mono font-black tracking-widest text-zinc-900 uppercase">
+              *{numericReceiptNo}*
             </p>
-            <p className="text-[8px] font-bold">
-              Software by SwiftBite POS
-            </p>
+
+            <div className="text-xs text-zinc-900 space-y-0.5 pt-1">
+              <p className="font-black text-black text-sm">Thank you for dining with SwiftBite!</p>
+              <p className="text-[10px] font-black">We hope to serve you again soon &bull; Have a wonderful day</p>
+            </div>
           </div>
         </div>
       </div>
@@ -271,15 +243,8 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             margin: 0;
             size: 80mm auto;
           }
-          *, *::before, *::after {
-            color: #000 !important;
-            border-color: #000 !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
           body {
             background: #fff !important;
-            color: #000 !important;
             margin: 0 !important;
             padding: 0 !important;
           }
@@ -293,16 +258,13 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             position: absolute;
             left: 0;
             top: 0;
-            width: 76mm !important;
-            max-width: 76mm !important;
-            padding: 4mm 2mm !important;
+            width: 80mm !important;
+            max-width: 80mm !important;
+            padding: 12px 14px !important;
             margin: 0 !important;
             box-shadow: none !important;
             border: none !important;
             border-radius: 0 !important;
-            color: #000 !important;
-            font-family: monospace, Courier, monospace !important;
-            font-weight: 900 !important;
           }
         }
       `}</style>
