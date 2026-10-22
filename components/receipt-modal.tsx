@@ -174,10 +174,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
               <span className="font-semibold text-zinc-800">Rs. {order.subtotal.toLocaleString()}</span>
             </div>
 
-            <div className="flex justify-between text-zinc-600">
-              <span>GST Tax (18%):</span>
-              <span className="font-semibold text-zinc-800">Rs. {order.tax.toLocaleString()}</span>
-            </div>
+
 
             {calcDiscountValue > 0 && (
               <div className="flex justify-between text-emerald-600 font-bold">
