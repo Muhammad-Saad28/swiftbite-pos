@@ -29,7 +29,6 @@ export default function WaiterLayout({ children }: { children: React.ReactNode }
 
   const navItems = [
     { name: "Dashboard", href: "/waiter/dashboard", icon: LayoutDashboard },
-    { name: "Tables Map", href: "/waiter/tables", icon: Utensils },
     { name: "New Order", href: "/waiter/new-order", icon: PlusCircle },
     { name: "Active Orders", href: "/waiter/orders", icon: Clock },
     { name: "History", href: "/waiter/history", icon: History },

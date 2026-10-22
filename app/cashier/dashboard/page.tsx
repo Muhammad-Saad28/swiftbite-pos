@@ -491,7 +491,7 @@ export default function CashierDashboardPage() {
                         </span>
                       </div>
                       <p className="text-xs text-zinc-400 mt-1">
-                        {order.table_number ? `Table ${order.table_number.toString().padStart(2, "0")}` : order.customer_name || "Counter Walk-in"} &bull; Server: {order.waiter_name}
+                        {order.customer_name || "Counter Walk-in"} &bull; Server: {order.waiter_name || "Cashier"}
                       </p>
                     </div>
                     <Badge variant={order.status}>{order.status}</Badge>
@@ -1155,7 +1155,7 @@ export default function CashierDashboardPage() {
                 Rs. {paymentSuccessData.paidAmount.toLocaleString()}
               </h2>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Order #{paymentSuccessData.order.id} &bull; {paymentSuccessData.order.table_number ? `Table ${paymentSuccessData.order.table_number.toString().padStart(2, "0")}` : paymentSuccessData.order.customer_name || "Counter Walk-in"}
+                Order #{paymentSuccessData.order.id} &bull; {paymentSuccessData.order.customer_name || "Counter Walk-in"}
               </p>
             </div>
 

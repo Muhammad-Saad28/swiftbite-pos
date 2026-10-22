@@ -130,9 +130,9 @@ export default function WaiterNewOrderPage() {
       {/* Header & Order Mode Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="sm" onClick={() => router.push("/waiter/tables")} className="text-zinc-400">
+          <Button variant="ghost" size="sm" onClick={() => router.push("/waiter/dashboard")} className="text-zinc-400">
             <ArrowLeft className="h-4 w-4 mr-1" />
-            <span>Tables</span>
+            <span>Dashboard</span>
           </Button>
           <div>
             <h1 className="text-2xl font-black text-white tracking-tight">Create New Order</h1>
@@ -177,20 +177,19 @@ export default function WaiterNewOrderPage() {
 
       {/* Mode Specific Inputs */}
       {orderType === "dine_in" ? (
-        <div className="flex items-center space-x-2 bg-zinc-900 border border-zinc-800 p-3 rounded-xl">
-          <TableIcon className="h-4 w-4 text-orange-400 ml-1" />
-          <span className="text-xs font-bold text-zinc-300">Target Table:</span>
-          <select
-            value={selectedTableNum}
-            onChange={(e) => setSelectedTableNum(parseInt(e.target.value, 10))}
-            className="bg-zinc-950 border border-zinc-800 text-orange-400 font-extrabold text-sm rounded-lg px-3 py-1 focus:outline-none"
-          >
-            {tables.map((t) => (
-              <option key={t.id} value={t.table_number}>
-                Table #{t.table_number.toString().padStart(2, "0")} ({t.capacity} seats) - {t.status.toUpperCase()}
-              </option>
-            ))}
-          </select>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl">
+          <Input
+            placeholder="Guest / Customer Name (Optional)"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            className="bg-zinc-950 border-zinc-800 text-xs"
+          />
+          <Input
+            placeholder="Guest Contact / Phone (Optional)"
+            value={customerPhone}
+            onChange={(e) => setCustomerPhone(e.target.value)}
+            className="bg-zinc-950 border-zinc-800 text-xs"
+          />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl">

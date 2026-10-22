@@ -239,14 +239,14 @@ export default function AdminDashboardPage() {
         <Card className="bg-gradient-to-br from-zinc-900 to-zinc-950 border-zinc-800/80 shadow-lg relative overflow-hidden group">
            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-emerald-500/10" />
           <div className="flex items-center justify-between relative z-10">
-            <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Active Tables</span>
+            <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Fulfilled Orders</span>
             <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-              <Utensils className="h-4 w-4" />
+              <CheckCircle className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4 relative z-10">
-            <span className="text-3xl font-black text-white">{occupiedTables} <span className="text-xl text-zinc-600">/ {tables.length}</span></span>
-            <p className="text-[11px] text-emerald-400 font-bold mt-2 tracking-wide">{Math.round((occupiedTables / (tables.length || 1)) * 100)}% Occupancy Rate</p>
+            <span className="text-3xl font-black text-white">{orders.filter(o => o.status === "completed" || o.status === "served").length}</span>
+            <p className="text-[11px] text-emerald-400 font-bold mt-2 tracking-wide">Successfully served & closed</p>
           </div>
         </Card>
 
@@ -356,7 +356,7 @@ export default function AdminDashboardPage() {
                         <span className="font-black text-white text-lg">Order #{order.id}</span>
                       </div>
                       <div className="flex items-center space-x-2 mt-1.5 text-xs font-medium">
-                        <span className="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded-md">Table {order.table_number ? order.table_number.toString().padStart(2, "0") : "N/A"}</span>
+                        <span className="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded-md">{order.customer_name || "Counter / Dine-In"}</span>
                         <span className="text-zinc-500">&bull;</span>
                         <span className="text-zinc-400">Waiter: {order.waiter_name}</span>
                       </div>

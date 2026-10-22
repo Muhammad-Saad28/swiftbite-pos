@@ -66,7 +66,7 @@ export default function WaiterHistoryPage() {
                 <div>
                   <span className="font-extrabold text-white text-sm">Order #{order.id}</span>
                   <p className="text-xs text-zinc-400">
-                    Table {order.table_number ? order.table_number.toString().padStart(2, "0") : "N/A"} &bull; Waiter: {order.waiter_name}
+                    {order.customer_name || "Counter / Guest"} &bull; Waiter: {order.waiter_name}
                   </p>
                 </div>
                 <Badge variant={order.status}>{order.status}</Badge>

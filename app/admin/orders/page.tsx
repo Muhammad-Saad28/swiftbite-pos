@@ -307,7 +307,7 @@ export default function AdminOrdersPage() {
                         </div>
                       ) : (
                         <p className="text-xs text-zinc-400 mt-1">
-                          {order.table_number ? `Table ${order.table_number.toString().padStart(2, "0")}` : "Walk-In"} &bull; Server: {order.waiter_name}
+                          {order.customer_name || "Walk-In"} &bull; Server: {order.waiter_name}
                         </p>
                       )}
                     </div>

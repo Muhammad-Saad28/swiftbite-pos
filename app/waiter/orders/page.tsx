@@ -126,7 +126,7 @@ export default function WaiterOrdersPage() {
                       </span>
                     </div>
                     <p className="text-xs text-zinc-400 mt-0.5">
-                      {order.table_number ? `Table ${order.table_number.toString().padStart(2, "0")}` : order.customer_name || "Walk-In"} &bull; Waiter: {order.waiter_name}
+                      {order.customer_name || "Counter / Guest"} &bull; Waiter: {order.waiter_name}
                     </p>
                   </div>
                   <Badge variant={order.status}>{order.status}</Badge>

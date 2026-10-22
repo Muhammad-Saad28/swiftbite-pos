@@ -100,15 +100,6 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
               <span className="font-semibold text-zinc-800">{formattedDate}, {formattedTime}</span>
             </div>
 
-            {order.table_number && (
-              <div className="flex justify-between items-center">
-                <span className="text-zinc-500 font-medium">Table Assignment:</span>
-                <span className="font-bold text-zinc-950 bg-zinc-100 px-2 py-0.5 rounded text-[11px]">
-                  Table {order.table_number.toString().padStart(2, "0")}
-                </span>
-              </div>
-            )}
-
             <div className="flex justify-between items-center">
               <span className="text-zinc-500 font-medium">Server / Cashier:</span>
               <span className="font-semibold text-zinc-800">{order.waiter_name || "Admin Manager"}</span>

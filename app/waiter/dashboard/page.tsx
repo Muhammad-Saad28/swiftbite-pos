@@ -106,14 +106,14 @@ export default function WaiterDashboardPage() {
           <p className="text-4xl font-black text-orange-400 relative z-10">{preparingCount}</p>
         </div>
         <div className="bg-zinc-900/80 backdrop-blur-sm border border-zinc-800 rounded-2xl p-5 flex flex-col justify-center relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <span className="text-xs font-black text-zinc-500 uppercase tracking-widest mb-1 relative z-10">Tables</span>
-          <p className="text-4xl font-black text-white relative z-10">{occupiedCount} <span className="text-xl text-zinc-600">/ {tables.length}</span></p>
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <span className="text-xs font-black text-zinc-500 uppercase tracking-widest mb-1 relative z-10">Completed</span>
+          <p className="text-4xl font-black text-emerald-400 relative z-10">{orders.filter(o => o.status === "completed" || o.status === "served").length}</p>
         </div>
       </div>
 
       {/* Quick Action Navigation Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div
           onClick={() => router.push("/waiter/new-order")}
           className="group cursor-pointer rounded-3xl bg-zinc-900 border border-zinc-800 p-6 transition-all hover:bg-zinc-800/50 hover:border-orange-500/50 hover:shadow-[0_0_30px_rgba(255,184,0,0.1)] relative overflow-hidden"
@@ -123,19 +123,7 @@ export default function WaiterDashboardPage() {
             <PlusCircle className="h-7 w-7" />
           </div>
           <h3 className="text-xl font-black text-white mb-2 group-hover:text-orange-400 transition-colors">Create Order</h3>
-          <p className="text-sm text-zinc-400 font-medium leading-relaxed">Select a table, browse the menu categories, and send items straight to the kitchen.</p>
-        </div>
-
-        <div
-          onClick={() => router.push("/waiter/tables")}
-          className="group cursor-pointer rounded-3xl bg-zinc-900 border border-zinc-800 p-6 transition-all hover:bg-zinc-800/50 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)] relative overflow-hidden"
-        >
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors" />
-          <div className="h-14 w-14 rounded-2xl bg-zinc-800 text-zinc-100 border border-zinc-700 flex items-center justify-center shadow-lg mb-6 group-hover:bg-blue-500/20 group-hover:text-blue-400 group-hover:border-blue-500/30 transition-all">
-            <Utensils className="h-7 w-7" />
-          </div>
-          <h3 className="text-xl font-black text-white mb-2 group-hover:text-blue-400 transition-colors">Tables Map</h3>
-          <p className="text-sm text-zinc-400 font-medium leading-relaxed">View table availability, assign customers, and manage dining flow efficiently.</p>
+          <p className="text-sm text-zinc-400 font-medium leading-relaxed">Punch items, add guest preferences, and send orders straight to kitchen.</p>
         </div>
 
         <div
@@ -182,7 +170,7 @@ export default function WaiterDashboardPage() {
                       <Badge variant={order.status} className="px-2 py-0">{order.status}</Badge>
                     </div>
                     <p className="text-zinc-400 text-xs font-bold uppercase tracking-wider">
-                      Table {order.table_number ? order.table_number.toString().padStart(2, "0") : "N/A"} &bull; {order.items?.length || 0} items
+                      {order.customer_name || "Counter / Guest"} &bull; {order.items?.length || 0} items
                     </p>
                   </div>
                   <span className="font-black text-orange-400 text-lg">Rs. {order.total}</span>

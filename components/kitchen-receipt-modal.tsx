@@ -72,14 +72,8 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               </div>
             </div>
 
-            {/* Table / Server / Customer Meta */}
+            {/* Server / Customer Meta */}
             <div className="py-2 border-y border-dashed border-black text-xs space-y-1.5">
-              {order.table_number && (
-                <div className="flex justify-between items-center text-sm font-black bg-zinc-200/80 px-2 py-1 rounded">
-                  <span>TABLE NUMBER:</span>
-                  <span className="text-base text-black">TABLE {order.table_number.toString().padStart(2, "0")}</span>
-                </div>
-              )}
               <div className="flex justify-between items-center text-[11px]">
                 <span className="text-zinc-600">Time Placed:</span>
                 <span className="font-bold text-black">{formattedTime} ({formattedDate})</span>

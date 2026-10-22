@@ -276,25 +276,6 @@ export default function CashierPOSRegisterPage() {
             </div>
 
             {/* Context Fields based on Order Type */}
-            {orderType === "dine_in" && (
-              <div>
-                <label className="block text-[11px] font-bold uppercase text-zinc-400 mb-1">
-                  Assign Table
-                </label>
-                <select
-                  value={selectedTableNum}
-                  onChange={(e) => setSelectedTableNum(parseInt(e.target.value, 10))}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100"
-                >
-                  {tables.map((t) => (
-                    <option key={t.id} value={t.table_number}>
-                      Table {t.table_number.toString().padStart(2, "0")} ({t.status})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
             <div className="space-y-2">
               <Input
                 label="Customer Name"
