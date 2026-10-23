@@ -165,13 +165,43 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
       <style jsx global>{`
         @media print {
           @page {
-            margin: 0;
-            size: 80mm auto;
+            margin: 0 !important;
+            size: auto;
           }
-          body {
+          html, body {
             background: #fff !important;
             margin: 0 !important;
             padding: 0 !important;
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+          }
+          /* Hide everything in DOM */
+          body > * {
+            display: none !important;
+          }
+          /* Only display modal container holding the receipt */
+          body > [data-radix-portal],
+          body > div:has(#kitchen-receipt) {
+            display: block !important;
+            position: static !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            transform: none !important;
+          }
+          /* Neutralize modal dialog centering wrappers */
+          .fixed, [role="dialog"], .backdrop-blur-sm {
+            position: static !important;
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            max-height: none !important;
+            max-width: none !important;
+            width: auto !important;
+            transform: none !important;
+            display: block !important;
           }
           body * {
             visibility: hidden;
@@ -180,16 +210,21 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
             visibility: visible;
           }
           #kitchen-receipt {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 80mm !important;
-            max-width: 80mm !important;
-            padding: 12px 14px !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
             margin: 0 !important;
+            width: 78mm !important;
+            max-width: 78mm !important;
+            padding: 4mm 2mm !important;
             box-shadow: none !important;
             border: none !important;
             border-radius: 0 !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
           }
         }
       `}</style>

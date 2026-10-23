@@ -136,9 +136,9 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
 
             <div className="divide-y-2 divide-dashed divide-black">
               {order.items?.map((item) => (
-                <div key={item.id} className="py-3 flex justify-between items-start text-lg font-mono">
+                <div key={item.id} className="py-3 flex justify-between items-start text-base font-mono">
                   <div className="pr-3 text-left">
-                    <p className="font-black text-black leading-snug text-lg">
+                    <p className="font-black text-black leading-snug text-base">
                       {item.menu_item_name}
                     </p>
                     {item.notes && (
@@ -150,7 +150,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                       {item.quantity} &times; Rs. {item.price.toLocaleString()}
                     </p>
                   </div>
-                  <span className="font-black text-black whitespace-nowrap pt-0.5 text-lg">
+                  <span className="font-black text-black whitespace-nowrap pt-0.5 text-base">
                     Rs. {(item.price * item.quantity).toLocaleString()}
                   </span>
                 </div>
@@ -240,13 +240,43 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
       <style jsx global>{`
         @media print {
           @page {
-            margin: 0;
-            size: 80mm auto;
+            margin: 0 !important;
+            size: auto;
           }
-          body {
+          html, body {
             background: #fff !important;
             margin: 0 !important;
             padding: 0 !important;
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+          }
+          /* Hide everything in DOM */
+          body > * {
+            display: none !important;
+          }
+          /* Only display receipt modal content container */
+          body > [data-radix-portal],
+          body > div:has(#thermal-receipt) {
+            display: block !important;
+            position: static !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            transform: none !important;
+          }
+          /* Ensure modal backdrop and other modal chrome are hidden */
+          .fixed, [role="dialog"], .backdrop-blur-sm {
+            position: static !important;
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            max-height: none !important;
+            max-width: none !important;
+            width: auto !important;
+            transform: none !important;
+            display: block !important;
           }
           body * {
             visibility: hidden;
@@ -255,16 +285,21 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             visibility: visible;
           }
           #thermal-receipt {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 80mm !important;
-            max-width: 80mm !important;
-            padding: 12px 14px !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
             margin: 0 !important;
+            width: 78mm !important;
+            max-width: 78mm !important;
+            padding: 4mm 2mm !important;
             box-shadow: none !important;
             border: none !important;
             border-radius: 0 !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
           }
         }
       `}</style>
