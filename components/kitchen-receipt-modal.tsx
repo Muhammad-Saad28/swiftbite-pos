@@ -27,16 +27,16 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
       existingIframe.remove();
     }
 
-    // Create a hidden, isolated iframe dedicated solely to printing this KOT
+    // Create an off-screen, isolated iframe with 78mm width dedicated to printing this KOT
     const iframe = document.createElement("iframe");
     iframe.id = "kot-print-iframe";
     iframe.style.position = "fixed";
-    iframe.style.right = "0";
-    iframe.style.bottom = "0";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
+    iframe.style.top = "-9999px";
+    iframe.style.left = "-9999px";
+    iframe.style.width = "78mm";
+    iframe.style.height = "auto";
     iframe.style.border = "0";
-    iframe.style.visibility = "hidden";
+    iframe.style.opacity = "0";
     document.body.appendChild(iframe);
 
     const doc = iframe.contentWindow?.document;
@@ -52,7 +52,7 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
         <head>
           <meta charset="utf-8" />
           <title>KOT #${numericReceiptNo}</title>
-          <style>
+          <style id="kot-page-style">
             @page {
               size: 80mm auto;
               margin: 0;
@@ -79,7 +79,8 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               width: 78mm;
               max-width: 78mm;
               margin: 0 auto;
-              padding: 4mm 2mm;
+              padding: 2mm 2mm 1mm 2mm;
+              box-sizing: border-box;
             }
             /* Component styling translations for thermal print fidelity */
             .text-center { text-align: center; }
@@ -154,9 +155,14 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
             .divide-y-2 > * + * { border-top: 2px dashed #000000; }
             .divide-dashed { border-style: dashed; }
             
-            /* Prevent unwanted pagination splits */
+            /* Clean pagination behavior & zero trailing margins */
             .print-wrapper, .print-wrapper * {
               page-break-inside: auto;
+            }
+            .print-wrapper > *:last-child,
+            .print-wrapper > *:last-child > *:last-child {
+              margin-bottom: 0 !important;
+              padding-bottom: 0 !important;
             }
           </style>
         </head>
@@ -169,14 +175,45 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
     `);
     doc.close();
 
-    // Allow browser layout engine to render isolated DOM before printing
+    // Allow browser layout engine to render isolated DOM, compute exact content height, and fit @page dynamically
     setTimeout(() => {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
-      // Clean up after print window opens
+      try {
+        const wrapper = doc.querySelector(".print-wrapper") as HTMLElement | null;
+        const measuredPx = wrapper ? wrapper.scrollHeight : (printElement.offsetHeight || 280);
+        // 96 DPI conversion: 1 px ≈ 0.264583 mm
+        const computedHeightMm = Math.max(40, Math.ceil(measuredPx * 0.2646) + 4);
+
+        let dynamicStyle = doc.getElementById("kot-page-style");
+        if (!dynamicStyle) {
+          dynamicStyle = doc.createElement("style");
+          dynamicStyle.id = "kot-page-style";
+          doc.head.appendChild(dynamicStyle);
+        }
+        dynamicStyle.innerHTML = `
+          @page {
+            size: 80mm ${computedHeightMm}mm !important;
+            margin: 0 !important;
+          }
+          html, body {
+            width: 80mm !important;
+            max-width: 80mm !important;
+            height: ${computedHeightMm}mm !important;
+            max-height: ${computedHeightMm}mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+          }
+        ` + dynamicStyle.innerHTML;
+      } catch (e) {}
+
       setTimeout(() => {
-        iframe.remove();
-      }, 1000);
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+        // Clean up after print window opens
+        setTimeout(() => {
+          iframe.remove();
+        }, 1500);
+      }, 50);
     }, 150);
   };
 
@@ -308,7 +345,7 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
             )}
 
             {/* Footer */}
-            <div className="pt-4 pb-1 text-center border-t-2 border-black mt-4 text-xs space-y-1">
+            <div className="pt-2 pb-0.5 text-center border-t-2 border-black mt-2 text-xs">
               <p className="font-black uppercase tracking-wider text-black text-xs">
                 === END OF KITCHEN ORDER TICKET ===
               </p>

@@ -27,16 +27,16 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
       existingIframe.remove();
     }
 
-    // Create a hidden, isolated iframe dedicated solely to printing the final receipt
+    // Create an off-screen, isolated iframe with 78mm width dedicated solely to printing the final receipt
     const iframe = document.createElement("iframe");
     iframe.id = "thermal-print-iframe";
     iframe.style.position = "fixed";
-    iframe.style.right = "0";
-    iframe.style.bottom = "0";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
+    iframe.style.top = "-9999px";
+    iframe.style.left = "-9999px";
+    iframe.style.width = "78mm";
+    iframe.style.height = "auto";
     iframe.style.border = "0";
-    iframe.style.visibility = "hidden";
+    iframe.style.opacity = "0";
     document.body.appendChild(iframe);
 
     const doc = iframe.contentWindow?.document;
@@ -52,7 +52,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
         <head>
           <meta charset="utf-8" />
           <title>Receipt #${numericReceiptNo}</title>
-          <style>
+          <style id="receipt-page-style">
             @page {
               size: 80mm auto;
               margin: 0;
@@ -79,7 +79,8 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
               width: 78mm;
               max-width: 78mm;
               margin: 0 auto;
-              padding: 4mm 2mm;
+              padding: 2mm 2mm 1mm 2mm;
+              box-sizing: border-box;
             }
             /* Component styling translations for thermal print fidelity */
             .text-center { text-align: center; }
@@ -185,9 +186,14 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             .divide-y-2 > * + * { border-top: 2px dashed #000000; }
             .divide-dashed { border-style: dashed; }
             
-            /* Clean pagination behavior */
+            /* Clean pagination behavior & zero trailing margins */
             .print-wrapper, .print-wrapper * {
               page-break-inside: auto;
+            }
+            .print-wrapper > *:last-child,
+            .print-wrapper > *:last-child > *:last-child {
+              margin-bottom: 0 !important;
+              padding-bottom: 0 !important;
             }
           </style>
         </head>
@@ -200,14 +206,45 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
     `);
     doc.close();
 
-    // Allow rendering engine to layout detached DOM before print invocation
+    // Allow browser layout engine to render isolated DOM, compute exact content height, and fit @page dynamically
     setTimeout(() => {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
-      // Remove iframe from DOM after print dialog triggers
+      try {
+        const wrapper = doc.querySelector(".print-wrapper") as HTMLElement | null;
+        const measuredPx = wrapper ? wrapper.scrollHeight : (printElement.offsetHeight || 320);
+        // 96 DPI conversion: 1 px ≈ 0.264583 mm
+        const computedHeightMm = Math.max(50, Math.ceil(measuredPx * 0.2646) + 4);
+
+        let dynamicStyle = doc.getElementById("receipt-page-style");
+        if (!dynamicStyle) {
+          dynamicStyle = doc.createElement("style");
+          dynamicStyle.id = "receipt-page-style";
+          doc.head.appendChild(dynamicStyle);
+        }
+        dynamicStyle.innerHTML = `
+          @page {
+            size: 80mm ${computedHeightMm}mm !important;
+            margin: 0 !important;
+          }
+          html, body {
+            width: 80mm !important;
+            max-width: 80mm !important;
+            height: ${computedHeightMm}mm !important;
+            max-height: ${computedHeightMm}mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+          }
+        ` + dynamicStyle.innerHTML;
+      } catch (e) {}
+
       setTimeout(() => {
-        iframe.remove();
-      }, 1000);
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+        // Remove iframe from DOM after print dialog triggers
+        setTimeout(() => {
+          iframe.remove();
+        }, 1500);
+      }, 50);
     }, 150);
   };
 
@@ -389,8 +426,8 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </div>
 
           {/* Footer Greeting - Clean without barcode and without paid by */}
-          <div className="pt-4 pb-1 text-center space-y-1 mt-2">
-            <div className="text-xs sm:text-sm text-black space-y-1 font-black">
+          <div className="pt-2 pb-0.5 text-center space-y-0.5 mt-2">
+            <div className="text-xs sm:text-sm text-black space-y-0.5 font-black">
               <p className="font-black text-black text-sm sm:text-base">Thank you for dining with SwiftBite!</p>
               <p className="text-[11px] sm:text-xs font-black">We hope to serve you again soon &bull; Have a wonderful day</p>
             </div>
