@@ -71,7 +71,7 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               padding: 0 !important;
               background: #ffffff !important;
               color: #000000 !important;
-              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
               -webkit-font-smoothing: none !important;
               font-weight: 900 !important;
             }
@@ -202,25 +202,25 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
         <div className="max-h-[70vh] overflow-y-auto pr-1">
           <div
             id="kitchen-receipt"
-            className="receipt-container bg-white text-zinc-950 p-6 sm:p-7 rounded-2xl shadow-xl border-2 border-zinc-950 mx-auto max-w-[380px] font-mono transition-all"
+            className="receipt-container bg-white text-zinc-950 p-6 sm:p-7 rounded-2xl shadow-xl border-2 border-zinc-950 mx-auto max-w-[380px] font-sans transition-all"
           >
             {/* Header: Kitchen KOT */}
             <div className="text-center pb-3 border-b-2 border-black">
               <div className="inline-flex items-center justify-center p-1.5 rounded-xl bg-black text-white mb-1.5">
                 <ChefHat className="h-6 w-6" />
               </div>
-              <h2 className="text-xl font-black tracking-tight text-black uppercase">
+              <h2 className="text-xl font-black tracking-tight text-black uppercase font-sans">
                 *** KITCHEN ORDER TICKET ***
               </h2>
-              <p className="text-xs font-black tracking-widest text-zinc-800 uppercase mt-0.5">
+              <p className="text-xs font-black tracking-widest text-black uppercase mt-0.5">
                 SWIFTBITE KITCHEN DISPATCH
               </p>
             </div>
 
             {/* Prominent Order No & Order Type Banner */}
-            <div className="my-3 py-2.5 px-3 bg-zinc-100 border-2 border-black rounded-lg flex items-center justify-between">
+            <div className="my-3 py-2.5 px-3 bg-zinc-100 border-2 border-black rounded-lg flex items-center justify-between font-sans">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-zinc-600 block">
+                <span className="text-[10px] font-black uppercase tracking-wider text-black block">
                   KOT # / ORDER #
                 </span>
                 <span className="text-xl font-black tracking-wider text-black">
@@ -235,26 +235,26 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
             </div>
 
             {/* Server / Customer Meta */}
-            <div className="py-2.5 border-y-2 border-dashed border-black text-xs space-y-1.5 text-black font-black">
+            <div className="py-2.5 border-y-2 border-dashed border-black text-xs space-y-1.5 text-black font-black font-sans">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-black font-black">Time Placed:</span>
+                <span className="text-black font-black uppercase">Time Placed:</span>
                 <span className="font-black text-black">{formattedTime} ({formattedDate})</span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-black font-black">Punched By:</span>
+                <span className="text-black font-black uppercase">Punched By:</span>
                 <span className="font-black text-black">{order.waiter_name || "Cashier Desk"}</span>
               </div>
               {order.customer_name && (
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-black font-black">Customer:</span>
+                  <span className="text-black font-black uppercase">Customer:</span>
                   <span className="font-black text-black">{order.customer_name}</span>
                 </div>
               )}
             </div>
 
             {/* Kitchen Items to Prepare */}
-            <div className="pt-3 pb-2 space-y-2 text-black font-black">
-              <div className="flex justify-between text-sm font-black uppercase tracking-wider text-black border-b-2 border-black pb-1.5">
+            <div className="pt-3 pb-2 space-y-2 text-black font-black font-sans">
+              <div className="flex justify-between text-sm sm:text-base font-black uppercase tracking-wider text-black border-b-2 border-black pb-1.5">
                 <span>QTY & ITEM NAME</span>
                 <span>STATUS</span>
               </div>
@@ -266,13 +266,13 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
                     item.menu_item_name?.toLowerCase().includes("combo");
 
                   return (
-                    <div key={item.id || idx} className="py-3 text-black font-black">
+                    <div key={item.id || idx} className="py-3 text-black font-black font-sans">
                       <div className="flex justify-between items-start">
                         <div className="flex items-center space-x-2">
                           <span className="text-xl font-black px-2 py-0.5 rounded bg-black text-white">
                             {item.quantity}x
                           </span>
-                          <span className="text-lg font-black text-black tracking-tight leading-snug">
+                          <span className="text-base sm:text-lg font-black text-black tracking-tight leading-snug">
                             {item.menu_item_name}
                           </span>
                         </div>
@@ -280,8 +280,8 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
                       </div>
                       {/* Only show includes for Combo Deals */}
                       {isDeal && item.notes && (
-                        <div className="mt-1 text-left text-black font-black">
-                          <p className="text-[11px] uppercase font-black tracking-wider text-black">
+                        <div className="mt-1 text-left text-black font-black font-sans">
+                          <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-black">
                             COMBO ITEMS TO PREPARE:
                           </p>
                           <p className="text-sm font-black text-black leading-tight mt-0.5">
