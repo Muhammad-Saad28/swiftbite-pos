@@ -355,7 +355,7 @@ export default function CashierPOSRegisterPage() {
                       <h4 className="font-bold text-xs text-white line-clamp-1">{item.name}</h4>
                     </div>
                     {isPizza ? (
-                      <p className="text-[10px] text-orange-400/90 font-medium mt-0.5">4 Sizes: S, M, L, Family</p>
+                      <p className="text-[10px] text-orange-400/90 font-medium mt-0.5">Sizes: S, M, L</p>
                     ) : item.description ? (
                       <p className="text-[10px] text-zinc-400 line-clamp-1 mt-0.5">{item.description}</p>
                     ) : null}

@@ -358,7 +358,7 @@ export default function WaiterNewOrderPage() {
                       </span>
                     </div>
                     {isPizza ? (
-                      <p className="text-[10px] text-orange-400/90 font-medium">4 Sizes: S, M, L, Family</p>
+                      <p className="text-[10px] text-orange-400/90 font-medium">Sizes: S, M, L</p>
                     ) : item.description ? (
                       <p className="text-[11px] text-zinc-400 line-clamp-2 leading-tight">{item.description}</p>
                     ) : null}

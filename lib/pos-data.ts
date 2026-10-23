@@ -134,7 +134,7 @@ export interface POSNotification {
   created_at: string;
 }
 
-export type PizzaSize = "Small" | "Medium" | "Large" | "Family";
+export type PizzaSize = "Small" | "Medium" | "Large";
 
 export interface PizzaSizeOption {
   size: PizzaSize;
@@ -157,6 +157,7 @@ export function isPizzaItem(item: { name?: string; category_name?: string }): bo
       "garden fresh",
       "kabab blast",
       "mexican fire fajita",
+      "maxican fire fajita",
       "peri peri",
       "royal crown crust",
       "royal malai booti",
@@ -166,45 +167,51 @@ export function isPizzaItem(item: { name?: string; category_name?: string }): bo
   );
 }
 
+interface PizzaPriceConfig {
+  Small?: number;
+  Medium: number;
+  Large: number;
+}
+
+const officialPizzaMenuRates: Record<string, PizzaPriceConfig> = {
+  "chicken tikka delight": { Small: 550, Medium: 1300, Large: 1600 },
+  "mexican fire fajita": { Small: 550, Medium: 1300, Large: 1600 },
+  "maxican fire fajita": { Small: 550, Medium: 1300, Large: 1600 },
+  "royal malai booti": { Small: 650, Medium: 1350, Large: 1750 },
+  "royal crown crust": { Medium: 1400, Large: 1850 },
+  "kabab blast": { Medium: 1550, Large: 1950 },
+  "smoky kabab crust": { Medium: 1550, Large: 1950 },
+  "cheese lover": { Small: 600, Medium: 1200, Large: 1500 },
+  "peri peri": { Small: 650, Medium: 1350, Large: 1750 },
+  "garden fresh": { Small: 600, Medium: 1200, Large: 1500 },
+  "swift special": { Medium: 1500, Large: 1850 },
+  "cheese crust malai": { Medium: 1400, Large: 1800 },
+};
+
 export function getPizzaSizes(item: { name: string; price: number; category_name?: string }): PizzaSizeOption[] {
   const name = (item.name || "").toLowerCase().trim();
+  const config = officialPizzaMenuRates[name];
 
-  const fixedRates: Record<string, { Small: number; Medium: number; Large: number; Family: number }> = {
-    "chicken tikka delight": { Small: 550, Medium: 1050, Large: 1550, Family: 2150 },
-    "mexican fire fajita": { Small: 550, Medium: 1050, Large: 1550, Family: 2150 },
-    "cheese lover": { Small: 600, Medium: 1150, Large: 1650, Family: 2250 },
-    "garden fresh": { Small: 600, Medium: 1150, Large: 1650, Family: 2250 },
-    "peri peri": { Small: 650, Medium: 1250, Large: 1750, Family: 2350 },
-    "royal malai booti": { Small: 650, Medium: 1250, Large: 1750, Family: 2350 },
-    "cheese crust malai": { Small: 850, Medium: 1400, Large: 1950, Family: 2600 },
-    "royal crown crust": { Small: 850, Medium: 1400, Large: 1950, Family: 2600 },
-    "swift special": { Small: 900, Medium: 1500, Large: 2050, Family: 2700 },
-    "kabab blast": { Small: 950, Medium: 1550, Large: 2100, Family: 2750 },
-    "smoky kabab crust": { Small: 950, Medium: 1550, Large: 2100, Family: 2750 },
-  };
-
-  const matched = fixedRates[name];
-  if (matched) {
-    return [
-      { size: "Small", label: "Small", price: matched.Small, description: 'Personal (7")' },
-      { size: "Medium", label: "Medium", price: matched.Medium, description: 'Regular (10")' },
-      { size: "Large", label: "Large", price: matched.Large, description: 'Family Feast (13")' },
-      { size: "Family", label: "Family", price: matched.Family, description: 'Jumbo Size (16")' },
-    ];
+  if (config) {
+    const list: PizzaSizeOption[] = [];
+    if (config.Small) {
+      list.push({ size: "Small", label: "Small", price: config.Small, description: 'Personal (7")' });
+    }
+    list.push({ size: "Medium", label: "Medium", price: config.Medium, description: 'Regular (10")' });
+    list.push({ size: "Large", label: "Large", price: config.Large, description: 'Feast (13")' });
+    return list;
   }
 
-  // Fallback dynamic calculation
+  // Fallback dynamic calculation for any new custom pizza
   const base = item.price > 1000 ? Math.round(item.price * 0.55) : item.price;
   const sPrice = Math.round(base / 50) * 50;
   const mPrice = Math.round((base * 1.8) / 50) * 50;
-  const lPrice = Math.round((base * 2.6) / 50) * 50;
-  const fPrice = Math.round((base * 3.5) / 50) * 50;
+  const lPrice = Math.round((base * 2.5) / 50) * 50;
 
   return [
     { size: "Small", label: "Small", price: sPrice, description: 'Personal (7")' },
     { size: "Medium", label: "Medium", price: mPrice, description: 'Regular (10")' },
-    { size: "Large", label: "Large", price: lPrice, description: 'Family Feast (13")' },
-    { size: "Family", label: "Family", price: fPrice, description: 'Jumbo Size (16")' },
+    { size: "Large", label: "Large", price: lPrice, description: 'Feast (13")' },
   ];
 }
 
@@ -5329,7 +5336,7 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
           items: order.order_items?.map((item: any) => {
             const rawName = item.menu_items?.name || item.notes || "Item";
             let itemName = rawName;
-            const sizeNotesMatch = item.notes && (item.notes.startsWith("Size: ") || ["Small", "Medium", "Large", "Family"].includes(item.notes.trim()));
+            const sizeNotesMatch = item.notes && (item.notes.startsWith("Size: ") || ["Small", "Medium", "Large"].includes(item.notes.trim()));
             if (sizeNotesMatch) {
               const sz = item.notes.startsWith("Size: ") ? item.notes.replace("Size: ", "").trim() : item.notes.trim();
               if (!itemName.includes(`(${sz})`)) {

@@ -60,12 +60,19 @@ export function PizzaSizeModal({ isOpen, onClose, item, onSelectSize }: PizzaSiz
           </div>
         </div>
 
-        <p className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
-          Choose Size (4 Available Sizes):
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+            Choose Size ({sizes.length} Available Sizes):
+          </p>
+          {sizes.length === 2 && (
+            <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded font-bold">
+              Small not available
+            </span>
+          )}
+        </div>
 
-        {/* 4 Pizza Sizes Grid */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Pizza Sizes Grid */}
+        <div className={`grid ${sizes.length === 2 ? "grid-cols-2" : "grid-cols-1 sm:grid-cols-3"} gap-3`}>
           {sizes.map((s) => {
             const isSelected = selectedSize?.size === s.size;
             return (
