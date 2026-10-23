@@ -146,25 +146,40 @@ export interface PizzaSizeOption {
 export function isPizzaItem(item: { name?: string; category_name?: string }): boolean {
   if (!item) return false;
   const cat = (item.category_name || "").toLowerCase();
-  const name = (item.name || "").toLowerCase();
+  const name = (item.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
   return (
     cat.includes("pizza") ||
     name.includes("pizza") ||
     [
-      "cheese crust malai",
-      "cheese lover",
-      "chicken tikka delight",
-      "garden fresh",
-      "kabab blast",
-      "mexican fire fajita",
-      "maxican fire fajita",
-      "peri peri",
-      "royal crown crust",
-      "royal malai booti",
-      "smoky kabab crust",
-      "swift special",
-    ].includes(name.trim())
+      "cheesecrustmalai",
+      "cheeselover",
+      "chickentikkadelight",
+      "gardenfresh",
+      "kababblast",
+      "mexicanfirefajita",
+      "maxicanfirefajita",
+      "periperi",
+      "royalcrowncrust",
+      "royalmalaibooti",
+      "smokykababcrust",
+      "smokeykababcrust",
+      "swiftspecial",
+    ].includes(name)
   );
+}
+
+export function hasSmallPizzaSize(name?: string): boolean {
+  if (!name) return true;
+  const norm = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const noSmallList = [
+    "royalcrowncrust",
+    "kababblast",
+    "smokykababcrust",
+    "smokeykababcrust",
+    "swiftspecial",
+    "cheesecrustmalai",
+  ];
+  return !noSmallList.some((p) => norm.includes(p));
 }
 
 interface PizzaPriceConfig {
@@ -174,23 +189,24 @@ interface PizzaPriceConfig {
 }
 
 const officialPizzaMenuRates: Record<string, PizzaPriceConfig> = {
-  "chicken tikka delight": { Small: 550, Medium: 1300, Large: 1600 },
-  "mexican fire fajita": { Small: 550, Medium: 1300, Large: 1600 },
-  "maxican fire fajita": { Small: 550, Medium: 1300, Large: 1600 },
-  "royal malai booti": { Small: 650, Medium: 1350, Large: 1750 },
-  "royal crown crust": { Medium: 1400, Large: 1850 },
-  "kabab blast": { Medium: 1550, Large: 1950 },
-  "smoky kabab crust": { Medium: 1550, Large: 1950 },
-  "cheese lover": { Small: 600, Medium: 1200, Large: 1500 },
-  "peri peri": { Small: 650, Medium: 1350, Large: 1750 },
-  "garden fresh": { Small: 600, Medium: 1200, Large: 1500 },
-  "swift special": { Medium: 1500, Large: 1850 },
-  "cheese crust malai": { Medium: 1400, Large: 1800 },
+  "chickentikkadelight": { Small: 550, Medium: 1300, Large: 1600 },
+  "mexicanfirefajita": { Small: 550, Medium: 1300, Large: 1600 },
+  "maxicanfirefajita": { Small: 550, Medium: 1300, Large: 1600 },
+  "royalmalaibooti": { Small: 650, Medium: 1350, Large: 1750 },
+  "royalcrowncrust": { Medium: 1400, Large: 1850 },
+  "kababblast": { Medium: 1550, Large: 1950 },
+  "smokykababcrust": { Medium: 1550, Large: 1950 },
+  "smokeykababcrust": { Medium: 1550, Large: 1950 },
+  "cheeselover": { Small: 600, Medium: 1200, Large: 1500 },
+  "periperi": { Small: 650, Medium: 1350, Large: 1750 },
+  "gardenfresh": { Small: 600, Medium: 1200, Large: 1500 },
+  "swiftspecial": { Medium: 1500, Large: 1850 },
+  "cheesecrustmalai": { Medium: 1400, Large: 1800 },
 };
 
 export function getPizzaSizes(item: { name: string; price: number; category_name?: string }): PizzaSizeOption[] {
-  const name = (item.name || "").toLowerCase().trim();
-  const config = officialPizzaMenuRates[name];
+  const norm = (item.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const config = officialPizzaMenuRates[norm];
 
   if (config) {
     const list: PizzaSizeOption[] = [];
@@ -202,17 +218,20 @@ export function getPizzaSizes(item: { name: string; price: number; category_name
     return list;
   }
 
-  // Fallback dynamic calculation for any new custom pizza
+  // Fallback: check if item is in the no-small list
+  const allowSmall = hasSmallPizzaSize(item.name || "");
   const base = item.price > 1000 ? Math.round(item.price * 0.55) : item.price;
   const sPrice = Math.round(base / 50) * 50;
   const mPrice = Math.round((base * 1.8) / 50) * 50;
   const lPrice = Math.round((base * 2.5) / 50) * 50;
 
-  return [
-    { size: "Small", label: "Small", price: sPrice, description: 'Personal (7")' },
-    { size: "Medium", label: "Medium", price: mPrice, description: 'Regular (10")' },
-    { size: "Large", label: "Large", price: lPrice, description: 'Feast (13")' },
-  ];
+  const list: PizzaSizeOption[] = [];
+  if (allowSmall) {
+    list.push({ size: "Small", label: "Small", price: sPrice, description: 'Personal (7")' });
+  }
+  list.push({ size: "Medium", label: "Medium", price: mPrice, description: 'Regular (10")' });
+  list.push({ size: "Large", label: "Large", price: lPrice, description: 'Feast (13")' });
+  return list;
 }
 
 // In-Memory Fallback Dataset

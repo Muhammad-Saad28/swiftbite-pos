@@ -13,6 +13,8 @@ import {
   getPOSTables, 
   createPOSOrder, 
   isPizzaItem,
+  hasSmallPizzaSize,
+  getPizzaSizes,
   PizzaSizeOption,
   POSMenuItem, 
   POSCategory, 
@@ -354,11 +356,21 @@ export default function WaiterNewOrderPage() {
                         {item.name}
                       </h3>
                       <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded shrink-0">
-                        {isPizza ? `From Rs. ${item.price}` : `Rs. ${item.price}`}
+                        {isPizza ? `From Rs. ${getPizzaSizes(item)[0]?.price || item.price}` : `Rs. ${item.price}`}
                       </span>
                     </div>
                     {isPizza ? (
-                      <p className="text-[10px] text-orange-400/90 font-medium">Sizes: S, M, L</p>
+                      <div className="mt-0.5">
+                        {hasSmallPizzaSize(item.name) ? (
+                          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                            Sizes: S, M, L
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                            Sizes: M, L (No Small)
+                          </span>
+                        )}
+                      </div>
                     ) : item.description ? (
                       <p className="text-[11px] text-zinc-400 line-clamp-2 leading-tight">{item.description}</p>
                     ) : null}

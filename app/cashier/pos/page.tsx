@@ -12,6 +12,8 @@ import {
   getPOSTables, 
   createPOSOrder, 
   isPizzaItem,
+  hasSmallPizzaSize,
+  getPizzaSizes,
   PizzaSizeOption,
   POSMenuItem, 
   POSCategory, 
@@ -355,7 +357,17 @@ export default function CashierPOSRegisterPage() {
                       <h4 className="font-bold text-xs text-white line-clamp-1">{item.name}</h4>
                     </div>
                     {isPizza ? (
-                      <p className="text-[10px] text-orange-400/90 font-medium mt-0.5">Sizes: S, M, L</p>
+                      <div className="mt-0.5">
+                        {hasSmallPizzaSize(item.name) ? (
+                          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                            Sizes: S, M, L
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                            Sizes: M, L (No Small)
+                          </span>
+                        )}
+                      </div>
                     ) : item.description ? (
                       <p className="text-[10px] text-zinc-400 line-clamp-1 mt-0.5">{item.description}</p>
                     ) : null}
@@ -363,7 +375,7 @@ export default function CashierPOSRegisterPage() {
 
                   <div className="mt-3 pt-2 border-t border-zinc-800 flex items-center justify-between">
                     <span className="font-mono font-extrabold text-xs text-orange-400">
-                      {isPizza ? `From Rs. ${item.price}` : `Rs. ${item.price}`}
+                      {isPizza ? `From Rs. ${getPizzaSizes(item)[0]?.price || item.price}` : `Rs. ${item.price}`}
                     </span>
                     <div className="h-6 w-6 rounded-lg bg-orange-600/20 text-orange-400 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-colors">
                       <Plus className="h-3.5 w-3.5" />
