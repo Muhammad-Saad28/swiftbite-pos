@@ -15,7 +15,197 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
   if (!order) return null;
 
   const handlePrint = () => {
-    window.print();
+    const printElement = document.getElementById("thermal-receipt");
+    if (!printElement) {
+      window.print();
+      return;
+    }
+
+    // Remove any existing print iframe
+    const existingIframe = document.getElementById("thermal-print-iframe");
+    if (existingIframe) {
+      existingIframe.remove();
+    }
+
+    // Create a hidden, isolated iframe dedicated solely to printing the final receipt
+    const iframe = document.createElement("iframe");
+    iframe.id = "thermal-print-iframe";
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "0";
+    iframe.style.visibility = "hidden";
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (!doc) {
+      window.print();
+      return;
+    }
+
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Receipt #${numericReceiptNo}</title>
+          <style>
+            @page {
+              size: 80mm auto;
+              margin: 0;
+            }
+            *, *::before, *::after {
+              box-sizing: border-box;
+              margin: 0;
+              padding: 0;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            html, body {
+              width: 100%;
+              margin: 0 !important;
+              padding: 0 !important;
+              background: #ffffff !important;
+              color: #000000 !important;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+            }
+            .print-wrapper {
+              width: 78mm;
+              max-width: 78mm;
+              margin: 0 auto;
+              padding: 4mm 2mm;
+            }
+            /* Component styling translations for thermal print fidelity */
+            .text-center { text-align: center; }
+            .text-left { text-align: left; }
+            .text-right { text-align: right; }
+            .uppercase { text-transform: uppercase; }
+            .flex { display: flex; }
+            .inline-flex { display: inline-flex; }
+            .inline-block { display: inline-block; }
+            .items-center { align-items: center; }
+            .items-start { align-items: flex-start; }
+            .items-baseline { align-items: baseline; }
+            .justify-between { justify-content: space-between; }
+            .justify-center { justify-content: center; }
+            .space-y-0\\.5 > * + * { margin-top: 2px; }
+            .space-y-1 > * + * { margin-top: 4px; }
+            .space-y-1\\.5 > * + * { margin-top: 6px; }
+            .space-y-2 > * + * { margin-top: 8px; }
+            .space-y-2\\.5 > * + * { margin-top: 10px; }
+            .space-x-1 > * + * { margin-left: 4px; }
+            .space-x-2 > * + * { margin-left: 8px; }
+            .space-x-\\[2px\\] > * + * { margin-left: 2px; }
+            .border-b { border-bottom: 1.5px solid #000; }
+            .border-b-2 { border-bottom: 2px solid #000; }
+            .border-t { border-top: 1.5px solid #000; }
+            .border-t-2 { border-top: 2px solid #000; }
+            .border-y-2 { border-top: 2px solid #000; border-bottom: 2px solid #000; }
+            .border-2 { border: 2px solid #000; }
+            .border { border: 1.5px solid #000; }
+            .border-dashed { border-style: dashed !important; }
+            .border-dotted { border-style: dotted !important; }
+            .rounded { border-radius: 4px; }
+            .rounded-lg { border-radius: 6px; }
+            .rounded-xl { border-radius: 8px; }
+            .rounded-2xl { border-radius: 12px; }
+            .rounded-full { border-radius: 9999px; }
+            .bg-black { background-color: #000000 !important; color: #ffffff !important; }
+            .bg-white { background-color: #ffffff !important; }
+            .bg-zinc-100, .bg-zinc-200 { background-color: #f4f4f5 !important; }
+            .text-white { color: #ffffff !important; }
+            .text-black { color: #000000 !important; }
+            .font-black { font-weight: 900; }
+            .font-extrabold { font-weight: 800; }
+            .font-bold { font-weight: 700; }
+            .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important; }
+            .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; }
+            .text-xs { font-size: 11px; line-height: 14px; }
+            .text-sm { font-size: 13px; line-height: 16px; }
+            .text-base { font-size: 15px; line-height: 18px; }
+            .text-lg { font-size: 17px; line-height: 20px; }
+            .text-xl { font-size: 19px; line-height: 22px; }
+            .text-2xl { font-size: 21px; line-height: 24px; }
+            .text-3xl { font-size: 24px; line-height: 26px; }
+            .p-1 { padding: 4px; }
+            .p-1\\.5 { padding: 6px; }
+            .p-2 { padding: 8px; }
+            .p-2\\.5 { padding: 10px; }
+            .p-3 { padding: 12px; }
+            .px-2 { padding-left: 8px; padding-right: 8px; }
+            .px-2\\.5 { padding-left: 10px; padding-right: 10px; }
+            .px-3 { padding-left: 12px; padding-right: 12px; }
+            .px-3\\.5 { padding-left: 14px; padding-right: 14px; }
+            .py-0\\.5 { padding-top: 2px; padding-bottom: 2px; }
+            .py-1 { padding-top: 4px; padding-bottom: 4px; }
+            .py-1\\.5 { padding-top: 6px; padding-bottom: 6px; }
+            .py-2 { padding-top: 8px; padding-bottom: 8px; }
+            .py-2\\.5 { padding-top: 10px; padding-bottom: 10px; }
+            .py-3 { padding-top: 12px; padding-bottom: 12px; }
+            .pt-0\\.5 { padding-top: 2px; }
+            .pt-1 { padding-top: 4px; }
+            .pt-1\\.5 { padding-top: 6px; }
+            .pt-2 { padding-top: 8px; }
+            .pt-2\\.5 { padding-top: 10px; }
+            .pt-3 { padding-top: 12px; }
+            .pt-3\\.5 { padding-top: 14px; }
+            .pt-4 { padding-top: 16px; }
+            .pt-5 { padding-top: 20px; }
+            .pb-1 { padding-bottom: 4px; }
+            .pb-1\\.5 { padding-bottom: 6px; }
+            .pb-2 { padding-bottom: 8px; }
+            .pb-3 { padding-bottom: 10px; }
+            .pb-4 { padding-bottom: 14px; }
+            .my-3 { margin-top: 10px; margin-bottom: 10px; }
+            .mt-0\\.5 { margin-top: 2px; }
+            .mt-1 { margin-top: 4px; }
+            .mt-1\\.5 { margin-top: 6px; }
+            .mt-2 { margin-top: 8px; }
+            .mt-3 { margin-top: 12px; }
+            .mb-0\\.5 { margin-bottom: 2px; }
+            .mb-1\\.5 { margin-bottom: 6px; }
+            .pr-3 { padding-right: 12px; }
+            .h-10 { height: 40px; }
+            .h-18 { height: 72px; }
+            .w-18 { width: 72px; }
+            .h-full { height: 100%; }
+            .w-full { width: 100%; }
+            .leading-snug { line-height: 1.35; }
+            .leading-tight { line-height: 1.25; }
+            .tracking-wider { letter-spacing: 0.05em; }
+            .tracking-widest { letter-spacing: 0.1em; }
+            .tracking-tight { letter-spacing: -0.025em; }
+            .whitespace-nowrap { white-space: nowrap; }
+            .divide-y-2 > * + * { border-top: 2px dashed #000000; }
+            .divide-dashed { border-style: dashed; }
+            
+            /* Clean pagination behavior */
+            .print-wrapper, .print-wrapper * {
+              page-break-inside: auto;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-wrapper">
+            ${printElement.innerHTML}
+          </div>
+        </body>
+      </html>
+    `);
+    doc.close();
+
+    // Allow rendering engine to layout detached DOM before print invocation
+    setTimeout(() => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      // Remove iframe from DOM after print dialog triggers
+      setTimeout(() => {
+        iframe.remove();
+      }, 1000);
+    }, 150);
   };
 
   const discountAmount = order.discount_amount || 0;
@@ -235,74 +425,6 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </Button>
         </div>
       </div>
-
-      {/* High Quality Thermal Print Stylesheet */}
-      <style jsx global>{`
-        @media print {
-          @page {
-            margin: 0 !important;
-            size: auto;
-          }
-          html, body {
-            background: #fff !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            height: auto !important;
-            min-height: 0 !important;
-            overflow: visible !important;
-          }
-          /* Hide everything in DOM */
-          body > * {
-            display: none !important;
-          }
-          /* Only display receipt modal content container */
-          body > [data-radix-portal],
-          body > div:has(#thermal-receipt) {
-            display: block !important;
-            position: static !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            transform: none !important;
-          }
-          /* Ensure modal backdrop and other modal chrome are hidden */
-          .fixed, [role="dialog"], .backdrop-blur-sm {
-            position: static !important;
-            background: transparent !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-            max-height: none !important;
-            max-width: none !important;
-            width: auto !important;
-            transform: none !important;
-            display: block !important;
-          }
-          body * {
-            visibility: hidden;
-          }
-          #thermal-receipt, #thermal-receipt * {
-            visibility: visible;
-          }
-          #thermal-receipt {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            margin: 0 !important;
-            width: 78mm !important;
-            max-width: 78mm !important;
-            padding: 4mm 2mm !important;
-            box-shadow: none !important;
-            border: none !important;
-            border-radius: 0 !important;
-            background: #ffffff !important;
-            color: #000000 !important;
-            page-break-after: avoid !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-          }
-        }
-      `}</style>
     </Modal>
   );
 }
