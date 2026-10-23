@@ -246,7 +246,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           <div className="text-center space-y-1.5 pb-3">
             <div>
               <h2 className="text-2xl font-black tracking-tight text-black uppercase font-sans">
-                SWIFTBITE POS
+                SWIFTBITE
               </h2>
               <p className="text-xs font-black text-black tracking-wider uppercase mt-0.5">
                 Gourmet Burgers & Fast Food
