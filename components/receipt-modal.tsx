@@ -277,32 +277,32 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </div>
 
           {/* Metadata Section - Clean, Darker & Bold */}
-          <div className="py-2.5 text-xs sm:text-sm space-y-1.5 font-mono text-black font-black">
+          <div className="py-2.5 text-xs sm:text-sm space-y-1.5 font-sans text-black font-black">
             <div className="flex justify-between items-center">
-              <span className="text-black font-black">Date & Time:</span>
+              <span className="text-black font-black uppercase">Date & Time:</span>
               <span className="font-black text-black">{formattedDate}, {formattedTime}</span>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-black font-black">Cashier:</span>
+              <span className="text-black font-black uppercase">Cashier:</span>
               <span className="font-black text-black">{order.waiter_name || "Admin Manager"}</span>
             </div>
 
             {order.customer_name && (
               <div className="space-y-1.5 pt-1 text-black font-black">
                 <div className="flex justify-between items-center">
-                  <span className="text-black font-black">Customer:</span>
+                  <span className="text-black font-black uppercase">Customer:</span>
                   <span className="font-black text-black">{order.customer_name}</span>
                 </div>
                 {order.customer_phone && (
                   <div className="flex justify-between items-center">
-                    <span className="text-black font-black">Phone:</span>
+                    <span className="text-black font-black uppercase">Phone:</span>
                     <span className="font-black text-black">{order.customer_phone}</span>
                   </div>
                 )}
                 {order.delivery_address && (
                   <div className="text-xs sm:text-sm text-black pt-0.5 flex justify-between font-black">
-                    <span className="text-black font-black">Address:</span>
+                    <span className="text-black font-black uppercase">Address:</span>
                     <span className="text-right max-w-[65%] font-sans font-black text-black">{order.delivery_address}</span>
                   </div>
                 )}
@@ -311,8 +311,8 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </div>
 
           {/* Items Table */}
-          <div className="pt-2 pb-2 space-y-2 text-black font-black">
-            <div className="flex justify-between text-sm sm:text-base font-black uppercase tracking-wider text-black pb-1">
+          <div className="pt-2 pb-2 space-y-2 text-black font-black font-sans">
+            <div className="flex justify-between text-base sm:text-lg font-black uppercase tracking-wider text-black pb-1">
               <span>Item Description</span>
               <span>Amount</span>
             </div>
@@ -324,14 +324,14 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                   item.menu_item_name?.toLowerCase().includes("combo");
 
                 return (
-                  <div key={item.id} className="py-1 text-sm sm:text-base font-mono text-black font-black">
+                  <div key={item.id} className="py-1 text-base sm:text-lg font-sans text-black font-black">
                     <div className="flex justify-between items-start">
                       <div className="pr-3 text-left">
-                        {/* Main Item Name - Extra Bold & Prominent */}
+                        {/* Main Item Name - Matching Same Boldness and Sans Font as ITEM DESCRIPTION */}
                         <p className="text-base sm:text-lg font-black text-black leading-snug tracking-tight">
                           {item.menu_item_name}
                         </p>
-                        <p className="text-xs sm:text-sm font-black text-black mt-0.5">
+                        <p className="text-sm sm:text-base font-black text-black mt-0.5">
                           {item.quantity} &times; Rs. {item.price.toLocaleString()}
                         </p>
                       </div>
@@ -344,10 +344,10 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                     {/* Only show includes for Combo Deals */}
                     {isDeal && item.notes && (
                       <div className="mt-1 text-left text-black font-black">
-                        <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-black">
+                        <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-black">
                           INCLUDES:
                         </p>
-                        <p className="text-xs sm:text-sm font-black text-black leading-snug mt-0.5">
+                        <p className="text-sm sm:text-base font-black text-black leading-snug mt-0.5">
                           {item.notes}
                         </p>
                       </div>
@@ -359,7 +359,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </div>
 
           {/* Financial Breakdown */}
-          <div className="pt-2 space-y-1.5 text-sm sm:text-base font-mono">
+          <div className="pt-2 space-y-1.5 text-base sm:text-lg font-sans">
             <div className="flex justify-between text-black font-black">
               <span>Subtotal:</span>
               <span className="font-black text-black">Rs. {order.subtotal.toLocaleString()}</span>
@@ -375,7 +375,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             {/* Total Highlight */}
             <div className="pt-2 flex justify-between items-baseline">
               <div>
-                <span className="text-sm sm:text-base font-black uppercase tracking-wider text-black block">
+                <span className="text-base sm:text-lg font-black uppercase tracking-wider text-black block">
                   Net Amount
                 </span>
               </div>
