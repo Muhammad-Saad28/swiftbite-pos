@@ -318,35 +318,43 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             </div>
 
             <div className="space-y-3">
-              {order.items?.map((item) => (
-                <div key={item.id} className="py-1 text-sm sm:text-base font-mono text-black font-black">
-                  <div className="flex justify-between items-start">
-                    <div className="pr-3 text-left">
-                      <p className="font-black text-black leading-snug">
-                        {item.menu_item_name}
-                      </p>
-                      <p className="text-xs sm:text-sm font-black text-black mt-0.5">
-                        {item.quantity} &times; Rs. {item.price.toLocaleString()}
-                      </p>
+              {order.items?.map((item) => {
+                const isDeal =
+                  item.menu_item_name?.toLowerCase().includes("deal") ||
+                  item.menu_item_name?.toLowerCase().includes("combo");
+
+                return (
+                  <div key={item.id} className="py-1 text-sm sm:text-base font-mono text-black font-black">
+                    <div className="flex justify-between items-start">
+                      <div className="pr-3 text-left">
+                        {/* Main Item Name - Extra Bold & Prominent */}
+                        <p className="text-base sm:text-lg font-black text-black leading-snug tracking-tight">
+                          {item.menu_item_name}
+                        </p>
+                        <p className="text-xs sm:text-sm font-black text-black mt-0.5">
+                          {item.quantity} &times; Rs. {item.price.toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-black text-black whitespace-nowrap text-base sm:text-lg">
+                          Rs. {(item.price * item.quantity).toLocaleString()}
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="font-black text-black whitespace-nowrap text-sm sm:text-base">
-                        Rs. {(item.price * item.quantity).toLocaleString()}
-                      </span>
-                    </div>
+                    {/* Only show includes for Combo Deals */}
+                    {isDeal && item.notes && (
+                      <div className="mt-1 text-left text-black font-black">
+                        <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-black">
+                          INCLUDES:
+                        </p>
+                        <p className="text-xs sm:text-sm font-black text-black leading-snug mt-0.5">
+                          {item.notes}
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  {item.notes && (
-                    <div className="mt-1 text-left text-black font-black">
-                      <p className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-black">
-                        COMBO ITEMS TO PREPARE:
-                      </p>
-                      <p className="text-xs sm:text-sm font-black text-black leading-snug mt-0.5">
-                        {item.notes}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

@@ -5242,14 +5242,30 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
           items: order.order_items?.map((item: any) => {
             const itemName = item.menu_items?.name || item.notes || "Item";
             const desc = item.menu_items?.description || null;
-            let dealContents = desc;
-            if (item.notes && item.notes.trim() !== itemName.trim() && !item.notes.toLowerCase().startsWith("deal ")) {
-              dealContents = item.notes + (desc ? " | " + desc : "");
+            const categoryName = item.menu_items?.category_name || item.menu_items?.category?.name || "";
+            const isDealOrCombo =
+              itemName.toLowerCase().includes("deal") ||
+              itemName.toLowerCase().includes("combo") ||
+              categoryName.toLowerCase().includes("deal") ||
+              categoryName.toLowerCase().includes("combo");
+
+            let dealContents: string | null = null;
+            if (isDealOrCombo) {
+              dealContents = desc;
+              if (item.notes && item.notes.trim() !== itemName.trim() && !item.notes.toLowerCase().startsWith("deal ")) {
+                dealContents = item.notes + (desc ? " | " + desc : "");
+              }
+            } else {
+              // Not a deal/combo: only keep custom customer note if specifically provided, otherwise null
+              if (item.notes && item.notes.trim() !== itemName.trim() && !item.notes.toLowerCase().startsWith("deal ")) {
+                dealContents = item.notes;
+              }
             }
+
             return {
               ...item,
               menu_item_name: itemName,
-              notes: dealContents || item.notes || null,
+              notes: dealContents || null,
             };
           }),
           kitchen_started_at: localTimers.kitchen_started_at || order.kitchen_started_at || null,
