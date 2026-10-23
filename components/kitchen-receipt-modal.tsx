@@ -54,7 +54,6 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
           <title>KOT #${numericReceiptNo}</title>
           <style id="kot-page-style">
             @page {
-              size: 80mm auto;
               margin: 0;
             }
             *, *::before, *::after {
@@ -66,7 +65,8 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               print-color-adjust: exact !important;
             }
             html, body {
-              width: 100%;
+              width: 100% !important;
+              max-width: 80mm !important;
               margin: 0 !important;
               padding: 0 !important;
               background: #ffffff !important;
@@ -74,13 +74,21 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
               -webkit-font-smoothing: none !important;
               font-weight: 900 !important;
+              height: auto !important;
+              min-height: 0 !important;
+              max-height: none !important;
+              overflow: visible !important;
             }
             .print-wrapper {
               width: 78mm;
               max-width: 78mm;
               margin: 0 auto;
-              padding: 2mm 2mm 1mm 2mm;
+              padding: 2mm 2mm 0mm 2mm;
               box-sizing: border-box;
+              height: auto !important;
+              min-height: 0 !important;
+              max-height: none !important;
+              overflow: visible !important;
             }
             /* Component styling translations for thermal print fidelity */
             .text-center { text-align: center; }
@@ -179,9 +187,9 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
     setTimeout(() => {
       try {
         const wrapper = doc.querySelector(".print-wrapper") as HTMLElement | null;
-        const measuredPx = wrapper ? wrapper.scrollHeight : (printElement.offsetHeight || 280);
+        const measuredPx = wrapper?.offsetHeight || wrapper?.scrollHeight || printElement.offsetHeight || 260;
         // 96 DPI conversion: 1 px ≈ 0.264583 mm
-        const computedHeightMm = Math.max(40, Math.ceil(measuredPx * 0.2646) + 4);
+        const computedHeightMm = Math.max(35, Math.ceil(measuredPx * 0.2646) + 2);
 
         let dynamicStyle = doc.getElementById("kot-page-style");
         if (!dynamicStyle) {
@@ -189,19 +197,11 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
           dynamicStyle.id = "kot-page-style";
           doc.head.appendChild(dynamicStyle);
         }
+        // Valid CSS Paged Media descriptor (no !important on page properties)
         dynamicStyle.innerHTML = `
           @page {
-            size: 80mm ${computedHeightMm}mm !important;
-            margin: 0 !important;
-          }
-          html, body {
-            width: 80mm !important;
-            max-width: 80mm !important;
-            height: ${computedHeightMm}mm !important;
-            max-height: ${computedHeightMm}mm !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
+            size: 80mm ${computedHeightMm}mm;
+            margin: 0;
           }
         ` + dynamicStyle.innerHTML;
       } catch (e) {}
