@@ -15,7 +15,166 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
   if (!order) return null;
 
   const handlePrint = () => {
-    window.print();
+    const printElement = document.getElementById("kitchen-receipt");
+    if (!printElement) {
+      window.print();
+      return;
+    }
+
+    // Remove any existing print iframe
+    const existingIframe = document.getElementById("kot-print-iframe");
+    if (existingIframe) {
+      existingIframe.remove();
+    }
+
+    // Create a hidden, isolated iframe dedicated solely to printing this KOT
+    const iframe = document.createElement("iframe");
+    iframe.id = "kot-print-iframe";
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "0";
+    iframe.style.visibility = "hidden";
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (!doc) {
+      window.print();
+      return;
+    }
+
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>KOT #${numericReceiptNo}</title>
+          <style>
+            @page {
+              size: 80mm auto;
+              margin: 0;
+            }
+            *, *::before, *::after {
+              box-sizing: border-box;
+              margin: 0;
+              padding: 0;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            html, body {
+              width: 100%;
+              margin: 0 !important;
+              padding: 0 !important;
+              background: #ffffff !important;
+              color: #000000 !important;
+              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+            }
+            .print-wrapper {
+              width: 78mm;
+              max-width: 78mm;
+              margin: 0 auto;
+              padding: 4mm 2mm;
+            }
+            /* Component styling translations for thermal print fidelity */
+            .text-center { text-align: center; }
+            .text-right { text-align: right; }
+            .uppercase { text-transform: uppercase; }
+            .flex { display: flex; }
+            .inline-flex { display: inline-flex; }
+            .items-center { align-items: center; }
+            .items-start { align-items: flex-start; }
+            .justify-between { justify-content: space-between; }
+            .justify-center { justify-content: center; }
+            .space-y-1 > * + * { margin-top: 4px; }
+            .space-y-1\\.5 > * + * { margin-top: 6px; }
+            .space-y-2 > * + * { margin-top: 8px; }
+            .space-x-1\\.5 > * + * { margin-left: 6px; }
+            .space-x-2 > * + * { margin-left: 8px; }
+            .border-b { border-bottom: 1.5px solid #000; }
+            .border-b-2 { border-bottom: 2px solid #000; }
+            .border-t-2 { border-top: 2px solid #000; }
+            .border-y-2 { border-top: 2px solid #000; border-bottom: 2px solid #000; }
+            .border-2 { border: 2px solid #000; }
+            .border-dashed { border-style: dashed !important; }
+            .border-dotted { border-style: dotted !important; }
+            .rounded { border-radius: 4px; }
+            .rounded-lg { border-radius: 6px; }
+            .rounded-xl { border-radius: 8px; }
+            .bg-black { background-color: #000000 !important; color: #ffffff !important; }
+            .text-white { color: #ffffff !important; }
+            .text-black { color: #000000 !important; }
+            .font-black { font-weight: 900; }
+            .font-extrabold { font-weight: 800; }
+            .font-bold { font-weight: 700; }
+            .text-xs { font-size: 11px; line-height: 14px; }
+            .text-sm { font-size: 13px; line-height: 16px; }
+            .text-base { font-size: 15px; line-height: 18px; }
+            .text-lg { font-size: 16px; line-height: 20px; }
+            .text-xl { font-size: 18px; line-height: 22px; }
+            .p-1 { padding: 4px; }
+            .p-1\\.5 { padding: 6px; }
+            .p-2 { padding: 8px; }
+            .p-3 { padding: 10px; }
+            .px-1\\.5 { padding-left: 6px; padding-right: 6px; }
+            .px-2 { padding-left: 8px; padding-right: 8px; }
+            .px-2\\.5 { padding-left: 10px; padding-right: 10px; }
+            .px-3 { padding-left: 12px; padding-right: 12px; }
+            .py-0\\.5 { padding-top: 2px; padding-bottom: 2px; }
+            .py-1 { padding-top: 4px; padding-bottom: 4px; }
+            .py-1\\.5 { padding-top: 6px; padding-bottom: 6px; }
+            .py-2 { padding-top: 8px; padding-bottom: 8px; }
+            .py-2\\.5 { padding-top: 10px; padding-bottom: 10px; }
+            .py-3 { padding-top: 12px; padding-bottom: 12px; }
+            .pt-1 { padding-top: 4px; }
+            .pt-2 { padding-top: 8px; }
+            .pt-3 { padding-top: 10px; }
+            .pt-4 { padding-top: 14px; }
+            .pb-1 { padding-bottom: 4px; }
+            .pb-1\\.5 { padding-bottom: 6px; }
+            .pb-2 { padding-bottom: 8px; }
+            .pb-3 { padding-bottom: 10px; }
+            .my-3 { margin-top: 10px; margin-bottom: 10px; }
+            .mt-0\\.5 { margin-top: 2px; }
+            .mt-1 { margin-top: 4px; }
+            .mt-1\\.5 { margin-top: 6px; }
+            .mt-3 { margin-top: 10px; }
+            .mt-4 { margin-top: 14px; }
+            .mb-0\\.5 { margin-bottom: 2px; }
+            .mb-1\\.5 { margin-bottom: 6px; }
+            .pr-2 { padding-right: 8px; }
+            .pl-8 { padding-left: 28px; }
+            .leading-tight { line-height: 1.25; }
+            .italic { font-style: italic; }
+            .divide-y-2 > * + * { border-top: 2px dashed #000000; }
+            .divide-dashed { border-style: dashed; }
+            
+            /* Prevent unwanted pagination splits */
+            .print-wrapper, .print-wrapper * {
+              page-break-inside: auto;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-wrapper">
+            ${printElement.innerHTML}
+          </div>
+        </body>
+      </html>
+    `);
+    doc.close();
+
+    // Allow browser layout engine to render isolated DOM before printing
+    setTimeout(() => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      // Clean up after print window opens
+      setTimeout(() => {
+        iframe.remove();
+      }, 1000);
+    }, 150);
   };
 
   const numericReceiptNo = formatOrderNumber(order.order_number || order.id);
@@ -140,7 +299,6 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               <p className="font-black uppercase tracking-wider text-black text-xs">
                 === END OF KITCHEN ORDER TICKET ===
               </p>
-              <p className="text-zinc-750 font-bold">Send physical print to kitchen line</p>
             </div>
           </div>
         </div>
@@ -160,74 +318,6 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
           </Button>
         </div>
       </div>
-
-      {/* Print Styles for Kitchen Receipt */}
-      <style jsx global>{`
-        @media print {
-          @page {
-            margin: 0 !important;
-            size: auto;
-          }
-          html, body {
-            background: #fff !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            height: auto !important;
-            min-height: 0 !important;
-            overflow: visible !important;
-          }
-          /* Hide everything in DOM */
-          body > * {
-            display: none !important;
-          }
-          /* Only display modal container holding the receipt */
-          body > [data-radix-portal],
-          body > div:has(#kitchen-receipt) {
-            display: block !important;
-            position: static !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            transform: none !important;
-          }
-          /* Neutralize modal dialog centering wrappers */
-          .fixed, [role="dialog"], .backdrop-blur-sm {
-            position: static !important;
-            background: transparent !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-            max-height: none !important;
-            max-width: none !important;
-            width: auto !important;
-            transform: none !important;
-            display: block !important;
-          }
-          body * {
-            visibility: hidden;
-          }
-          #kitchen-receipt, #kitchen-receipt * {
-            visibility: visible;
-          }
-          #kitchen-receipt {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            margin: 0 !important;
-            width: 78mm !important;
-            max-width: 78mm !important;
-            padding: 4mm 2mm !important;
-            box-shadow: none !important;
-            border: none !important;
-            border-radius: 0 !important;
-            background: #ffffff !important;
-            color: #000000 !important;
-            page-break-after: avoid !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-          }
-        }
-      `}</style>
     </Modal>
   );
 }
