@@ -239,64 +239,54 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             id="thermal-receipt"
             className="receipt-container bg-white text-zinc-950 p-6 sm:p-7 rounded-2xl shadow-xl border border-zinc-200/80 mx-auto max-w-[380px] font-sans transition-all"
           >
-          {/* Top Brand Logo & Restaurant Header */}
-          <div className="text-center space-y-2 pb-4 border-b-2 border-black">
-            <div className="relative inline-block">
-              <div className="h-18 w-18 mx-auto rounded-full p-1 bg-black shadow-md flex items-center justify-center">
-                <img
-                  src="/logo.jpeg"
-                  alt="SwiftBite Logo"
-                  className="h-full w-full object-cover rounded-full bg-black"
-                />
-              </div>
-            </div>
-
+          {/* Top Restaurant Header */}
+          <div className="text-center space-y-1.5 pb-3">
             <div>
-              <h2 className="text-3xl font-black tracking-tight text-black uppercase font-sans">
+              <h2 className="text-2xl font-black tracking-tight text-black uppercase font-sans">
                 SWIFTBITE POS
               </h2>
-              <p className="text-sm font-black text-black tracking-wider uppercase mt-0.5">
+              <p className="text-xs font-black text-black tracking-wider uppercase mt-0.5">
                 Gourmet Burgers & Fast Food
               </p>
             </div>
 
-            <div className="text-xs text-black leading-snug space-y-0.5 pt-1 font-black">
+            <div className="text-xs text-black leading-snug space-y-0.5 pt-0.5 font-bold">
               <p>Main G.T. Road, near Orange Line Station, Dera Gujran, Lahore</p>
               <p>Phone: 0321-2490006 / 0306-4656951</p>
             </div>
           </div>
 
-          {/* Receipt Number Highlight Banner */}
-          <div className="my-3 py-2.5 px-3.5 rounded-xl border-2 border-black bg-white flex items-center justify-between">
+          {/* Receipt Number Banner - Clean without boxes */}
+          <div className="my-2 py-1 flex items-center justify-between">
             <div className="text-left">
-              <span className="text-xs font-black uppercase tracking-widest text-black block">
+              <span className="text-[10px] font-black uppercase tracking-widest text-black block">
                 Receipt Number
               </span>
-              <span className="text-xl font-black font-mono tracking-wider text-black">
+              <span className="text-base font-black font-mono tracking-wider text-black">
                 #{numericReceiptNo}
               </span>
             </div>
             <div className="text-right">
-              <span className="inline-block px-3.5 py-1.5 rounded-lg text-sm font-black uppercase tracking-wider bg-black text-white shadow-sm">
+              <span className="inline-block text-xs font-black uppercase tracking-wider text-black">
                 {order.order_type ? order.order_type.replace("_", " ") : "Dine-In"}
               </span>
             </div>
           </div>
 
-          {/* Metadata Grid */}
-          <div className="py-3 border-y-2 border-dashed border-black text-sm space-y-2 font-mono">
+          {/* Metadata Section - Clean, Bold, Bigger Text */}
+          <div className="py-2.5 text-xs sm:text-sm space-y-1.5 font-mono">
             <div className="flex justify-between items-center">
               <span className="text-black font-black">Date & Time:</span>
               <span className="font-black text-black">{formattedDate}, {formattedTime}</span>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-black font-black">Server / Cashier:</span>
+              <span className="text-black font-black">Cashier:</span>
               <span className="font-black text-black">{order.waiter_name || "Admin Manager"}</span>
             </div>
 
             {order.customer_name && (
-              <div className="pt-2 mt-2 border-t-2 border-dotted border-black space-y-1.5">
+              <div className="space-y-1.5 pt-1">
                 <div className="flex justify-between items-center">
                   <span className="text-black font-black">Customer:</span>
                   <span className="font-black text-black">{order.customer_name}</span>
@@ -308,7 +298,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                   </div>
                 )}
                 {order.delivery_address && (
-                  <div className="text-xs text-black pt-1 flex justify-between font-black">
+                  <div className="text-xs sm:text-sm text-black pt-0.5 flex justify-between font-black">
                     <span className="text-black font-black">Address:</span>
                     <span className="text-right max-w-[65%] font-sans font-black">{order.delivery_address}</span>
                   </div>
@@ -318,38 +308,45 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </div>
 
           {/* Items Table */}
-          <div className="pt-3 pb-2 space-y-2.5">
-            <div className="flex justify-between text-base font-black uppercase tracking-wider text-black border-b-2 border-black pb-2">
-              <span className="text-base font-black">Item Description</span>
-              <span className="text-base font-black">Amount</span>
+          <div className="pt-2 pb-2 space-y-2">
+            <div className="flex justify-between text-sm sm:text-base font-black uppercase tracking-wider text-black pb-1">
+              <span>Item Description</span>
+              <span>Amount</span>
             </div>
 
-            <div className="divide-y-2 divide-dashed divide-black">
+            <div className="space-y-3">
               {order.items?.map((item) => (
-                <div key={item.id} className="py-3 flex justify-between items-start text-base font-mono">
+                <div key={item.id} className="py-1 flex justify-between items-start text-sm sm:text-base font-mono">
                   <div className="pr-3 text-left">
-                    <p className="font-black text-black leading-snug text-base">
+                    <p className="font-black text-black leading-snug">
                       {item.menu_item_name}
                     </p>
-                    {item.notes && (
-                      <p className="text-xs font-black text-black mt-1.5 leading-snug bg-white p-2 rounded border-2 border-black">
-                        📦 Combo includes: {item.notes}
-                      </p>
-                    )}
-                    <p className="text-sm font-black text-black mt-1">
+                    <p className="text-xs sm:text-sm font-black text-black mt-0.5">
                       {item.quantity} &times; Rs. {item.price.toLocaleString()}
                     </p>
                   </div>
-                  <span className="font-black text-black whitespace-nowrap pt-0.5 text-base">
-                    Rs. {(item.price * item.quantity).toLocaleString()}
-                  </span>
+                  <div className="text-right flex flex-col items-end">
+                    <span className="font-black text-black whitespace-nowrap text-sm sm:text-base">
+                      Rs. {(item.price * item.quantity).toLocaleString()}
+                    </span>
+                    {item.notes && (
+                      <div className="mt-1 text-right max-w-[220px] p-1.5 rounded border-2 border-black bg-white">
+                        <p className="text-[10px] font-black uppercase tracking-wider text-black text-right">
+                          COMBO ITEMS TO PREPARE:
+                        </p>
+                        <p className="text-xs font-black text-black leading-snug text-right mt-0.5">
+                          {item.notes}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Financial Breakdown */}
-          <div className="pt-3 border-t-2 border-black space-y-2 text-base font-mono">
+          <div className="pt-2 space-y-1.5 text-sm sm:text-base font-mono">
             <div className="flex justify-between text-black font-black">
               <span>Subtotal:</span>
               <span className="font-black text-black">Rs. {order.subtotal.toLocaleString()}</span>
@@ -363,48 +360,25 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             )}
 
             {/* Total Highlight */}
-            <div className="pt-3.5 mt-2 border-t-2 border-dashed border-black flex justify-between items-baseline">
+            <div className="pt-2 flex justify-between items-baseline">
               <div>
-                <span className="text-base font-black uppercase tracking-wider text-black block">
+                <span className="text-sm sm:text-base font-black uppercase tracking-wider text-black block">
                   Net Amount
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-3xl font-black text-black tracking-tight">
+                <span className="text-2xl sm:text-3xl font-black text-black tracking-tight">
                   Rs. {order.total.toLocaleString()}
                 </span>
               </div>
             </div>
-
-            {order.payment_method && (
-              <div className="pt-2.5 border-t-2 border-dotted border-black flex justify-between text-sm items-center font-black">
-                <span className="text-black font-black">Paid Via:</span>
-                <span className="font-black uppercase tracking-wider text-white bg-black px-2.5 py-1 rounded">
-                  {order.payment_method.replace("_", " ")}
-                </span>
-              </div>
-            )}
           </div>
 
-          {/* Barcode & Footer Greeting */}
-          <div className="pt-5 pb-1 text-center space-y-2 border-t-2 border-dashed border-black mt-3">
-            {/* Decorative Barcode Lines */}
-            <div className="flex justify-center items-center space-x-[2px] h-10 py-1">
-              {[3, 1, 4, 1, 2, 5, 2, 1, 3, 2, 4, 1, 2, 4, 1, 3, 2, 4, 1, 2, 3, 1, 4, 2, 3].map((w, i) => (
-                <span
-                  key={i}
-                  className="bg-black inline-block h-full"
-                  style={{ width: `${w}px` }}
-                />
-              ))}
-            </div>
-            <p className="text-xs font-mono font-black tracking-widest text-black uppercase">
-              *{numericReceiptNo}*
-            </p>
-
-            <div className="text-sm text-black space-y-1 pt-1.5 font-black">
-              <p className="font-black text-black text-base">Thank you for dining with SwiftBite!</p>
-              <p className="text-xs font-black">We hope to serve you again soon &bull; Have a wonderful day</p>
+          {/* Footer Greeting - Clean without barcode and without paid by */}
+          <div className="pt-4 pb-1 text-center space-y-1 mt-2">
+            <div className="text-xs sm:text-sm text-black space-y-1 font-black">
+              <p className="font-black text-black text-sm sm:text-base">Thank you for dining with SwiftBite!</p>
+              <p className="text-[11px] sm:text-xs font-black">We hope to serve you again soon &bull; Have a wonderful day</p>
             </div>
           </div>
         </div>
