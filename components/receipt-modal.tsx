@@ -61,6 +61,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
               box-sizing: border-box;
               margin: 0;
               padding: 0;
+              color: #000000 !important;
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
             }
@@ -71,6 +72,8 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
               background: #ffffff !important;
               color: #000000 !important;
               font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+              -webkit-font-smoothing: none !important;
+              font-weight: 900 !important;
             }
             .print-wrapper {
               width: 78mm;
@@ -273,8 +276,8 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             </div>
           </div>
 
-          {/* Metadata Section - Clean, Bold, Bigger Text */}
-          <div className="py-2.5 text-xs sm:text-sm space-y-1.5 font-mono">
+          {/* Metadata Section - Clean, Darker & Bold */}
+          <div className="py-2.5 text-xs sm:text-sm space-y-1.5 font-mono text-black font-black">
             <div className="flex justify-between items-center">
               <span className="text-black font-black">Date & Time:</span>
               <span className="font-black text-black">{formattedDate}, {formattedTime}</span>
@@ -286,7 +289,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             </div>
 
             {order.customer_name && (
-              <div className="space-y-1.5 pt-1">
+              <div className="space-y-1.5 pt-1 text-black font-black">
                 <div className="flex justify-between items-center">
                   <span className="text-black font-black">Customer:</span>
                   <span className="font-black text-black">{order.customer_name}</span>
@@ -300,7 +303,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                 {order.delivery_address && (
                   <div className="text-xs sm:text-sm text-black pt-0.5 flex justify-between font-black">
                     <span className="text-black font-black">Address:</span>
-                    <span className="text-right max-w-[65%] font-sans font-black">{order.delivery_address}</span>
+                    <span className="text-right max-w-[65%] font-sans font-black text-black">{order.delivery_address}</span>
                   </div>
                 )}
               </div>
@@ -308,7 +311,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           </div>
 
           {/* Items Table */}
-          <div className="pt-2 pb-2 space-y-2">
+          <div className="pt-2 pb-2 space-y-2 text-black font-black">
             <div className="flex justify-between text-sm sm:text-base font-black uppercase tracking-wider text-black pb-1">
               <span>Item Description</span>
               <span>Amount</span>
@@ -316,7 +319,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
 
             <div className="space-y-3">
               {order.items?.map((item) => (
-                <div key={item.id} className="py-1 text-sm sm:text-base font-mono">
+                <div key={item.id} className="py-1 text-sm sm:text-base font-mono text-black font-black">
                   <div className="flex justify-between items-start">
                     <div className="pr-3 text-left">
                       <p className="font-black text-black leading-snug">
@@ -333,7 +336,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                     </div>
                   </div>
                   {item.notes && (
-                    <div className="mt-1 text-left">
+                    <div className="mt-1 text-left text-black font-black">
                       <p className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-black">
                         COMBO ITEMS TO PREPARE:
                       </p>
