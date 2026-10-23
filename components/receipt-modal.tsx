@@ -316,30 +316,32 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
 
             <div className="space-y-3">
               {order.items?.map((item) => (
-                <div key={item.id} className="py-1 flex justify-between items-start text-sm sm:text-base font-mono">
-                  <div className="pr-3 text-left">
-                    <p className="font-black text-black leading-snug">
-                      {item.menu_item_name}
-                    </p>
-                    <p className="text-xs sm:text-sm font-black text-black mt-0.5">
-                      {item.quantity} &times; Rs. {item.price.toLocaleString()}
-                    </p>
+                <div key={item.id} className="py-1 text-sm sm:text-base font-mono">
+                  <div className="flex justify-between items-start">
+                    <div className="pr-3 text-left">
+                      <p className="font-black text-black leading-snug">
+                        {item.menu_item_name}
+                      </p>
+                      <p className="text-xs sm:text-sm font-black text-black mt-0.5">
+                        {item.quantity} &times; Rs. {item.price.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-black text-black whitespace-nowrap text-sm sm:text-base">
+                        Rs. {(item.price * item.quantity).toLocaleString()}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-right flex flex-col items-end">
-                    <span className="font-black text-black whitespace-nowrap text-sm sm:text-base">
-                      Rs. {(item.price * item.quantity).toLocaleString()}
-                    </span>
-                    {item.notes && (
-                      <div className="mt-1 text-right max-w-[220px] p-1.5 rounded border-2 border-black bg-white">
-                        <p className="text-[10px] font-black uppercase tracking-wider text-black text-right">
-                          COMBO ITEMS TO PREPARE:
-                        </p>
-                        <p className="text-xs font-black text-black leading-snug text-right mt-0.5">
-                          {item.notes}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                  {item.notes && (
+                    <div className="mt-1 text-left">
+                      <p className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-black">
+                        COMBO ITEMS TO PREPARE:
+                      </p>
+                      <p className="text-xs sm:text-sm font-black text-black leading-snug mt-0.5">
+                        {item.notes}
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
