@@ -272,6 +272,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             <div className="text-right">
               <span className="inline-block text-xs font-black uppercase tracking-wider text-black">
                 {order.order_type ? order.order_type.replace("_", " ") : "Dine-In"}
+                {(!order.order_type || order.order_type === "dine_in") && order.table_number ? ` - Table #${order.table_number}` : ""}
               </span>
             </div>
           </div>

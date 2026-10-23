@@ -17,6 +17,7 @@ import {
   POSOrder 
 } from "@/lib/pos-data";
 import { Utensils, Users, Plus, Calendar, XCircle, Phone, User, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminTablesPage() {
   const [tables, setTables] = useState<POSTable[]>([]);
@@ -184,7 +185,17 @@ export default function AdminTablesPage() {
               </div>
             )}
 
-            <div className="flex justify-between items-center pt-2">
+            <div className="flex flex-wrap gap-2 items-center justify-between pt-2 border-t border-zinc-800">
+              <Link href={`/cashier/pos?orderType=dine_in&table=${selectedTable.table_number}`}>
+                <Button
+                  size="sm"
+                  className="bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center space-x-1.5"
+                >
+                  <Utensils className="h-3.5 w-3.5" />
+                  <span>Punch Order (Table #{selectedTable.table_number})</span>
+                </Button>
+              </Link>
+
               {selectedTable.status === "available" && (
                 <Button
                   size="sm"

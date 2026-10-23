@@ -12,16 +12,22 @@ import {
   getPOSCategories, 
   getPOSTables, 
   createPOSOrder, 
+  isPizzaItem,
+  PizzaSizeOption,
   POSMenuItem, 
   POSCategory, 
   POSTable 
 } from "@/lib/pos-data";
 import { playOrderNotificationSound } from "@/lib/sound";
+import { PizzaSizeModal } from "@/components/pizza-size-modal";
 import { Search, Plus, Minus, Trash2, Send, CheckCircle2, ArrowLeft, ShoppingCart, Table as TableIcon, Utensils, ShoppingBag, Truck, User, Phone, MapPin } from "lucide-react";
 
 interface CartItem {
+  id: string;
   item: POSMenuItem;
   quantity: number;
+  size?: string;
+  notes?: string;
 }
 
 export default function WaiterNewOrderPage() {
@@ -29,14 +35,14 @@ export default function WaiterNewOrderPage() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
 
-  const initialTableNum = searchParams.get("table") || "7";
+  const initialTableNum = searchParams.get("table") || "1";
 
   const [categories, setCategories] = useState<POSCategory[]>([]);
   const [menuItems, setMenuItems] = useState<POSMenuItem[]>([]);
   const [tables, setTables] = useState<POSTable[]>([]);
 
   const [orderType, setOrderType] = useState<"dine_in" | "takeaway" | "delivery">("dine_in");
-  const [selectedTableNum, setSelectedTableNum] = useState<number>(parseInt(initialTableNum, 10) || 7);
+  const [selectedTableNum, setSelectedTableNum] = useState<number>(parseInt(initialTableNum, 10) || 1);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
@@ -49,6 +55,9 @@ export default function WaiterNewOrderPage() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Pizza Size Modal State
+  const [pizzaModalItem, setPizzaModalItem] = useState<POSMenuItem | null>(null);
+
   useEffect(() => {
     Promise.all([getPOSCategories(), getPOSMenuItems(), getPOSTables()]).then(([c, m, t]) => {
       setCategories(c);
@@ -57,21 +66,48 @@ export default function WaiterNewOrderPage() {
     });
   }, []);
 
-  const addToCart = (item: POSMenuItem) => {
+  const handleItemClick = (item: POSMenuItem) => {
+    if (isPizzaItem(item)) {
+      setPizzaModalItem(item);
+    } else {
+      addToCart(item);
+    }
+  };
+
+  const addToCart = (item: POSMenuItem, sizeOption?: PizzaSizeOption) => {
     setCart((prev) => {
-      const existing = prev.find((c) => c.item.id === item.id);
+      const cartKey = sizeOption ? `${item.id}_${sizeOption.size}` : item.id;
+      const existing = prev.find((c) => c.id === cartKey);
       if (existing) {
-        return prev.map((c) => (c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c));
+        return prev.map((c) => (c.id === cartKey ? { ...c, quantity: c.quantity + 1 } : c));
       }
-      return [...prev, { item, quantity: 1 }];
+
+      const itemRecord: POSMenuItem = sizeOption
+        ? {
+            ...item,
+            name: `${item.name} (${sizeOption.size})`,
+            price: sizeOption.price,
+          }
+        : item;
+
+      return [
+        ...prev,
+        {
+          id: cartKey,
+          item: itemRecord,
+          quantity: 1,
+          size: sizeOption?.size,
+          notes: sizeOption ? `Size: ${sizeOption.size}` : undefined,
+        },
+      ];
     });
   };
 
-  const updateQuantity = (id: string, delta: number) => {
+  const updateQuantity = (cartId: string, delta: number) => {
     setCart((prev) =>
       prev
         .map((c) => {
-          if (c.item.id === id) {
+          if (c.id === cartId) {
             const newQty = c.quantity + delta;
             return newQty > 0 ? { ...c, quantity: newQty } : null;
           }
@@ -81,8 +117,8 @@ export default function WaiterNewOrderPage() {
     );
   };
 
-  const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((c) => c.item.id !== id));
+  const removeFromCart = (cartId: string) => {
+    setCart((prev) => prev.filter((c) => c.id !== cartId));
   };
 
   const subtotal = cart.reduce((sum, c) => sum + c.item.price * c.quantity, 0);
@@ -106,10 +142,11 @@ export default function WaiterNewOrderPage() {
       delivery_address: orderType === "delivery" ? deliveryAddress : null,
       notes,
       items: cart.map((c) => ({
-        menu_item_id: c.item.id,
+        menu_item_id: c.item.id.includes("_") ? c.item.id.split("_")[0] : c.item.id,
         menu_item_name: c.item.name,
         quantity: c.quantity,
         price: c.item.price,
+        notes: c.notes || null,
       })),
     });
 
@@ -177,19 +214,60 @@ export default function WaiterNewOrderPage() {
 
       {/* Mode Specific Inputs */}
       {orderType === "dine_in" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl">
-          <Input
-            placeholder="Guest / Customer Name (Optional)"
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-            className="bg-zinc-950 border-zinc-800 text-xs"
-          />
-          <Input
-            placeholder="Guest Contact / Phone (Optional)"
-            value={customerPhone}
-            onChange={(e) => setCustomerPhone(e.target.value)}
-            className="bg-zinc-950 border-zinc-800 text-xs"
-          />
+        <div className="space-y-3">
+          {/* 6 Tables Selector */}
+          <div className="bg-zinc-900 border border-orange-500/30 p-3 rounded-xl space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
+                <Utensils className="h-3.5 w-3.5 text-orange-400" />
+                Select Dine-In Table (6 Tables):
+              </span>
+              <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/20">
+                Table #{selectedTableNum}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              {[1, 2, 3, 4, 5, 6].map((tableNum) => {
+                const isSelected = selectedTableNum === tableNum;
+                const tbl = tables.find((t) => t.table_number === tableNum);
+                const isOccupied = tbl?.status === "occupied";
+                return (
+                  <button
+                    key={tableNum}
+                    type="button"
+                    onClick={() => setSelectedTableNum(tableNum)}
+                    className={`py-2 px-2.5 rounded-xl border text-center transition-all flex flex-col items-center justify-center ${
+                      isSelected
+                        ? "bg-orange-600 border-orange-500 text-white shadow font-black scale-105"
+                        : isOccupied
+                        ? "bg-zinc-950 border-amber-500/40 text-amber-300"
+                        : "bg-zinc-950 border-zinc-800 text-zinc-300 hover:border-zinc-700"
+                    }`}
+                  >
+                    <span className="text-xs font-black">Table {tableNum}</span>
+                    <span className={`text-[10px] ${isSelected ? "text-orange-200" : isOccupied ? "text-amber-400 font-semibold" : "text-emerald-400"}`}>
+                      {isOccupied ? "Occupied" : "Available"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl">
+            <Input
+              placeholder="Guest / Customer Name (Optional)"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              className="bg-zinc-950 border-zinc-800 text-xs"
+            />
+            <Input
+              placeholder="Guest Contact / Phone (Optional)"
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              className="bg-zinc-950 border-zinc-800 text-xs"
+            />
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl">
@@ -262,33 +340,40 @@ export default function WaiterNewOrderPage() {
 
           {/* Menu Items Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {filteredItems.map((item) => (
-              <Card
-                key={item.id}
-                onClick={() => addToCart(item)}
-                className="bg-zinc-900 border-zinc-800 hover:border-orange-500/50 cursor-pointer transition-all p-3 flex flex-col justify-between group space-y-2"
-              >
-                <div className="space-y-1">
-                  <div className="flex justify-between items-start">
-                    <h3 className="font-extrabold text-white text-xs group-hover:text-orange-400 transition-colors">
-                      {item.name}
-                    </h3>
-                    <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded shrink-0">
-                      Rs. {item.price}
-                    </span>
+            {filteredItems.map((item) => {
+              const isPizza = isPizzaItem(item);
+              return (
+                <Card
+                  key={item.id}
+                  onClick={() => handleItemClick(item)}
+                  className="bg-zinc-900 border-zinc-800 hover:border-orange-500/50 cursor-pointer transition-all p-3 flex flex-col justify-between group space-y-2"
+                >
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-start">
+                      <h3 className="font-extrabold text-white text-xs group-hover:text-orange-400 transition-colors">
+                        {item.name}
+                      </h3>
+                      <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded shrink-0">
+                        {isPizza ? `From Rs. ${item.price}` : `Rs. ${item.price}`}
+                      </span>
+                    </div>
+                    {isPizza ? (
+                      <p className="text-[10px] text-orange-400/90 font-medium">4 Sizes: S, M, L, Family</p>
+                    ) : item.description ? (
+                      <p className="text-[11px] text-zinc-400 line-clamp-2 leading-tight">{item.description}</p>
+                    ) : null}
                   </div>
-                  <p className="text-[11px] text-zinc-400 line-clamp-2 leading-tight">{item.description}</p>
-                </div>
 
-                <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between">
-                  <span className="text-[10px] text-zinc-500 uppercase font-semibold">{item.category_name}</span>
-                  <Button size="sm" className="h-7 px-2.5 text-[11px] bg-zinc-800 group-hover:bg-orange-600 text-zinc-200 group-hover:text-white font-bold transition-all">
-                    <Plus className="h-3 w-3 mr-1" />
-                    <span>Add</span>
-                  </Button>
-                </div>
-              </Card>
-            ))}
+                  <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between">
+                    <span className="text-[10px] text-zinc-500 uppercase font-semibold">{item.category_name}</span>
+                    <Button size="sm" className="h-7 px-2.5 text-[11px] bg-zinc-800 group-hover:bg-orange-600 text-zinc-200 group-hover:text-white font-bold transition-all">
+                      <Plus className="h-3 w-3 mr-1" />
+                      <span>{isPizza ? "Sizes" : "Add"}</span>
+                    </Button>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
         </div>
 
@@ -313,7 +398,7 @@ export default function WaiterNewOrderPage() {
                 </div>
               ) : (
                 cart.map((c) => (
-                  <div key={c.item.id} className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between space-x-2">
+                  <div key={c.id} className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between space-x-2">
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-zinc-200 truncate">{c.item.name}</p>
                       <p className="text-[10px] text-zinc-500">Rs. {c.item.price} &times; {c.quantity}</p>
@@ -321,20 +406,20 @@ export default function WaiterNewOrderPage() {
 
                     <div className="flex items-center space-x-1">
                       <button
-                        onClick={() => updateQuantity(c.item.id, -1)}
+                        onClick={() => updateQuantity(c.id, -1)}
                         className="p-1 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300"
                       >
                         <Minus className="h-3 w-3" />
                       </button>
                       <span className="text-xs font-bold text-white px-1.5">{c.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(c.item.id, 1)}
+                        onClick={() => updateQuantity(c.id, 1)}
                         className="p-1 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300"
                       >
                         <Plus className="h-3 w-3" />
                       </button>
                       <button
-                        onClick={() => removeFromCart(c.item.id)}
+                        onClick={() => removeFromCart(c.id)}
                         className="p-1 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 ml-1"
                       >
                         <Trash2 className="h-3 w-3" />
@@ -412,6 +497,14 @@ export default function WaiterNewOrderPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Pizza Size Selection Modal */}
+      <PizzaSizeModal
+        isOpen={!!pizzaModalItem}
+        onClose={() => setPizzaModalItem(null)}
+        item={pizzaModalItem}
+        onSelectSize={(item, sizeOption) => addToCart(item, sizeOption)}
+      />
     </div>
   );
 }

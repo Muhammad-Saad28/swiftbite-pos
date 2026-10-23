@@ -11,11 +11,14 @@ import {
   getPOSCategories, 
   getPOSTables, 
   createPOSOrder, 
+  isPizzaItem,
+  PizzaSizeOption,
   POSMenuItem, 
   POSCategory, 
   POSTable 
 } from "@/lib/pos-data";
 import { playOrderNotificationSound } from "@/lib/sound";
+import { PizzaSizeModal } from "@/components/pizza-size-modal";
 import { 
   Search, 
   Plus, 
@@ -29,13 +32,17 @@ import {
   Phone, 
   MapPin, 
   CheckCircle2, 
-  ArrowLeft 
+  ArrowLeft,
+  Utensils
 } from "lucide-react";
 import Link from "next/link";
 
 interface CartItem {
+  id: string;
   item: POSMenuItem;
   quantity: number;
+  size?: string;
+  notes?: string;
 }
 
 export default function CashierPOSRegisterPage() {
@@ -58,29 +65,75 @@ export default function CashierPOSRegisterPage() {
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Pizza Size Modal State
+  const [pizzaModalItem, setPizzaModalItem] = useState<POSMenuItem | null>(null);
+
   useEffect(() => {
     Promise.all([getPOSCategories(), getPOSMenuItems(), getPOSTables()]).then(([c, m, t]) => {
       setCategories(c);
       setMenuItems(m);
       setTables(t);
     });
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const typeParam = params.get("orderType") || params.get("type");
+      const tableParam = params.get("table");
+      if (typeParam === "dine_in" || typeParam === "takeaway" || typeParam === "delivery") {
+        setOrderType(typeParam as any);
+      }
+      if (tableParam) {
+        const num = parseInt(tableParam, 10);
+        if (num >= 1 && num <= 6) {
+          setSelectedTableNum(num);
+          setOrderType("dine_in");
+        }
+      }
+    }
   }, []);
 
-  const addToCart = (item: POSMenuItem) => {
+  const handleItemClick = (item: POSMenuItem) => {
+    if (isPizzaItem(item)) {
+      setPizzaModalItem(item);
+    } else {
+      addToCart(item);
+    }
+  };
+
+  const addToCart = (item: POSMenuItem, sizeOption?: PizzaSizeOption) => {
     setCart((prev) => {
-      const existing = prev.find((c) => c.item.id === item.id);
+      const cartKey = sizeOption ? `${item.id}_${sizeOption.size}` : item.id;
+      const existing = prev.find((c) => c.id === cartKey);
       if (existing) {
-        return prev.map((c) => (c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c));
+        return prev.map((c) => (c.id === cartKey ? { ...c, quantity: c.quantity + 1 } : c));
       }
-      return [...prev, { item, quantity: 1 }];
+
+      const itemRecord: POSMenuItem = sizeOption
+        ? {
+            ...item,
+            name: `${item.name} (${sizeOption.size})`,
+            price: sizeOption.price,
+          }
+        : item;
+
+      return [
+        ...prev,
+        {
+          id: cartKey,
+          item: itemRecord,
+          quantity: 1,
+          size: sizeOption?.size,
+          notes: sizeOption ? `Size: ${sizeOption.size}` : undefined,
+        },
+      ];
     });
   };
 
-  const updateQuantity = (id: string, delta: number) => {
+  const updateQuantity = (cartId: string, delta: number) => {
     setCart((prev) =>
       prev
         .map((c) => {
-          if (c.item.id === id) {
+          if (c.id === cartId) {
             const newQty = c.quantity + delta;
             return newQty > 0 ? { ...c, quantity: newQty } : null;
           }
@@ -90,8 +143,8 @@ export default function CashierPOSRegisterPage() {
     );
   };
 
-  const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((c) => c.item.id !== id));
+  const removeFromCart = (cartId: string) => {
+    setCart((prev) => prev.filter((c) => c.id !== cartId));
   };
 
   const subtotal = cart.reduce((sum, c) => sum + c.item.price * c.quantity, 0);
@@ -115,10 +168,11 @@ export default function CashierPOSRegisterPage() {
       delivery_address: orderType === "delivery" ? deliveryAddress : null,
       notes,
       items: cart.map((c) => ({
-        menu_item_id: c.item.id,
+        menu_item_id: c.item.id.includes("_") ? c.item.id.split("_")[0] : c.item.id,
         menu_item_name: c.item.name,
         quantity: c.quantity,
         price: c.item.price,
+        notes: c.notes || null,
       })),
     });
 
@@ -185,6 +239,53 @@ export default function CashierPOSRegisterPage() {
         </div>
       </div>
 
+      {/* Dine-In 6 Tables Selector */}
+      {orderType === "dine_in" && (
+        <div className="bg-zinc-900 border border-orange-500/30 p-3.5 rounded-2xl space-y-2.5 shadow-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center space-x-2">
+              <span className="p-1.5 rounded-lg bg-orange-600/20 text-orange-400">
+                <Utensils className="h-4 w-4" />
+              </span>
+              <div>
+                <span className="text-xs font-black text-white uppercase tracking-wider">Select Dine-In Table</span>
+                <span className="text-[11px] text-zinc-400 ml-2">(6 Tables Available)</span>
+              </div>
+            </div>
+            <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2.5 py-1 rounded-full border border-orange-500/20 w-fit">
+              Selected: Table #{selectedTableNum}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+            {[1, 2, 3, 4, 5, 6].map((tableNum) => {
+              const isSelected = selectedTableNum === tableNum;
+              const tbl = tables.find((t) => t.table_number === tableNum);
+              const isOccupied = tbl?.status === "occupied";
+              return (
+                <button
+                  key={tableNum}
+                  type="button"
+                  onClick={() => setSelectedTableNum(tableNum)}
+                  className={`py-2 px-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center ${
+                    isSelected
+                      ? "bg-orange-600 border-orange-500 text-white shadow-md shadow-orange-600/30 font-black scale-105"
+                      : isOccupied
+                      ? "bg-zinc-950/80 border-amber-500/40 text-amber-300 hover:border-amber-400"
+                      : "bg-zinc-950 border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:bg-zinc-800/50"
+                  }`}
+                >
+                  <span className="text-xs font-black">Table {tableNum}</span>
+                  <span className={`text-[10px] ${isSelected ? "text-orange-200" : isOccupied ? "text-amber-400 font-semibold" : "text-emerald-400"}`}>
+                    {isOccupied ? "Occupied" : "Available"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Menu Catalog Section */}
         <div className="lg:col-span-2 space-y-4">
@@ -233,35 +334,44 @@ export default function CashierPOSRegisterPage() {
 
           {/* Menu Items Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => addToCart(item)}
-                className="group cursor-pointer rounded-2xl bg-zinc-900 border border-zinc-800 p-3 hover:border-orange-500/50 hover:bg-zinc-850 transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="h-24 w-full bg-zinc-950 rounded-xl overflow-hidden mb-2 relative">
-                    {item.image && (
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                    )}
-                    <span className="absolute bottom-1 right-1 text-[9px] font-bold bg-zinc-950/80 px-1.5 py-0.5 rounded text-orange-400">
-                      {item.category_name}
-                    </span>
+            {filteredItems.map((item) => {
+              const isPizza = isPizzaItem(item);
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => handleItemClick(item)}
+                  className="group cursor-pointer rounded-2xl bg-zinc-900 border border-zinc-800 p-3 hover:border-orange-500/50 hover:bg-zinc-850 transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="h-24 w-full bg-zinc-950 rounded-xl overflow-hidden mb-2 relative">
+                      {item.image && (
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                      )}
+                      <span className="absolute bottom-1 right-1 text-[9px] font-bold bg-zinc-950/80 px-1.5 py-0.5 rounded text-orange-400">
+                        {item.category_name}
+                      </span>
+                    </div>
+                    <div className="flex items-start justify-between gap-1">
+                      <h4 className="font-bold text-xs text-white line-clamp-1">{item.name}</h4>
+                    </div>
+                    {isPizza ? (
+                      <p className="text-[10px] text-orange-400/90 font-medium mt-0.5">4 Sizes: S, M, L, Family</p>
+                    ) : item.description ? (
+                      <p className="text-[10px] text-zinc-400 line-clamp-1 mt-0.5">{item.description}</p>
+                    ) : null}
                   </div>
-                  <h4 className="font-bold text-xs text-white line-clamp-1">{item.name}</h4>
-                  {item.description && (
-                    <p className="text-[10px] text-zinc-400 line-clamp-1 mt-0.5">{item.description}</p>
-                  )}
-                </div>
 
-                <div className="mt-3 pt-2 border-t border-zinc-800 flex items-center justify-between">
-                  <span className="font-mono font-extrabold text-xs text-orange-400">Rs. {item.price}</span>
-                  <div className="h-6 w-6 rounded-lg bg-orange-600/20 text-orange-400 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-colors">
-                    <Plus className="h-3.5 w-3.5" />
+                  <div className="mt-3 pt-2 border-t border-zinc-800 flex items-center justify-between">
+                    <span className="font-mono font-extrabold text-xs text-orange-400">
+                      {isPizza ? `From Rs. ${item.price}` : `Rs. ${item.price}`}
+                    </span>
+                    <div className="h-6 w-6 rounded-lg bg-orange-600/20 text-orange-400 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                      <Plus className="h-3.5 w-3.5" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -277,6 +387,15 @@ export default function CashierPOSRegisterPage() {
 
             {/* Context Fields based on Order Type */}
             <div className="space-y-2">
+              {orderType === "dine_in" && (
+                <div className="p-2.5 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-between text-xs">
+                  <span className="text-zinc-300 font-bold">Selected Table:</span>
+                  <span className="font-black text-orange-400 bg-orange-500/20 px-2 py-0.5 rounded">
+                    Table #{selectedTableNum}
+                  </span>
+                </div>
+              )}
+
               <Input
                 label="Customer Name"
                 placeholder="Walk-in guest / Customer"
@@ -310,28 +429,30 @@ export default function CashierPOSRegisterPage() {
                 </p>
               ) : (
                 cart.map((c) => (
-                  <div key={c.item.id} className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800/80 flex items-center justify-between text-xs">
+                  <div key={c.id} className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800/80 flex items-center justify-between text-xs">
                     <div className="pr-2">
-                      <p className="font-bold text-white line-clamp-1">{c.item.name}</p>
+                      <div className="flex items-center space-x-1">
+                        <p className="font-bold text-white line-clamp-1">{c.item.name}</p>
+                      </div>
                       <p className="text-[10px] text-zinc-400 font-mono">Rs. {c.item.price * c.quantity}</p>
                     </div>
 
                     <div className="flex items-center space-x-1.5 shrink-0">
                       <button
-                        onClick={() => updateQuantity(c.item.id, -1)}
+                        onClick={() => updateQuantity(c.id, -1)}
                         className="h-6 w-6 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center font-bold"
                       >
                         <Minus className="h-3 w-3" />
                       </button>
                       <span className="w-5 text-center font-bold text-white text-xs">{c.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(c.item.id, 1)}
+                        onClick={() => updateQuantity(c.id, 1)}
                         className="h-6 w-6 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center font-bold"
                       >
                         <Plus className="h-3 w-3" />
                       </button>
                       <button
-                        onClick={() => removeFromCart(c.item.id)}
+                        onClick={() => removeFromCart(c.id)}
                         className="p-1 text-zinc-500 hover:text-rose-400 ml-1"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -374,6 +495,14 @@ export default function CashierPOSRegisterPage() {
           </Card>
         </div>
       </div>
+
+      {/* Pizza Size Selection Modal */}
+      <PizzaSizeModal
+        isOpen={!!pizzaModalItem}
+        onClose={() => setPizzaModalItem(null)}
+        item={pizzaModalItem}
+        onSelectSize={(item, sizeOption) => addToCart(item, sizeOption)}
+      />
     </div>
   );
 }

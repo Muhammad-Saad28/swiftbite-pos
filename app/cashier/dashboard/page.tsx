@@ -497,7 +497,7 @@ export default function CashierDashboardPage() {
                       <div className="flex items-center space-x-2">
                         <span className="text-lg font-black text-white">Order #{order.id}</span>
                         <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded uppercase">
-                          {order.order_type || "Dine-In"}
+                          {isDelivery ? "Delivery" : order.order_type === "takeaway" ? "Takeaway" : `Dine-In • Table #${order.table_number || 1}`}
                         </span>
                       </div>
                       <p className="text-xs text-zinc-400 mt-1">

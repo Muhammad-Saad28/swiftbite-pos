@@ -134,20 +134,88 @@ export interface POSNotification {
   created_at: string;
 }
 
+export type PizzaSize = "Small" | "Medium" | "Large" | "Family";
+
+export interface PizzaSizeOption {
+  size: PizzaSize;
+  label: string;
+  price: number;
+  description?: string;
+}
+
+export function isPizzaItem(item: { name?: string; category_name?: string }): boolean {
+  if (!item) return false;
+  const cat = (item.category_name || "").toLowerCase();
+  const name = (item.name || "").toLowerCase();
+  return (
+    cat.includes("pizza") ||
+    name.includes("pizza") ||
+    [
+      "cheese crust malai",
+      "cheese lover",
+      "chicken tikka delight",
+      "garden fresh",
+      "kabab blast",
+      "mexican fire fajita",
+      "peri peri",
+      "royal crown crust",
+      "royal malai booti",
+      "smoky kabab crust",
+      "swift special",
+    ].includes(name.trim())
+  );
+}
+
+export function getPizzaSizes(item: { name: string; price: number; category_name?: string }): PizzaSizeOption[] {
+  const name = (item.name || "").toLowerCase().trim();
+
+  const fixedRates: Record<string, { Small: number; Medium: number; Large: number; Family: number }> = {
+    "chicken tikka delight": { Small: 550, Medium: 1050, Large: 1550, Family: 2150 },
+    "mexican fire fajita": { Small: 550, Medium: 1050, Large: 1550, Family: 2150 },
+    "cheese lover": { Small: 600, Medium: 1150, Large: 1650, Family: 2250 },
+    "garden fresh": { Small: 600, Medium: 1150, Large: 1650, Family: 2250 },
+    "peri peri": { Small: 650, Medium: 1250, Large: 1750, Family: 2350 },
+    "royal malai booti": { Small: 650, Medium: 1250, Large: 1750, Family: 2350 },
+    "cheese crust malai": { Small: 850, Medium: 1400, Large: 1950, Family: 2600 },
+    "royal crown crust": { Small: 850, Medium: 1400, Large: 1950, Family: 2600 },
+    "swift special": { Small: 900, Medium: 1500, Large: 2050, Family: 2700 },
+    "kabab blast": { Small: 950, Medium: 1550, Large: 2100, Family: 2750 },
+    "smoky kabab crust": { Small: 950, Medium: 1550, Large: 2100, Family: 2750 },
+  };
+
+  const matched = fixedRates[name];
+  if (matched) {
+    return [
+      { size: "Small", label: "Small", price: matched.Small, description: 'Personal (7")' },
+      { size: "Medium", label: "Medium", price: matched.Medium, description: 'Regular (10")' },
+      { size: "Large", label: "Large", price: matched.Large, description: 'Family Feast (13")' },
+      { size: "Family", label: "Family", price: matched.Family, description: 'Jumbo Size (16")' },
+    ];
+  }
+
+  // Fallback dynamic calculation
+  const base = item.price > 1000 ? Math.round(item.price * 0.55) : item.price;
+  const sPrice = Math.round(base / 50) * 50;
+  const mPrice = Math.round((base * 1.8) / 50) * 50;
+  const lPrice = Math.round((base * 2.6) / 50) * 50;
+  const fPrice = Math.round((base * 3.5) / 50) * 50;
+
+  return [
+    { size: "Small", label: "Small", price: sPrice, description: 'Personal (7")' },
+    { size: "Medium", label: "Medium", price: mPrice, description: 'Regular (10")' },
+    { size: "Large", label: "Large", price: lPrice, description: 'Family Feast (13")' },
+    { size: "Family", label: "Family", price: fPrice, description: 'Jumbo Size (16")' },
+  ];
+}
+
 // In-Memory Fallback Dataset
 let mockTables: POSTable[] = [
-  { id: "t1", table_number: 1, capacity: 2, status: "available" },
+  { id: "t1", table_number: 1, capacity: 4, status: "available" },
   { id: "t2", table_number: 2, capacity: 4, status: "available" },
   { id: "t3", table_number: 3, capacity: 4, status: "available" },
   { id: "t4", table_number: 4, capacity: 6, status: "available" },
-  { id: "t5", table_number: 5, capacity: 2, status: "available" },
-  { id: "t6", table_number: 6, capacity: 4, status: "available" },
-  { id: "t7", table_number: 7, capacity: 4, status: "available" },
-  { id: "t8", table_number: 8, capacity: 8, status: "available" },
-  { id: "t9", table_number: 9, capacity: 4, status: "available" },
-  { id: "t10", table_number: 10, capacity: 6, status: "available" },
-  { id: "t11", table_number: 11, capacity: 2, status: "available" },
-  { id: "t12", table_number: 12, capacity: 4, status: "available" },
+  { id: "t5", table_number: 5, capacity: 4, status: "available" },
+  { id: "t6", table_number: 6, capacity: 6, status: "available" },
 ];
 
 let mockCategories: POSCategory[] = [
@@ -4920,9 +4988,28 @@ let mockIngredients: POSMenuItemIngredient[] = [
 export async function getPOSTables(): Promise<POSTable[]> {
   try {
     const { data, error } = await supabase.from("tables").select("*").order("table_number");
-    if (!error && data && data.length > 0) return data as POSTable[];
+    if (!error && data && data.length > 0) {
+      const valid = (data as POSTable[]).filter(t => t.table_number >= 1 && t.table_number <= 6);
+      if (valid.length >= 6) return valid;
+      return (data as POSTable[]).slice(0, 6);
+    }
   } catch (e) {}
   return mockTables;
+}
+
+export async function updatePOSOrderTable(orderId: string, tableNumber: number): Promise<boolean> {
+  const target = mockOrders.find(o => o.id === orderId);
+  if (target) {
+    target.table_number = tableNumber;
+    target.table_id = `t${tableNumber}`;
+  }
+  try {
+    const { data: tableData } = await supabase.from("tables").select("id").eq("table_number", tableNumber).maybeSingle();
+    if (tableData) {
+      await supabase.from("orders").update({ table_id: tableData.id }).eq("id", orderId);
+    }
+  } catch (e) {}
+  return true;
 }
 
 export async function addPOSTable(tableNumber: number, capacity: number): Promise<POSTable> {
@@ -5240,7 +5327,15 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
           assigned_rider_name: assignedRiderName,
           delivery_status: deliveryStatus,
           items: order.order_items?.map((item: any) => {
-            const itemName = item.menu_items?.name || item.notes || "Item";
+            const rawName = item.menu_items?.name || item.notes || "Item";
+            let itemName = rawName;
+            const sizeNotesMatch = item.notes && (item.notes.startsWith("Size: ") || ["Small", "Medium", "Large", "Family"].includes(item.notes.trim()));
+            if (sizeNotesMatch) {
+              const sz = item.notes.startsWith("Size: ") ? item.notes.replace("Size: ", "").trim() : item.notes.trim();
+              if (!itemName.includes(`(${sz})`)) {
+                itemName = `${itemName} (${sz})`;
+              }
+            }
             const desc = item.menu_items?.description || null;
             const categoryName = item.menu_items?.category_name || item.menu_items?.category?.name || "";
             const isDealOrCombo =
@@ -5252,12 +5347,12 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
             let dealContents: string | null = null;
             if (isDealOrCombo) {
               dealContents = desc;
-              if (item.notes && item.notes.trim() !== itemName.trim() && !item.notes.toLowerCase().startsWith("deal ")) {
+              if (item.notes && item.notes.trim() !== itemName.trim() && !item.notes.toLowerCase().startsWith("deal ") && !item.notes.startsWith("Size: ")) {
                 dealContents = item.notes + (desc ? " | " + desc : "");
               }
             } else {
               // Not a deal/combo: only keep custom customer note if specifically provided, otherwise null
-              if (item.notes && item.notes.trim() !== itemName.trim() && !item.notes.toLowerCase().startsWith("deal ")) {
+              if (item.notes && item.notes.trim() !== itemName.trim() && !item.notes.toLowerCase().startsWith("deal ") && !item.notes.startsWith("Size: ")) {
                 dealContents = item.notes;
               }
             }
@@ -5295,7 +5390,7 @@ export async function createPOSOrder(order: {
   customer_phone?: string | null;
   delivery_address?: string | null;
   notes?: string | null;
-  items: { menu_item_id: string; menu_item_name: string; quantity: number; price: number }[];
+  items: { menu_item_id: string; menu_item_name: string; quantity: number; price: number; notes?: string | null }[];
 }): Promise<POSOrder> {
   const orderType = order.order_type || "dine_in";
   const subtotal = order.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -5331,6 +5426,7 @@ export async function createPOSOrder(order: {
       menu_item_name: item.menu_item_name,
       quantity: item.quantity,
       price: item.price,
+      notes: item.notes || null,
     })),
   };
 
@@ -5370,6 +5466,7 @@ export async function createPOSOrder(order: {
         menu_item_id: item.menu_item_id,
         quantity: item.quantity,
         price: item.price,
+        notes: item.notes || null,
       }));
       await supabase.from("order_items").insert(insertedItems);
       newOrder.id = data.id;

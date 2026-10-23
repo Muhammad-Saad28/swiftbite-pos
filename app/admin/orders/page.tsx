@@ -10,6 +10,7 @@ import {
   getPOSOrders, 
   updateOrderStatus, 
   updatePOSOrderPaymentAndDiscount, 
+  updatePOSOrderTable,
   confirmRiderCashHandover,
   approveOrderCancellation,
   POSOrder 
@@ -38,8 +39,10 @@ import {
   Bike,
   Ban,
   ShieldAlert,
-  CheckCircle2
+  CheckCircle2,
+  Utensils
 } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<POSOrder[]>([]);
@@ -134,6 +137,7 @@ export default function AdminOrdersPage() {
   const filteredOrders = orders.filter((o) => {
     let matchesTab = true;
     if (activeTab === "all") matchesTab = true;
+    else if (activeTab === "dine_in") matchesTab = o.order_type === "dine_in" || (!o.order_type && !!o.table_number);
     else if (activeTab === "delivery") matchesTab = o.order_type === "delivery";
     else if (activeTab === "cancellation_requests") matchesTab = !!o.cancellation_requested && o.status !== "cancelled" && o.status !== "rejected";
     else if (activeTab === "rejected") matchesTab = o.status === "rejected" || o.status === "cancelled";
@@ -157,6 +161,7 @@ export default function AdminOrdersPage() {
   const tabs = [
     { id: "all", label: "All Orders", count: orders.length },
     { id: "pending", label: "Pending", count: orders.filter(o => o.status === "pending").length },
+    { id: "dine_in", label: "🍽️ Dine-In (6 Tables)", count: orders.filter(o => o.order_type === "dine_in" || (!o.order_type && !!o.table_number)).length },
     { id: "delivery", label: "🛵 Online Deliveries", count: orders.filter(o => o.order_type === "delivery").length },
     { id: "accepted", label: "Accepted", count: orders.filter(o => o.status === "accepted").length },
     { id: "preparing", label: "Preparing", count: orders.filter(o => o.status === "preparing").length },
@@ -181,19 +186,28 @@ export default function AdminOrdersPage() {
             )}
           </div>
           <p className="text-xs text-zinc-400 mt-0.5">
-            Realtime live orders &bull; Connected with customer website and WhatsApp
+            Realtime live orders &bull; Connected with customer website, dine-in tables, and WhatsApp
           </p>
         </div>
 
-        <div className="w-full sm:w-72">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-            <Input
-              placeholder="Search by Order #, Customer, Phone..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-zinc-900 border-zinc-800 text-xs"
-            />
+        <div className="flex items-center space-x-2">
+          <Link href="/cashier/pos?orderType=dine_in">
+            <Button className="bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 text-zinc-950 font-black text-xs h-9 px-3.5 rounded-xl shadow shrink-0">
+              <Utensils className="h-3.5 w-3.5 mr-1.5" />
+              <span>Punch Dine-In Sale</span>
+            </Button>
+          </Link>
+
+          <div className="w-full sm:w-64">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+              <Input
+                placeholder="Search Order #, Table..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 bg-zinc-900 border-zinc-800 text-xs h-9"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -264,9 +278,33 @@ export default function AdminOrdersPage() {
                             ? "bg-purple-500/15 text-purple-400 border border-purple-500/30"
                             : "bg-orange-500/15 text-orange-400 border border-orange-500/30"
                         }`}>
-                          {isDelivery ? "🛵 Online Delivery" : (order.order_type || "Dine-In")}
+                          {isDelivery
+                            ? "🛵 Online Delivery"
+                            : order.order_type === "takeaway"
+                            ? "🛍️ Takeaway"
+                            : `🍽️ Dine-In • Table #${order.table_number || 1}`}
                         </span>
                       </div>
+
+                      {/* Dine-In 6 Tables Reassign Selector */}
+                      {(!order.order_type || order.order_type === "dine_in") && order.status !== "completed" && order.status !== "cancelled" && (
+                        <div className="flex items-center space-x-1.5 mt-2 bg-zinc-950/80 border border-orange-500/20 px-2 py-1 rounded-lg w-fit">
+                          <Utensils className="h-3 w-3 text-orange-400" />
+                          <span className="text-[11px] text-zinc-400 font-bold">Table:</span>
+                          <select
+                            value={order.table_number || 1}
+                            onChange={async (e) => {
+                              await updatePOSOrderTable(order.id, parseInt(e.target.value, 10));
+                              await refreshData();
+                            }}
+                            className="bg-zinc-900 border border-zinc-700 text-orange-400 font-black text-[11px] rounded px-1.5 py-0.5 cursor-pointer hover:border-orange-400"
+                          >
+                            {[1, 2, 3, 4, 5, 6].map((num) => (
+                              <option key={num} value={num}>Table {num}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
 
                       {/* Customer / Table Details */}
                       {isDelivery || order.customer_name ? (

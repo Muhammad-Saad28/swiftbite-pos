@@ -230,6 +230,7 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               <div className="text-right">
                 <span className="inline-block px-2.5 py-1 rounded bg-black text-white font-black text-xs uppercase tracking-wider">
                   {order.order_type ? order.order_type.replace("_", " ") : "DINE IN"}
+                  {(!order.order_type || order.order_type === "dine_in") && order.table_number ? ` - TABLE #${order.table_number}` : ""}
                 </span>
               </div>
             </div>
