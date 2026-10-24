@@ -8,7 +8,7 @@ import { Settings, Save, CheckCircle2 } from "lucide-react";
 
 export default function AdminSettingsPage() {
   const [name, setName] = useState("SwiftBite Restaurant");
-  const [taxRate, setTaxRate] = useState("18");
+  const [taxRate, setTaxRate] = useState("0");
   const [currency, setCurrency] = useState("Rs.");
   const [serviceCharge, setServiceCharge] = useState("0");
   const [isSaved, setIsSaved] = useState(false);

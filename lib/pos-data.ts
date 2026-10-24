@@ -5344,8 +5344,16 @@ export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
         const assignedRiderName = local?.assigned_rider_name || (order.users?.name ? order.users?.name : null);
         const deliveryStatus = local?.delivery_status || (order.status === "completed" ? "delivered" : order.status === "served" ? "picked_up" : assignedRiderId ? "assigned" : "unassigned");
 
+        const effectiveSubtotal = order.subtotal || 0;
+        const discountVal = order.discount_type === "percentage"
+          ? Math.round(effectiveSubtotal * ((order.discount_amount || 0) / 100))
+          : (order.discount_amount || 0);
+        const effectiveTotal = Math.max(0, effectiveSubtotal - discountVal);
+
         return {
           ...order,
+          tax: 0,
+          total: effectiveTotal,
           order_number: totalCount - idx,
           table_number: order.tables?.table_number,
           waiter_name: order.users?.name || (order.order_type === "delivery" ? "Website Online" : "Staff"),
@@ -5495,6 +5503,8 @@ export async function createPOSOrder(order: {
         notes: item.notes || null,
       }));
       await supabase.from("order_items").insert(insertedItems);
+      // Guarantee zero sales tax in bills & database
+      await supabase.from("orders").update({ tax: 0, total: subtotal }).eq("id", data.id);
       newOrder.id = data.id;
     }
   } catch (e) {}
@@ -5524,14 +5534,14 @@ export async function updatePOSOrderPaymentAndDiscount(
       ? Math.round(target.subtotal * (discountAmount / 100))
       : discountAmount;
 
-    target.total = Math.max(0, (target.subtotal + target.tax) - discountVal);
+    target.tax = 0;
+    target.total = Math.max(0, target.subtotal - discountVal);
   }
 
   try {
     const { data: orderData } = await supabase.from("orders").select("subtotal, tax").eq("id", orderId).single();
     if (orderData) {
       const subtotal = orderData.subtotal || 0;
-      const tax = orderData.tax || 0;
       const discountVal = discountType === "percentage"
         ? Math.round(subtotal * (discountAmount / 100))
         : discountAmount;
@@ -5544,6 +5554,7 @@ export async function updatePOSOrderPaymentAndDiscount(
           payment_method: paymentMethod,
           discount_amount: discountAmount,
           discount_type: discountType,
+          tax: 0,
           total,
         })
         .eq("id", orderId);

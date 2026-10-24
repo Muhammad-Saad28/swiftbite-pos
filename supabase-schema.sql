@@ -310,7 +310,7 @@ BEGIN
   SELECT discount_amount, discount_type INTO current_discount_amount, current_discount_type FROM orders WHERE id = target_order_id;
   
   calc_subtotal := COALESCE((SELECT SUM(price * quantity) FROM order_items WHERE order_id = target_order_id), 0);
-  calc_tax := ROUND(calc_subtotal * 0.18);
+  calc_tax := 0; -- No sales tax
   
   IF (current_discount_type = 'percentage') THEN
     calc_discount := ROUND(calc_subtotal * (COALESCE(current_discount_amount, 0)::NUMERIC / 100.0));
@@ -320,8 +320,8 @@ BEGIN
 
   UPDATE orders SET 
     subtotal = calc_subtotal,
-    tax = calc_tax,
-    total = GREATEST(0, (calc_subtotal + calc_tax) - calc_discount)
+    tax = 0,
+    total = GREATEST(0, calc_subtotal - calc_discount)
   WHERE id = target_order_id;
 
   RETURN NULL;
