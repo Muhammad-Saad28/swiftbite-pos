@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getPOSOrders, updateOrderStatus, POSOrder } from "@/lib/pos-data";
-import { ChefHat, Clock, CheckCircle2, Flame, CheckSquare, Timer } from "lucide-react";
+import { getPOSOrders, updateOrderStatus, markKitchenItemsDispatched, POSOrder } from "@/lib/pos-data";
+import { ChefHat, Clock, CheckCircle2, Flame, CheckSquare, Timer, Sparkles } from "lucide-react";
 
 export default function KitchenDashboardPage() {
   const [orders, setOrders] = useState<POSOrder[]>([]);
@@ -42,6 +42,11 @@ export default function KitchenDashboardPage() {
   };
 
   const handleMarkReady = async (id: string) => {
+    // Mark all current items for this order as dispatched/completed by kitchen
+    const targetOrder = orders.find((o) => o.id === id);
+    if (targetOrder && targetOrder.items) {
+      markKitchenItemsDispatched(id, targetOrder.items);
+    }
     await updateOrderStatus(id, "ready");
     await refreshData();
   };
@@ -140,19 +145,40 @@ export default function KitchenDashboardPage() {
 
                   {/* Itemized Order Checklist */}
                   <div className="mt-5 space-y-3 flex-1">
-                    <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest block border-b border-zinc-800 pb-2">
-                      {order.items?.length || 0} ITEMS TO PREPARE
-                    </span>
+                    <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+                      <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">
+                        {order.items?.length || 0} ITEMS TO PREPARE
+                      </span>
+                      {order.items?.some((i) => i.is_new) && (
+                        <span className="inline-flex items-center space-x-1 text-[10px] font-black uppercase tracking-wider bg-amber-500 text-zinc-950 px-2 py-0.5 rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.5)]">
+                          <Sparkles className="h-3 w-3" />
+                          <span>NEW ADDITIONS</span>
+                        </span>
+                      )}
+                    </div>
                     <div className="space-y-2.5">
                       {order.items?.map((item) => (
                          <div
                          key={item.id}
-                         className="flex items-center justify-between p-3 rounded-xl bg-zinc-950/50 border border-zinc-800/50"
+                         className={`flex items-center justify-between p-3 rounded-xl transition-colors ${
+                           item.is_new
+                             ? "bg-amber-950/40 border-2 border-amber-500/70 shadow-[0_0_12px_rgba(245,158,11,0.2)]"
+                             : "bg-zinc-950/50 border border-zinc-800/50"
+                         }`}
                        >
-                         <span className="text-base font-bold text-zinc-100 uppercase tracking-wide leading-tight max-w-[70%]">
-                           {item.menu_item_name}
-                         </span>
-                         <span className="h-9 min-w-[36px] px-2 rounded-lg bg-zinc-800 text-white font-black text-lg flex items-center justify-center">
+                         <div className="flex flex-col">
+                           <span className="text-base font-bold text-zinc-100 uppercase tracking-wide leading-tight max-w-[70%]">
+                             {item.menu_item_name}
+                           </span>
+                           {item.is_new && (
+                             <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider mt-0.5">
+                               ★ NEW ITEM ADDED
+                             </span>
+                           )}
+                         </div>
+                         <span className={`h-9 min-w-[36px] px-2 rounded-lg font-black text-lg flex items-center justify-center ${
+                           item.is_new ? "bg-amber-500 text-zinc-950" : "bg-zinc-800 text-white"
+                         }`}>
                            {item.quantity}
                          </span>
                        </div>

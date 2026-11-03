@@ -24,6 +24,8 @@ import {
   startOrderKitchenTimer,
   stopOrderKitchenTimer,
   setOrderTimer,
+  getKitchenPendingItems,
+  markKitchenItemsDispatched,
   POSOrder, 
   POSUser,
   POSMenuItem,
@@ -154,8 +156,15 @@ export default function CashierDashboardPage() {
         o.id === order.id ? { ...o, kitchen_started_at: o.kitchen_started_at || startedTime } : o
       )
     );
+
+    // Calculate items that need preparation
+    const pendingItems = getKitchenPendingItems(order);
+    const hasPendingOnly = pendingItems.length > 0 && pendingItems.length < (order.items || []).length;
+
     setSelectedKitchenOrder({
       ...order,
+      items: hasPendingOnly ? pendingItems : order.items,
+      is_addition: hasPendingOnly,
       kitchen_started_at: order.kitchen_started_at || startedTime,
     });
     await refreshData();
@@ -354,9 +363,18 @@ export default function CashierDashboardPage() {
     setIsSavingAddItems(false);
     setAddingToOrder(null);
 
-    // If order was found, automatically trigger updated receipt / KOT prompt
+    // When new items are added to an active order, prompt the user with the new supplementary Kitchen KOT first
     if (updatedOrder) {
-      setSelectedReceiptOrder(updatedOrder);
+      const pendingItems = getKitchenPendingItems(updatedOrder);
+      if (pendingItems.length > 0) {
+        setSelectedKitchenOrder({
+          ...updatedOrder,
+          items: pendingItems,
+          is_addition: true,
+        });
+      } else {
+        setSelectedReceiptOrder(updatedOrder);
+      }
     }
   };
 

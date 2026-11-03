@@ -2,7 +2,7 @@
 
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
-import { POSOrder, formatOrderNumber } from "@/lib/pos-data";
+import { POSOrder, formatOrderNumber, markKitchenItemsDispatched } from "@/lib/pos-data";
 import { Printer, ChefHat, Clock, AlertCircle } from "lucide-react";
 
 interface KitchenReceiptModalProps {
@@ -15,6 +15,11 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
   if (!order) return null;
 
   const handlePrint = () => {
+    // When printed, automatically register all items on this KOT as dispatched to kitchen
+    if (order && order.items) {
+      markKitchenItemsDispatched(order.id, order.items);
+    }
+
     const printElement = document.getElementById("kitchen-receipt");
     if (!printElement) {
       window.print();
@@ -247,8 +252,13 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
                 <ChefHat className="h-6 w-6" />
               </div>
               <h2 className="text-xl font-black tracking-tight text-black uppercase font-sans">
-                *** KITCHEN ORDER TICKET ***
+                {order.is_addition ? "*** RUNNING KOT (ADDITIONAL ITEMS) ***" : "*** KITCHEN ORDER TICKET ***"}
               </h2>
+              {order.is_addition && (
+                <div className="my-1 py-1 px-2 bg-black text-white rounded text-center text-xs font-black uppercase tracking-wider">
+                  ⚡ SUPPLEMENTARY KOT — PREPARE NEW ITEMS ONLY ⚡
+                </div>
+              )}
               <p className="text-xs font-black tracking-widest text-black uppercase mt-0.5">
                 SWIFTBITE KITCHEN DISPATCH
               </p>

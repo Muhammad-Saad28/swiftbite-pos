@@ -13,6 +13,7 @@ import {
   updatePOSOrderTable,
   confirmRiderCashHandover,
   approveOrderCancellation,
+  getKitchenPendingItems,
   POSOrder 
 } from "@/lib/pos-data";
 import { supabase } from "@/lib/supabase/client";
@@ -409,7 +410,15 @@ export default function AdminOrdersPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => setSelectedKitchenOrder(order)}
+                      onClick={() => {
+                        const pendingItems = getKitchenPendingItems(order);
+                        const hasPendingOnly = pendingItems.length > 0 && pendingItems.length < (order.items || []).length;
+                        setSelectedKitchenOrder({
+                          ...order,
+                          items: hasPendingOnly ? pendingItems : order.items,
+                          is_addition: hasPendingOnly,
+                        });
+                      }}
                       className="border-zinc-800 text-zinc-300 hover:bg-zinc-800 text-xs font-bold flex items-center justify-center space-x-1"
                     >
                       <ChefHat className="h-3.5 w-3.5 text-amber-400" />

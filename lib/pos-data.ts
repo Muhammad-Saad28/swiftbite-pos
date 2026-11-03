@@ -38,6 +38,7 @@ export interface POSOrderItem {
   quantity: number;
   price: number;
   notes?: string | null;
+  is_new?: boolean;
 }
 
 export interface POSOrder {
@@ -74,6 +75,7 @@ export interface POSOrder {
   delivered_at?: string | null;
   return_started_at?: string | null;
   handover_completed_at?: string | null;
+  is_addition?: boolean;
 }
 
 export function formatOrderNumber(orderIdOrNumber: string | number | undefined, indexFallback: number = 1): string {
@@ -145,8 +147,12 @@ export interface PizzaSizeOption {
 
 export function isPizzaItem(item: { name?: string; category_name?: string }): boolean {
   if (!item) return false;
+  const rawName = (item.name || "").toLowerCase();
+  // Exclude burgers (e.g. "Pizza Burger") so they are treated as standard items with no size selection
+  if (rawName.includes("burger")) return false;
+
   const cat = (item.category_name || "").toLowerCase();
-  const name = (item.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const name = rawName.replace(/[^a-z0-9]/g, "");
   return (
     cat.includes("pizza") ||
     name.includes("pizza") ||
@@ -338,7 +344,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Chicken Burger",
     "description": "Tender chicken patty burger with fresh crisp lettuce and signature sauce.",
     "price": 300,
-    "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -371,7 +377,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Chicken Patty Burger",
     "description": "Classic chicken patty served on a toasted bun with house mayo.",
     "price": 300,
-    "image": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -558,7 +564,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Honey Mustard",
     "description": "Sweet and zesty honey mustard dressing.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1528750997573-59b89d56f4f7?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1534939561126-855b8675edd7?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -580,7 +586,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Kabab Paratha Roll",
     "description": "Juicy chicken seekh kabab wrapped in a flaky paratha with spiced yoghurt sauce.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -591,7 +597,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Kabab Shawarma",
     "description": "Tender spiced chicken seekh kababs rolled with fresh salad and garlic toum.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -613,7 +619,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Loaded Fries",
     "description": "Fries loaded with cheddar cheese sauce, chicken chunks, jalapeños, and secret sauce.",
     "price": 650,
-    "image": "https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1585325701165-351af916e581?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": true
   },
@@ -624,7 +630,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai + Tikka Paratha Roll",
     "description": "Dual flavor blast combining rich malai boti and spicy red tikka in hot paratha.",
     "price": 450,
-    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": true
   },
@@ -635,7 +641,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai + Tikka Shawarma",
     "description": "Best of both worlds: creamy malai booti and spicy red tikka chunks in one wrap.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1554998171-7e599bc95ccd?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": true
   },
@@ -646,7 +652,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai Booti Paratha Roll",
     "description": "Melt-in-mouth creamy malai boti pieces rolled with onions and green chutney.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -657,7 +663,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai Booti Shawarma",
     "description": "Creamy malai chicken tikka wrapped with onions and mild garlic sauce.",
     "price": 350,
-    "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -679,7 +685,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Mayo Fries",
     "description": "Hot fries generously drizzled with garlic mayonnaise.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -734,7 +740,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Philly Burger",
     "description": "Savory Philly-style burger with caramelized onions and melted cheese.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -745,7 +751,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Pizza Burger",
     "description": "Fusion delight packed with pizza sauce, mozzarella cheese, herbs, and crispy patty.",
     "price": 450,
-    "image": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -877,7 +883,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Zinger Paratha Roll",
     "description": "Crispy zinger chicken fillet rolled in flaky golden paratha with special sauce.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1528736235302-52922df5c122?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": true
   },
@@ -888,7 +894,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Zinger Shawarma",
     "description": "Crunchy zinger strips wrapped in soft pita with zesty sauce and pickles.",
     "price": 380,
-    "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1528736235302-52922df5c122?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": true
   }
@@ -5176,7 +5182,7 @@ export async function addPOSMenuItem(item: {
     name: item.name,
     description: item.description || null,
     price: item.price,
-    image: item.image || "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80",
+    image: item.image || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
     available: true,
     featured: false,
   };
@@ -5325,6 +5331,68 @@ export async function setOrderTimer(orderId: string, field: "kitchen_started_at"
     } catch (e) {}
   }
   return now;
+}
+
+// Kitchen Dispatched Item Tracking
+// Tracks which items have already been printed / dispatched to the kitchen per order
+const KITCHEN_DISPATCHED_STORAGE_KEY = "pos_kitchen_dispatched_items";
+
+export function getDispatchedKitchenItems(orderId: string): Record<string, number> {
+  if (typeof window !== "undefined") {
+    try {
+      const all = JSON.parse(localStorage.getItem(KITCHEN_DISPATCHED_STORAGE_KEY) || "{}");
+      return all[orderId] || {};
+    } catch (e) {}
+  }
+  return {};
+}
+
+export function markKitchenItemsDispatched(
+  orderId: string,
+  items: { menu_item_id: string; menu_item_name?: string; quantity: number; notes?: string | null }[]
+): void {
+  if (typeof window !== "undefined") {
+    try {
+      const all = JSON.parse(localStorage.getItem(KITCHEN_DISPATCHED_STORAGE_KEY) || "{}");
+      const orderDispatched = all[orderId] || {};
+
+      items.forEach((item) => {
+        const key = `${item.menu_item_id}_${item.menu_item_name || ""}_${item.notes || ""}`;
+        orderDispatched[key] = (orderDispatched[key] || 0) + item.quantity;
+      });
+
+      all[orderId] = orderDispatched;
+      localStorage.setItem(KITCHEN_DISPATCHED_STORAGE_KEY, JSON.stringify(all));
+    } catch (e) {}
+  }
+}
+
+export function getKitchenPendingItems(order: { id: string; items?: POSOrderItem[] }): POSOrderItem[] {
+  if (!order || !order.items || order.items.length === 0) return [];
+  const dispatched = getDispatchedKitchenItems(order.id);
+  const hasAnyDispatched = Object.keys(dispatched).length > 0;
+
+  // If no items have ever been dispatched/printed for this order yet, all items are pending
+  if (!hasAnyDispatched) {
+    return order.items;
+  }
+
+  const pending: POSOrderItem[] = [];
+  order.items.forEach((item) => {
+    const key = `${item.menu_item_id}_${item.menu_item_name || ""}_${item.notes || ""}`;
+    const alreadySent = dispatched[key] || 0;
+    const remainingQty = item.quantity - alreadySent;
+
+    if (remainingQty > 0) {
+      pending.push({
+        ...item,
+        quantity: remainingQty,
+        is_new: true,
+      });
+    }
+  });
+
+  return pending;
 }
 
 export async function getPOSOrders(waiterId?: string): Promise<POSOrder[]> {
@@ -5524,6 +5592,9 @@ export async function createPOSOrder(order: {
   } catch (e) {}
 
   mockOrders = [newOrder, ...mockOrders];
+  // Automatically mark the initial items as dispatched to the kitchen
+  markKitchenItemsDispatched(newOrder.id, newOrder.items || []);
+
   addNotificationToMock(
     "new_order",
     `New ${orderType.toUpperCase()} Order #${newOrder.id} ${order.table_number ? `(Table ${order.table_number})` : ""}`
@@ -5666,7 +5737,19 @@ export async function addItemsToPOSOrder(
     ? target?.notes ? `${target.notes} | ${additionalNotes}` : additionalNotes
     : target?.notes || undefined;
 
-  return updatePOSOrderItems(orderId, mergedItems, updatedNotes);
+  const result = await updatePOSOrderItems(orderId, mergedItems, updatedNotes);
+
+  // If order was in preparing or accepted state, keep it active so kitchen sees the addition
+  if (result) {
+    if (target && (target.status === "ready" || target.status === "served")) {
+      target.status = "preparing";
+      try {
+        await supabase.from("orders").update({ status: "preparing" }).eq("id", orderId);
+      } catch (e) {}
+    }
+  }
+
+  return result;
 }
 
 export async function updateOrderStatus(
