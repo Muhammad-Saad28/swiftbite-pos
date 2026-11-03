@@ -33,9 +33,11 @@ export default function AdminMenuPage() {
 
   // New Item State
   const [newName, setNewName] = useState("");
-  const [newCategory, setNewCategory] = useState("c1");
+  const [newCategory, setNewCategory] = useState("");
   const [newPrice, setNewPrice] = useState("");
   const [newDesc, setNewDesc] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
 
   // Recipe Modal State
   const [recipeMenuItem, setRecipeMenuItem] = useState<POSMenuItem | null>(null);
@@ -53,6 +55,9 @@ export default function AdminMenuPage() {
     setItems(fetchedItems);
     setCategories(fetchedCats);
     setInventoryList(fetchedInv);
+    if (!newCategory && fetchedCats.length > 0) {
+      setNewCategory(fetchedCats[0].id);
+    }
   };
 
   useEffect(() => {
@@ -68,21 +73,43 @@ export default function AdminMenuPage() {
   };
 
   const handleAddItem = async () => {
-    if (!newName || !newPrice) return;
+    if (!newName.trim()) {
+      setAddError("Please enter an item name.");
+      return;
+    }
+    if (!newPrice.trim()) {
+      setAddError("Please enter a valid price.");
+      return;
+    }
     const priceNum = parseInt(newPrice, 10);
-    
-    await addPOSMenuItem({
-      category_id: newCategory,
-      name: newName,
-      description: newDesc || null,
-      price: priceNum,
-    });
+    if (isNaN(priceNum) || priceNum < 0) {
+      setAddError("Price must be a valid positive number.");
+      return;
+    }
 
-    setIsAddModalOpen(false);
-    setNewName("");
-    setNewPrice("");
-    setNewDesc("");
-    await refreshData();
+    setIsSubmitting(true);
+    setAddError(null);
+
+    const categoryToUse = newCategory || (categories.length > 0 ? categories[0].id : null);
+    
+    try {
+      await addPOSMenuItem({
+        category_id: categoryToUse,
+        name: newName.trim(),
+        description: newDesc.trim() || null,
+        price: priceNum,
+      });
+
+      setIsAddModalOpen(false);
+      setNewName("");
+      setNewPrice("");
+      setNewDesc("");
+      await refreshData();
+    } catch (err: any) {
+      setAddError(err?.message || "Failed to add menu item.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDeleteItem = async (id: string) => {
@@ -288,8 +315,13 @@ export default function AdminMenuPage() {
       </Modal>
 
       {/* Add Menu Item Modal */}
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Add New Menu Item">
+      <Modal isOpen={isAddModalOpen} onClose={() => { setIsAddModalOpen(false); setAddError(null); }} title="Add New Menu Item">
         <div className="space-y-4">
+          {addError && (
+            <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-400 font-medium">
+              {addError}
+            </div>
+          )}
           <Input
             label="Item Name"
             placeholder="e.g. Chicken Karahi"
@@ -327,11 +359,16 @@ export default function AdminMenuPage() {
           />
 
           <div className="flex justify-end space-x-2 pt-2">
-            <Button variant="ghost" size="sm" onClick={() => setIsAddModalOpen(false)}>
+            <Button variant="ghost" size="sm" onClick={() => { setIsAddModalOpen(false); setAddError(null); }}>
               Cancel
             </Button>
-            <Button size="sm" onClick={handleAddItem} className="bg-orange-600 hover:bg-orange-500 font-bold">
-              Save Item
+            <Button
+              size="sm"
+              disabled={isSubmitting}
+              onClick={handleAddItem}
+              className="bg-orange-600 hover:bg-orange-500 font-bold"
+            >
+              {isSubmitting ? "Saving..." : "Save Item"}
             </Button>
           </div>
         </div>

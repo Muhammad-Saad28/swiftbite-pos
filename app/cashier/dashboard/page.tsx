@@ -11,6 +11,12 @@ import {
   updateOrderStatus, 
   updatePOSOrderPaymentAndDiscount, 
   getPOSUsers,
+  getPOSMenuItems,
+  getPOSCategories,
+  addItemsToPOSOrder,
+  isPizzaItem,
+  getPizzaSizes,
+  PizzaSizeOption,
   assignOrderRider,
   confirmRiderCashHandover,
   CANCELLATION_PIN,
@@ -19,10 +25,13 @@ import {
   stopOrderKitchenTimer,
   setOrderTimer,
   POSOrder, 
-  POSUser 
+  POSUser,
+  POSMenuItem,
+  POSCategory
 } from "@/lib/pos-data";
 import { ReceiptModal } from "@/components/receipt-modal";
 import { KitchenReceiptModal } from "@/components/kitchen-receipt-modal";
+import { PizzaSizeModal } from "@/components/pizza-size-modal";
 import { LiveTimerBadge } from "@/components/live-timer-badge";
 import { 
   Search, 
@@ -44,7 +53,11 @@ import {
   ChefHat,
   Ban,
   ShieldAlert,
-  KeyRound
+  KeyRound,
+  PlusCircle,
+  Plus,
+  Minus,
+  Trash2
 } from "lucide-react";
 import Link from "next/link";
 
@@ -83,13 +96,34 @@ export default function CashierDashboardPage() {
   const [dispatchOrder, setDispatchOrder] = useState<POSOrder | null>(null);
   const [selectedRiderId, setSelectedRiderId] = useState<string>("");
 
+  // Add More Items to Existing Order State
+  const [addingToOrder, setAddingToOrder] = useState<POSOrder | null>(null);
+  const [allMenuItems, setAllMenuItems] = useState<POSMenuItem[]>([]);
+  const [allCategories, setAllCategories] = useState<POSCategory[]>([]);
+  const [addItemCategory, setAddItemCategory] = useState<string>("All");
+  const [addItemSearch, setAddItemSearch] = useState<string>("");
+  const [addItemsCart, setAddItemsCart] = useState<{
+    id: string;
+    item: POSMenuItem;
+    quantity: number;
+    size?: string;
+    notes?: string;
+  }[]>([]);
+  const [addItemsNotes, setAddItemsNotes] = useState<string>("");
+  const [isSavingAddItems, setIsSavingAddItems] = useState(false);
+  const [addPizzaModalItem, setAddPizzaModalItem] = useState<POSMenuItem | null>(null);
+
   const refreshData = async () => {
-    const [fetchedOrders, fetchedUsers] = await Promise.all([
+    const [fetchedOrders, fetchedUsers, fetchedMenu, fetchedCats] = await Promise.all([
       getPOSOrders(),
       getPOSUsers(),
+      getPOSMenuItems(),
+      getPOSCategories(),
     ]);
     setOrders(fetchedOrders);
     setRiders(fetchedUsers.filter(u => u.role === "rider" && (u.status === "approved" || (!u.status && u.active))));
+    setAllMenuItems(fetchedMenu);
+    setAllCategories(fetchedCats);
   };
 
   useEffect(() => {
@@ -246,6 +280,84 @@ export default function CashierDashboardPage() {
 
     setCheckoutOrder(null);
     await refreshData();
+  };
+
+  // Open Add More Items Modal
+  const openAddItemsModal = (order: POSOrder) => {
+    setAddingToOrder(order);
+    setAddItemsCart([]);
+    setAddItemsNotes("");
+    setAddItemCategory("All");
+    setAddItemSearch("");
+  };
+
+  const handleAddItemToCart = (item: POSMenuItem, sizeOption?: PizzaSizeOption) => {
+    setAddItemsCart((prev) => {
+      const cartKey = sizeOption ? `${item.id}_${sizeOption.size}` : item.id;
+      const existing = prev.find((c) => c.id === cartKey);
+      if (existing) {
+        return prev.map((c) => (c.id === cartKey ? { ...c, quantity: c.quantity + 1 } : c));
+      }
+      const itemRecord: POSMenuItem = sizeOption
+        ? {
+            ...item,
+            name: `${item.name} (${sizeOption.size})`,
+            price: sizeOption.price,
+          }
+        : item;
+      return [
+        ...prev,
+        {
+          id: cartKey,
+          item: itemRecord,
+          quantity: 1,
+          size: sizeOption?.size,
+          notes: sizeOption ? `Size: ${sizeOption.size}` : undefined,
+        },
+      ];
+    });
+  };
+
+  const updateAddItemsCartQty = (id: string, delta: number) => {
+    setAddItemsCart((prev) =>
+      prev
+        .map((c) => {
+          if (c.id === id) {
+            const nextQty = c.quantity + delta;
+            return nextQty > 0 ? { ...c, quantity: nextQty } : null;
+          }
+          return c;
+        })
+        .filter(Boolean) as any
+    );
+  };
+
+  const handleSaveAddMoreItems = async () => {
+    if (!addingToOrder || addItemsCart.length === 0) return;
+    setIsSavingAddItems(true);
+
+    const formattedAdditions = addItemsCart.map((c) => ({
+      menu_item_id: c.item.id.includes("_") ? c.item.id.split("_")[0] : c.item.id,
+      menu_item_name: c.item.name,
+      quantity: c.quantity,
+      price: c.item.price,
+      notes: c.notes || null,
+    }));
+
+    await addItemsToPOSOrder(addingToOrder.id, formattedAdditions, addItemsNotes);
+
+    // Refresh order list immediately
+    const [fetched] = await Promise.all([getPOSOrders()]);
+    setOrders(fetched);
+    const updatedOrder = fetched.find((o) => o.id === addingToOrder.id);
+
+    setIsSavingAddItems(false);
+    setAddingToOrder(null);
+
+    // If order was found, automatically trigger updated receipt / KOT prompt
+    if (updatedOrder) {
+      setSelectedReceiptOrder(updatedOrder);
+    }
   };
 
   const handleConfirmRiderCashHandover = async (orderId: string) => {
@@ -645,6 +757,20 @@ export default function CashierDashboardPage() {
 
 
 
+
+                  {/* Add More Items to Active Order (e.g. Table 1 additional items) */}
+                  {order.status !== "completed" && order.status !== "rejected" && order.status !== "cancelled" && (
+                    <Button
+                      size="sm"
+                      onClick={() => openAddItemsModal(order)}
+                      className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs h-9.5 flex items-center justify-center space-x-1.5 shadow-md shadow-orange-600/20"
+                    >
+                      <PlusCircle className="h-4 w-4" />
+                      <span>
+                        ADD MORE ITEMS {order.order_type === "dine_in" && order.table_number ? `(TABLE #${order.table_number})` : ""}
+                      </span>
+                    </Button>
+                  )}
 
                   {/* Cancel Order Action (Requires PIN or Admin Approval) */}
                   {order.status !== "completed" && order.status !== "rejected" && order.status !== "cancelled" && (
@@ -1221,6 +1347,241 @@ export default function CashierDashboardPage() {
           </div>
         )}
       </Modal>
+
+      {/* Add More Items to Order Modal */}
+      <Modal
+        isOpen={!!addingToOrder}
+        onClose={() => setAddingToOrder(null)}
+        title={
+          addingToOrder
+            ? `Add More Items to Order #${addingToOrder.id}${
+                addingToOrder.order_type === "dine_in" && addingToOrder.table_number
+                  ? ` (Table #${addingToOrder.table_number})`
+                  : ""
+              }`
+            : "Add Items"
+        }
+      >
+        {addingToOrder && (
+          <div className="space-y-4 max-h-[80vh] flex flex-col">
+            {/* Existing Order Items Quick Summary */}
+            <div className="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-1.5 shrink-0">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-zinc-400 font-bold uppercase tracking-wider text-[11px]">
+                  Existing Items on Ticket:
+                </span>
+                <span className="font-mono text-zinc-300 font-bold">
+                  Current Total: <strong className="text-orange-400">Rs. {addingToOrder.total}</strong>
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 pt-1 max-h-20 overflow-y-auto">
+                {addingToOrder.items?.map((it, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center text-[11px] bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-lg text-zinc-300"
+                  >
+                    <span className="text-orange-400 font-bold mr-1">{it.quantity}x</span>
+                    {it.menu_item_name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Menu Selection Section */}
+            <div className="space-y-2 shrink-0">
+              <div className="flex flex-col sm:flex-row items-center gap-2">
+                {/* Search */}
+                <div className="relative flex-1 w-full">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-500" />
+                  <Input
+                    placeholder="Search menu items to add..."
+                    value={addItemSearch}
+                    onChange={(e) => setAddItemSearch(e.target.value)}
+                    className="pl-8 bg-zinc-950 border-zinc-800 text-xs h-8"
+                  />
+                </div>
+
+                {/* Categories */}
+                <div className="flex space-x-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+                  <button
+                    type="button"
+                    onClick={() => setAddItemCategory("All")}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap ${
+                      addItemCategory === "All"
+                        ? "bg-orange-600 text-white"
+                        : "bg-zinc-950 text-zinc-400 hover:text-white border border-zinc-800"
+                    }`}
+                  >
+                    All
+                  </button>
+                  {allCategories.slice(0, 5).map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => setAddItemCategory(c.name)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap ${
+                        addItemCategory === c.name
+                          ? "bg-orange-600 text-white"
+                          : "bg-zinc-950 text-zinc-400 hover:text-white border border-zinc-800"
+                      }`}
+                    >
+                      {c.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Items Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1 bg-zinc-950/50 rounded-xl border border-zinc-800/80">
+                {allMenuItems
+                  .filter((m) => {
+                    const matchCat = addItemCategory === "All" || m.category_name === addItemCategory;
+                    const matchSearch = m.name.toLowerCase().includes(addItemSearch.toLowerCase());
+                    return matchCat && matchSearch && m.available;
+                  })
+                  .map((item) => {
+                    const isPizza = isPizzaItem(item);
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => {
+                          if (isPizza) {
+                            setAddPizzaModalItem(item);
+                          } else {
+                            handleAddItemToCart(item);
+                          }
+                        }}
+                        className="group cursor-pointer p-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-orange-500/50 hover:bg-zinc-850 transition-all flex flex-col justify-between"
+                      >
+                        <div className="text-left">
+                          <p className="text-xs font-bold text-white line-clamp-1">{item.name}</p>
+                          <span className="text-[10px] text-zinc-400">{item.category_name}</span>
+                        </div>
+                        <div className="mt-1 pt-1 border-t border-zinc-800 flex items-center justify-between">
+                          <span className="text-xs font-mono font-bold text-orange-400">
+                            {isPizza ? `From Rs. ${getPizzaSizes(item)[0]?.price || item.price}` : `Rs. ${item.price}`}
+                          </span>
+                          <span className="h-5 w-5 rounded bg-orange-600/20 text-orange-400 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white text-xs">
+                            <Plus className="h-3 w-3" />
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* Newly Added Items List */}
+            <div className="space-y-2 border-t border-zinc-800 pt-3">
+              <span className="text-xs font-bold text-white flex items-center justify-between">
+                <span>Items to Add to Order:</span>
+                <span className="text-[11px] text-orange-400 font-mono">
+                  Additional: +Rs. {addItemsCart.reduce((sum, c) => sum + c.item.price * c.quantity, 0)}
+                </span>
+              </span>
+
+              {addItemsCart.length === 0 ? (
+                <p className="text-center py-4 text-zinc-500 text-xs italic bg-zinc-950/40 rounded-xl border border-dashed border-zinc-800">
+                  Select items from above to add to this order ticket.
+                </p>
+              ) : (
+                <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                  {addItemsCart.map((c) => (
+                    <div
+                      key={c.id}
+                      className="p-2 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between text-xs"
+                    >
+                      <div>
+                        <p className="font-bold text-white">{c.item.name}</p>
+                        <p className="text-[10px] text-zinc-400 font-mono">
+                          Rs. {c.item.price} x {c.quantity} = Rs. {c.item.price * c.quantity}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center space-x-1.5">
+                        <button
+                          type="button"
+                          onClick={() => updateAddItemsCartQty(c.id, -1)}
+                          className="h-6 w-6 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </button>
+                        <span className="w-5 text-center font-bold text-white">{c.quantity}</span>
+                        <button
+                          type="button"
+                          onClick={() => updateAddItemsCartQty(c.id, 1)}
+                          className="h-6 w-6 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setAddItemsCart((prev) => prev.filter((i) => i.id !== c.id))}
+                          className="p-1 text-zinc-500 hover:text-rose-400 ml-1"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Note */}
+            <div>
+              <Input
+                label="Addition Kitchen Note"
+                placeholder="e.g. Added 2nd round, make urgent..."
+                value={addItemsNotes}
+                onChange={(e) => setAddItemsNotes(e.target.value)}
+                className="text-xs"
+              />
+            </div>
+
+            {/* New Total Calculation */}
+            <div className="p-3 bg-zinc-950 rounded-xl border border-zinc-800 flex items-center justify-between text-xs font-mono">
+              <span className="text-zinc-400">NEW UPDATED TOTAL:</span>
+              <span className="text-lg font-black text-orange-400">
+                Rs.{" "}
+                {(addingToOrder.subtotal || addingToOrder.total) +
+                  addItemsCart.reduce((sum, c) => sum + c.item.price * c.quantity, 0)}
+              </span>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end space-x-2 pt-2 border-t border-zinc-800">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setAddingToOrder(null)}
+                className="text-xs text-zinc-400"
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                disabled={addItemsCart.length === 0 || isSavingAddItems}
+                onClick={handleSaveAddMoreItems}
+                className="bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 text-zinc-950 font-black text-xs px-5 shadow-lg shadow-orange-600/30 flex items-center space-x-1.5"
+              >
+                <PlusCircle className="h-4 w-4" />
+                <span>
+                  {isSavingAddItems ? "Updating Order & Receipt..." : "CONFIRM & ADD TO ORDER & RECEIPT"}
+                </span>
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Pizza Size Modal for Add Items */}
+      <PizzaSizeModal
+        isOpen={!!addPizzaModalItem}
+        onClose={() => setAddPizzaModalItem(null)}
+        item={addPizzaModalItem}
+        onSelectSize={(item, sizeOption) => handleAddItemToCart(item, sizeOption)}
+      />
 
       {/* Thermal Final Receipt Print Modal */}
       <ReceiptModal

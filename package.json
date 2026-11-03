@@ -2,11 +2,56 @@
   "name": "swiftbite-pos",
   "version": "0.1.0",
   "private": true,
+  "description": "SwiftBite POS Desktop Application",
+  "author": "SwiftBite",
+  "main": "electron/main.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "desktop": "electron .",
+    "desktop:dev": "concurrently -k \"next dev\" \"wait-on http://localhost:3000 && electron . --dev\"",
+    "desktop:build": "next build && electron-builder --win"
+  },
+  "build": {
+    "appId": "com.swiftbite.pos",
+    "productName": "SwiftBite POS",
+    "nodeGypRebuild": false,
+    "npmRebuild": false,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**/*",
+      "out/**/*",
+      "public/**/*",
+      ".env",
+      "!node_modules/**/*",
+      "!.next/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "out",
+        "to": "out"
+      },
+      {
+        "from": ".env",
+        "to": ".env"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SwiftBite POS"
+    }
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1",
@@ -24,9 +69,14 @@
     "@types/node": "^20.17.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "concurrently": "^10.0.6",
+    "cross-env": "^10.1.0",
+    "electron": "^33.4.11",
+    "electron-builder": "^26.18.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.2.0",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "wait-on": "^9.5.1"
   }
 }

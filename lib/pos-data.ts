@@ -5164,6 +5164,11 @@ export async function addPOSMenuItem(item: {
   image?: string | null;
 }): Promise<POSMenuItem> {
   const cat = mockCategories.find(c => c.id === item.category_id);
+  const validCategoryId =
+    item.category_id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.category_id)
+      ? item.category_id
+      : null;
+
   let newItem: POSMenuItem = {
     id: `m_${Date.now()}`,
     category_id: item.category_id || null,
@@ -5180,7 +5185,7 @@ export async function addPOSMenuItem(item: {
     const { data, error } = await supabase
       .from("menu_items")
       .insert({
-        category_id: item.category_id || null,
+        category_id: validCategoryId,
         name: item.name,
         description: item.description || null,
         price: item.price,
@@ -5197,6 +5202,15 @@ export async function addPOSMenuItem(item: {
       };
     }
   } catch (e) {}
+
+  // Remove from deleted list if a previously deleted item or same ID was stored
+  if (typeof window !== "undefined") {
+    try {
+      const deletedIds = JSON.parse(localStorage.getItem("pos_deleted_menu_item_ids") || "[]");
+      const filtered = deletedIds.filter((d: string) => d !== newItem.id);
+      localStorage.setItem("pos_deleted_menu_item_ids", JSON.stringify(filtered));
+    } catch (e) {}
+  }
 
   mockMenuItems.unshift(newItem);
   return newItem;
@@ -5566,7 +5580,7 @@ export async function updatePOSOrderPaymentAndDiscount(
 
 export async function updatePOSOrderItems(
   orderId: string,
-  newItems: { menu_item_id: string; menu_item_name: string; quantity: number; price: number }[],
+  newItems: { menu_item_id: string; menu_item_name: string; quantity: number; price: number; notes?: string | null }[],
   notes?: string
 ): Promise<boolean> {
   const subtotal = newItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -5580,12 +5594,13 @@ export async function updatePOSOrderItems(
     target.total = total;
     if (notes !== undefined) target.notes = notes;
     target.items = newItems.map((item, idx) => ({
-      id: `oi_${orderId}_${idx}`,
+      id: `oi_${orderId}_${idx}_${Date.now()}`,
       order_id: orderId,
       menu_item_id: item.menu_item_id,
       menu_item_name: item.menu_item_name,
       quantity: item.quantity,
       price: item.price,
+      notes: item.notes || null,
     }));
   }
 
@@ -5597,12 +5612,61 @@ export async function updatePOSOrderItems(
       menu_item_id: item.menu_item_id,
       quantity: item.quantity,
       price: item.price,
+      notes: item.notes || null,
     }));
     await supabase.from("order_items").insert(insertedItems);
     await supabase.from("orders").update({ subtotal, tax, total, notes: notes || null }).eq("id", orderId);
   } catch (e) {}
 
   return true;
+}
+
+export async function addItemsToPOSOrder(
+  orderId: string,
+  additionalItems: { menu_item_id: string; menu_item_name: string; quantity: number; price: number; notes?: string | null }[],
+  additionalNotes?: string
+): Promise<boolean> {
+  if (!additionalItems || additionalItems.length === 0) return true;
+
+  const target = mockOrders.find(o => o.id === orderId);
+  const existingItems = target?.items || [];
+
+  // Merge items or append
+  const combinedItemsMap = new Map<string, { menu_item_id: string; menu_item_name: string; quantity: number; price: number; notes?: string | null }>();
+  
+  existingItems.forEach(i => {
+    const key = `${i.menu_item_id}_${i.menu_item_name}_${i.notes || ""}`;
+    combinedItemsMap.set(key, {
+      menu_item_id: i.menu_item_id,
+      menu_item_name: i.menu_item_name || "Item",
+      quantity: i.quantity,
+      price: i.price,
+      notes: i.notes || null,
+    });
+  });
+
+  additionalItems.forEach(i => {
+    const key = `${i.menu_item_id}_${i.menu_item_name}_${i.notes || ""}`;
+    const existing = combinedItemsMap.get(key);
+    if (existing) {
+      existing.quantity += i.quantity;
+    } else {
+      combinedItemsMap.set(key, {
+        menu_item_id: i.menu_item_id,
+        menu_item_name: i.menu_item_name,
+        quantity: i.quantity,
+        price: i.price,
+        notes: i.notes || null,
+      });
+    }
+  });
+
+  const mergedItems = Array.from(combinedItemsMap.values());
+  const updatedNotes = additionalNotes
+    ? target?.notes ? `${target.notes} | ${additionalNotes}` : additionalNotes
+    : target?.notes || undefined;
+
+  return updatePOSOrderItems(orderId, mergedItems, updatedNotes);
 }
 
 export async function updateOrderStatus(
