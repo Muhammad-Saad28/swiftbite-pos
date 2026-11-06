@@ -322,7 +322,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Cheese Crust Malai",
     "description": "Malai booti, onion, tomato, jalapeño",
     "price": 1400,
-    "image": "https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Cheese Crust Malai.jpg",
     "available": true,
     "featured": false
   },
@@ -333,7 +333,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Cheese Lover",
     "description": "Cheese blast",
     "price": 600,
-    "image": "https://images.unsplash.com/photo-1541745537411-b8046dc6d66c?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Cheese Lover.jpg",
     "available": true,
     "featured": false
   },
@@ -366,7 +366,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Chicken Paratha Roll",
     "description": "Golden crispy fried paratha rolled with seasoned grilled chicken and chutney.",
     "price": 350,
-    "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80",
+    "image": "/paratharoll/Chicken Paratha Roll.jpg",
     "available": true,
     "featured": false
   },
@@ -388,7 +388,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Chicken Shawarma",
     "description": "Traditional slow-roasted spiced chicken wrapped in warm pita with garlic mayo.",
     "price": 300,
-    "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=600&q=80",
+    "image": "/shawarma/Chicken-Shawarma.jpg",
     "available": true,
     "featured": false
   },
@@ -399,7 +399,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Chicken Tikka Delight",
     "description": "Chicken, tomato, capsicum, onion, black olives",
     "price": 550,
-    "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Chicken Tikka Delight.jpg",
     "available": true,
     "featured": true
   },
@@ -410,7 +410,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Creamy Pasta",
     "description": "Rich and velvety white sauce pasta with herbs and tender chicken chunks.",
     "price": 350,
-    "image": "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=600&q=80",
+    "image": "/pasta/Creamy Pasta.jpg",
     "available": true,
     "featured": false
   },
@@ -421,7 +421,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Crispy Crunch Pasta",
     "description": "Creamy spiced pasta topped with golden crispy fried chicken strips.",
     "price": 450,
-    "image": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80",
+    "image": "/pasta/Crispy Crunch Pasta.webp",
     "available": true,
     "featured": false
   },
@@ -432,7 +432,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Deal 1 — Zinger Combo",
     "description": "1 Zinger Burger + 1 Regular Fries + 1 Regular Drink",
     "price": 550,
-    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+    "image": "/combo deals/deal1.jpg",
     "available": true,
     "featured": true
   },
@@ -443,7 +443,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Deal 2 — Patty Burger Combo",
     "description": "1 Chicken Patty Burger + 1 Regular Fries + 1 Regular Drink + 2 Pc Nuggets",
     "price": 550,
-    "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
+    "image": "/combo deals/deal2.jpg",
     "available": true,
     "featured": true
   },
@@ -454,7 +454,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Deal 3 — Wings Combo",
     "description": "6 Pc Chicken Wings + 1 Regular Drink + 1 Dip Sauce",
     "price": 630,
-    "image": "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=600&q=80",
+    "image": "/combo deals/deal3.png",
     "available": true,
     "featured": false
   },
@@ -465,7 +465,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Deal 4 — Small Pizza Deal",
     "description": "2 Small Pizzas + 1 Half-Litre Drink",
     "price": 1099,
-    "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
+    "image": "/combo deals/deal4.png",
     "available": true,
     "featured": false
   },
@@ -476,7 +476,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Deal 5 — Medium Pizza Deal",
     "description": "2 Medium Pizzas + 1 One-Litre Drink",
     "price": 2499,
-    "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80",
+    "image": "/combo deals/deal5.png",
     "available": true,
     "featured": true
   },
@@ -487,7 +487,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Deal 6 — Burger & Pizza Combo",
     "description": "1 Zinger Burger + 1 Small Pizza + 1 Half-Litre Drink",
     "price": 999,
-    "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80",
+    "image": "/combo deals/deal6.png",
     "available": true,
     "featured": true
   },
@@ -498,7 +498,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Deal 7 — Large Pizza Deal",
     "description": "2 Large Pizzas + 1 One-Litre Drink",
     "price": 3099,
-    "image": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=600&q=80",
+    "image": "/combo deals/deal7.png",
     "available": true,
     "featured": true
   },
@@ -509,7 +509,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Dynamite Sauce",
     "description": "Rich, spicy and creamy explosive dynamite dip.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+    "image": "/sauce and adds on/Dynamite Sauce.jpg",
     "available": true,
     "featured": false
   },
@@ -520,7 +520,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Garden Fresh",
     "description": "Capsicum, onion, tomato, black olives",
     "price": 600,
-    "image": "https://images.unsplash.com/photo-1528137871618-79d2761e3fd5?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Garden Fresh.jpg",
     "available": true,
     "featured": false
   },
@@ -531,7 +531,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Garlic Mayo",
     "description": "Creamy whipped garlic mayonnaise dip.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=600&q=80",
+    "image": "/sauce and adds on/Garlic Mayo.jpg",
     "available": true,
     "featured": false
   },
@@ -542,7 +542,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Grill Sandwich",
     "description": "Golden pressed grilled sandwich with savory chicken filling and gooey melted cheese.",
     "price": 550,
-    "image": "https://images.unsplash.com/photo-1553909489-cd47e0907980?auto=format&fit=crop&w=600&q=80",
+    "image": "/sandwich/grill Sandwich.jpg",
     "available": true,
     "featured": false
   },
@@ -553,7 +553,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Half Fries",
     "description": "Regular portion of hot crispy golden French fries.",
     "price": 200,
-    "image": "https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=600&q=80",
+    "image": "/fries/Half Fries.webp",
     "available": true,
     "featured": false
   },
@@ -564,7 +564,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Honey Mustard",
     "description": "Sweet and zesty honey mustard dressing.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1607301406259-dfb186e15de8?auto=format&fit=crop&w=600&q=80",
+    "image": "/sauce and adds on/Honey Mustard.jpg",
     "available": true,
     "featured": false
   },
@@ -575,7 +575,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Kabab Blast",
     "description": "Chicken kabab, tomato, onion, jalapeño",
     "price": 1550,
-    "image": "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Kabab Blast.jpg",
     "available": true,
     "featured": false
   },
@@ -586,7 +586,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Kabab Paratha Roll",
     "description": "Juicy chicken seekh kabab wrapped in a flaky paratha with spiced yoghurt sauce.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
+    "image": "/paratharoll/Kabab Paratha Roll.jpg",
     "available": true,
     "featured": false
   },
@@ -597,7 +597,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Kabab Shawarma",
     "description": "Tender spiced chicken seekh kababs rolled with fresh salad and garlic toum.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=600&q=80",
+    "image": "/shawarma/kababshawarma.jpg",
     "available": true,
     "featured": false
   },
@@ -608,7 +608,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Large Fries",
     "description": "Large bucket of crispy salted golden French fries.",
     "price": 350,
-    "image": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?auto=format&fit=crop&w=600&q=80",
+    "image": "/fries/large fries.jpg",
     "available": true,
     "featured": false
   },
@@ -619,7 +619,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Loaded Fries",
     "description": "Fries loaded with cheddar cheese sauce, chicken chunks, jalapeños, and secret sauce.",
     "price": 650,
-    "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=600&q=80",
+    "image": "/fries/loaded fries.jpg",
     "available": true,
     "featured": true
   },
@@ -630,7 +630,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai + Tikka Paratha Roll",
     "description": "Dual flavor blast combining rich malai boti and spicy red tikka in hot paratha.",
     "price": 450,
-    "image": "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=600&q=80",
+    "image": "/paratharoll/Malai + Tikka Paratha Roll.jpg",
     "available": true,
     "featured": true
   },
@@ -641,7 +641,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai + Tikka Shawarma",
     "description": "Best of both worlds: creamy malai booti and spicy red tikka chunks in one wrap.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=600&q=80",
+    "image": "/shawarma/Malai + Tikka Shawarma.jpg",
     "available": true,
     "featured": true
   },
@@ -652,7 +652,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai Booti Paratha Roll",
     "description": "Melt-in-mouth creamy malai boti pieces rolled with onions and green chutney.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=600&q=80",
+    "image": "/paratharoll/Malai Booti Paratha Roll.jpg",
     "available": true,
     "featured": false
   },
@@ -663,7 +663,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai Booti Shawarma",
     "description": "Creamy malai chicken tikka wrapped with onions and mild garlic sauce.",
     "price": 350,
-    "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=600&q=80",
+    "image": "/shawarma/Malai Booti Shawarma.jpg",
     "available": true,
     "featured": false
   },
@@ -674,7 +674,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Masala Fries",
     "description": "Crispy French fries tossed in our signature zesty chaat masala spice blend.",
     "price": 350,
-    "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80",
+    "image": "/fries/Masala Fries.jpg",
     "available": true,
     "featured": false
   },
@@ -685,7 +685,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Mayo Fries",
     "description": "Hot fries generously drizzled with garlic mayonnaise.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=600&q=80",
+    "image": "/fries/mayo fries.jpg",
     "available": true,
     "featured": false
   },
@@ -696,7 +696,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Mexican Fire Fajita",
     "description": "Chicken, tomato, capsicum, onion, jalapeño",
     "price": 550,
-    "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Mexican Fire Fajita.jpg",
     "available": true,
     "featured": false
   },
@@ -707,7 +707,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Oven Bake Pasta",
     "description": "Penne pasta baked to golden perfection with mozzarella, marinara, and grilled chicken.",
     "price": 450,
-    "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80",
+    "image": "/pasta/Oven Bake Pasta.jpg",
     "available": true,
     "featured": true
   },
@@ -718,7 +718,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Peri Peri",
     "description": "Peri peri sauce, chicken, onion, tomato, olives, jalapeño",
     "price": 650,
-    "image": "https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/peri peri.jpg",
     "available": true,
     "featured": false
   },
@@ -729,7 +729,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Peri Peri Sauce",
     "description": "Fiery peri-peri chili dipping sauce.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1563865436874-9aef32095fad?auto=format&fit=crop&w=600&q=80",
+    "image": "/sauce and adds on/Peri Peri Sauce.jpg",
     "available": true,
     "featured": false
   },
@@ -762,7 +762,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Plain Fries",
     "description": "Classic lightly salted crispy fries.",
     "price": 350,
-    "image": "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=600&q=80",
+    "image": "/fries/plain fries.jpg",
     "available": true,
     "featured": false
   },
@@ -773,7 +773,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Royal Crown Crust",
     "description": "Chicken, tomato, capsicum, onion, black olives",
     "price": 1400,
-    "image": "https://images.unsplash.com/photo-1590947132387-155cc02f3212?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Royal Crown Crust.jpg",
     "available": true,
     "featured": true
   },
@@ -784,7 +784,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Royal Malai Booti",
     "description": "Malai booti, tomato, onion, black olives",
     "price": 650,
-    "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Royal Malai Booti.jpg",
     "available": true,
     "featured": true
   },
@@ -795,7 +795,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Smoky Kabab Crust",
     "description": "Chicken kabab, onion, capsicum, tomato, black olives",
     "price": 1550,
-    "image": "https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Smoky Kabab Crust.jpg",
     "available": true,
     "featured": true
   },
@@ -806,7 +806,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Special Tortilla Wrap",
     "description": "Grilled chicken, fresh lettuce, melted cheese, and signature dressing in a toasted tortilla wrap.",
     "price": 600,
-    "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=600&q=80",
+    "image": "/wraps/Special Tortilla Wrap.jpg",
     "available": true,
     "featured": true
   },
@@ -817,7 +817,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Sriracha Sauce",
     "description": "Spicy and tangy sriracha dipping sauce.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc?auto=format&fit=crop&w=600&q=80",
+    "image": "/sauce and adds on/Sriracha Sauce.jpg",
     "available": true,
     "featured": false
   },
@@ -828,7 +828,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Swift Club Sandwich",
     "description": "Triple-decker toasted sandwich loaded with grilled chicken, egg, cheese, and crunchy veggies.",
     "price": 650,
-    "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80",
+    "image": "/sandwich/Swift Club Sandwich.jpg",
     "available": true,
     "featured": true
   },
@@ -839,7 +839,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Swift Special",
     "description": "Half malai and half tikka",
     "price": 1500,
-    "image": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=600&q=80",
+    "image": "/pizza/Swift Special.jpg",
     "available": true,
     "featured": true
   },
@@ -883,7 +883,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Zinger Paratha Roll",
     "description": "Crispy zinger chicken fillet rolled in flaky golden paratha with special sauce.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1528736235302-52922df5c122?auto=format&fit=crop&w=600&q=80",
+    "image": "/paratharoll/Zinger Paratha Roll.jpg",
     "available": true,
     "featured": true
   },
@@ -894,7 +894,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Zinger Shawarma",
     "description": "Crunchy zinger strips wrapped in soft pita with zesty sauce and pickles.",
     "price": 380,
-    "image": "https://images.unsplash.com/photo-1594998893017-36147cbcae05?auto=format&fit=crop&w=600&q=80",
+    "image": "/shawarma/Zinger Shawarma.jpg",
     "available": true,
     "featured": true
   }
