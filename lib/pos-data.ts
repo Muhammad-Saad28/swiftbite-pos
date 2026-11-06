@@ -344,7 +344,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Chicken Burger",
     "description": "Tender chicken patty burger with fresh crisp lettuce and signature sauce.",
     "price": 300,
-    "image": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=600&q=80",
+    "image": "/burgers/chickenburger.jpg",
     "available": true,
     "featured": false
   },
@@ -355,7 +355,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Chicken Grill Burger",
     "description": "Charcoal-grilled juicy chicken breast with BBQ glaze and fresh veggies.",
     "price": 450,
-    "image": "https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=600&q=80",
+    "image": "/burgers/chickengrillburger.jpg",
     "available": true,
     "featured": false
   },
@@ -377,7 +377,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Chicken Patty Burger",
     "description": "Classic chicken patty served on a toasted bun with house mayo.",
     "price": 300,
-    "image": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=600&q=80",
+    "image": "/burgers/chickenpattyburger.jpeg",
     "available": true,
     "featured": false
   },
@@ -509,7 +509,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Dynamite Sauce",
     "description": "Rich, spicy and creamy explosive dynamite dip.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1528750997573-59b89d56f4f7?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -531,7 +531,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Garlic Mayo",
     "description": "Creamy whipped garlic mayonnaise dip.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -564,7 +564,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Honey Mustard",
     "description": "Sweet and zesty honey mustard dressing.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1534939561126-855b8675edd7?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1607301406259-dfb186e15de8?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -619,7 +619,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Loaded Fries",
     "description": "Fries loaded with cheddar cheese sauce, chicken chunks, jalapeños, and secret sauce.",
     "price": 650,
-    "image": "https://images.unsplash.com/photo-1585325701165-351af916e581?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": true
   },
@@ -641,7 +641,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai + Tikka Shawarma",
     "description": "Best of both worlds: creamy malai booti and spicy red tikka chunks in one wrap.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1554998171-7e599bc95ccd?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": true
   },
@@ -663,7 +663,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Malai Booti Shawarma",
     "description": "Creamy malai chicken tikka wrapped with onions and mild garlic sauce.",
     "price": 350,
-    "image": "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -729,7 +729,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Peri Peri Sauce",
     "description": "Fiery peri-peri chili dipping sauce.",
     "price": 70,
-    "image": "https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1563865436874-9aef32095fad?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": false
   },
@@ -740,7 +740,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Philly Burger",
     "description": "Savory Philly-style burger with caramelized onions and melted cheese.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80",
+    "image": "/burgers/Philly Burger.jpg",
     "available": true,
     "featured": false
   },
@@ -751,7 +751,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Pizza Burger",
     "description": "Fusion delight packed with pizza sauce, mozzarella cheese, herbs, and crispy patty.",
     "price": 450,
-    "image": "https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=600&q=80",
+    "image": "/burgers/pizzaburger.jpg",
     "available": true,
     "featured": false
   },
@@ -773,7 +773,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Royal Crown Crust",
     "description": "Chicken, tomato, capsicum, onion, black olives",
     "price": 1400,
-    "image": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1590947132387-155cc02f3212?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": true
   },
@@ -850,7 +850,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Swift Special Mighty",
     "description": "Colossal double patty burger with double cheese, crispy bacon-style toppings, and secret Swift sauce.",
     "price": 700,
-    "image": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=600&q=80",
+    "image": "/burgers/swiftmighty.jpg",
     "available": true,
     "featured": true
   },
@@ -861,7 +861,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Tandoori Burger",
     "description": "Smoky tandoori-spiced chicken fillet with refreshing mint mayo.",
     "price": 450,
-    "image": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=600&q=80",
+    "image": "/burgers/Tandoori Burger.png",
     "available": true,
     "featured": false
   },
@@ -872,7 +872,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Zinger Burger",
     "description": "Crispy deep-fried spicy zinger fillet topped with crunchy lettuce and spicy mayo.",
     "price": 400,
-    "image": "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=600&q=80",
+    "image": "/burgers/zingerburger.jpg",
     "available": true,
     "featured": true
   },
@@ -894,7 +894,7 @@ let mockMenuItems: POSMenuItem[] = [
     "name": "Zinger Shawarma",
     "description": "Crunchy zinger strips wrapped in soft pita with zesty sauce and pickles.",
     "price": 380,
-    "image": "https://images.unsplash.com/photo-1528736235302-52922df5c122?auto=format&fit=crop&w=600&q=80",
+    "image": "https://images.unsplash.com/photo-1594998893017-36147cbcae05?auto=format&fit=crop&w=600&q=80",
     "available": true,
     "featured": true
   }
