@@ -168,6 +168,7 @@ CREATE TABLE inventory (
   unit VARCHAR(20) NOT NULL DEFAULT 'kg',
   quantity DECIMAL(10, 2) DEFAULT 0 CHECK (quantity >= 0),
   minimum_quantity DECIMAL(10, 2) DEFAULT 0,
+  cost_per_unit DECIMAL(10, 2) DEFAULT 0,
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 

@@ -104,8 +104,50 @@ export interface POSInventoryItem {
   unit: string;
   quantity: number;
   minimum_quantity: number;
+  cost_per_unit?: number;
   updated_at: string;
   status?: "in_stock" | "low" | "critical";
+}
+
+export interface POSInventoryTransaction {
+  id: string;
+  inventory_id: string;
+  inventory_name?: string;
+  type: "add" | "remove" | "adjust";
+  quantity: number;
+  cost_per_unit?: number;
+  reason?: string | null;
+  created_at: string;
+}
+
+export interface POSProfitLossMetrics {
+  period: "today" | "month";
+  revenue: number;
+  productionCost: number; // COGS
+  grossProfit: number;
+  grossProfitMargin: number; // percentage
+  unsoldLoss: number;
+  netProfit: number;
+  netProfitMargin: number;
+  soldItemsCount: number;
+  addedStockValue: number;
+  wasteItemsCount: number;
+  itemizedBreakdown: {
+    menu_item_name: string;
+    quantity_sold: number;
+    revenue: number;
+    production_cost: number;
+    profit: number;
+  }[];
+  lossBreakdown: {
+    inventory_name: string;
+    unit: string;
+    added_quantity: number;
+    consumed_quantity: number;
+    unsold_quantity: number;
+    unit_cost: number;
+    loss_amount: number;
+  }[];
 }
 
 export interface POSMenuItemIngredient {
@@ -6184,5 +6226,493 @@ function addNotificationToMock(type: POSNotification["type"], message: string) {
     },
     ...mockNotifications,
   ];
+}
+
+// =========================================================================
+// INVENTORY TRANSACTIONS & PROFIT/LOSS ENGINE
+// =========================================================================
+
+const LOCAL_TX_KEY = "swiftbite_inventory_transactions";
+
+// Sample baseline inventory addition transactions for realistic P&L tracking
+let mockInventoryTransactions: POSInventoryTransaction[] = [
+  {
+    id: "tx_init_1",
+    inventory_id: "e0000000-0000-0000-0000-00000000000a",
+    inventory_name: "Burger bun (BUN)",
+    type: "add",
+    quantity: 100,
+    cost_per_unit: 25,
+    reason: "Daily Morning Stock Ingestion",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "tx_init_2",
+    inventory_id: "e0000000-0000-0000-0000-000000000001",
+    inventory_name: "Chicken boneless raw (CHK_RAW)",
+    type: "add",
+    quantity: 5000,
+    cost_per_unit: 0.75,
+    reason: "Daily Meat Supply Batch",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "tx_init_3",
+    inventory_id: "e0000000-0000-0000-0000-000000000006",
+    inventory_name: "Ready-made chicken patty (CHK_PATTY)",
+    type: "add",
+    quantity: 60,
+    cost_per_unit: 85,
+    reason: "Daily Patty Delivery",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "tx_init_4",
+    inventory_id: "e0000000-0000-0000-0000-000000000021",
+    inventory_name: "Cheddar cheese slice (CHEDDAR)",
+    type: "add",
+    quantity: 80,
+    cost_per_unit: 30,
+    reason: "Daily Cheese Supply",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "tx_init_5",
+    inventory_id: "e0000000-0000-0000-0000-000000000018",
+    inventory_name: "French fries frozen (FRIES_FROZ)",
+    type: "add",
+    quantity: 6000,
+    cost_per_unit: 0.35,
+    reason: "Daily Fries Stock",
+    created_at: new Date().toISOString(),
+  },
+];
+
+function getStoredLocalTransactions(): POSInventoryTransaction[] {
+  if (typeof window === "undefined") return mockInventoryTransactions;
+  try {
+    const raw = localStorage.getItem(LOCAL_TX_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {}
+  return mockInventoryTransactions;
+}
+
+function saveStoredLocalTransactions(txs: POSInventoryTransaction[]) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(LOCAL_TX_KEY, JSON.stringify(txs));
+  } catch (e) {}
+}
+
+export function getInventoryCostPerUnit(item: POSInventoryItem | undefined): number {
+  if (!item) return 20;
+  if (typeof item.cost_per_unit === "number" && item.cost_per_unit > 0) {
+    return item.cost_per_unit;
+  }
+  const n = (item.name || "").toLowerCase();
+  const u = (item.unit || "").toLowerCase();
+
+  // Pieces (pcs)
+  if (u === "pcs" || u === "pc") {
+    if (n.includes("bun")) return 25;
+    if (n.includes("patty") || n.includes("kabab")) return 85;
+    if (n.includes("wings")) return 40;
+    if (n.includes("nugget")) return 22;
+    if (n.includes("box") || n.includes("wrapper") || n.includes("pack")) return 8;
+    if (n.includes("dough") || n.includes("wrap")) return 50;
+    if (n.includes("drink") || n.includes("cola") || n.includes("beverage")) return 65;
+    if (n.includes("brownie") || n.includes("dessert")) return 110;
+    return 30;
+  }
+
+  // Grams (g)
+  if (u === "g") {
+    if (n.includes("beef")) return 0.90; // Rs. 900/kg
+    if (n.includes("chicken")) return 0.75; // Rs. 750/kg
+    if (n.includes("cheese")) return 1.30; // Rs. 1,300/kg
+    if (n.includes("mayo") || n.includes("ketchup") || n.includes("sauce")) return 0.35;
+    if (n.includes("fries") || n.includes("potato")) return 0.35;
+    if (n.includes("lettuce") || n.includes("onion") || n.includes("veg") || n.includes("tomato") || n.includes("jalapeno")) return 0.20;
+    return 0.50;
+  }
+
+  // Kilograms (kg)
+  if (u === "kg") {
+    if (n.includes("beef")) return 900;
+    if (n.includes("chicken")) return 750;
+    if (n.includes("cheese")) return 1300;
+    if (n.includes("fries")) return 350;
+    if (n.includes("sauce") || n.includes("mayo")) return 350;
+    return 450;
+  }
+
+  // Liquid (ml / liters)
+  if (u === "ml") return 0.45;
+  if (u === "l" || u === "litre" || u === "liter") return 450;
+
+  return 25;
+}
+
+/** Compute recipe-based production cost for a single menu item */
+export function getMenuItemProductionCost(
+  menuItemId: string,
+  priceFallback: number = 400,
+  notesOrSize?: string
+): number {
+  const ingredients = mockIngredients.filter((i) => i.menu_item_id === menuItemId);
+  if (ingredients.length > 0) {
+    let totalCost = 0;
+    for (const ing of ingredients) {
+      const inv = mockInventory.find((i) => i.id === ing.inventory_id);
+      const unitCost = getInventoryCostPerUnit(inv);
+      totalCost += (ing.quantity_required || 0) * unitCost;
+    }
+    // Scale if pizza sizes are present
+    const noteLow = (notesOrSize || "").toLowerCase();
+    if (noteLow.includes("large")) {
+      totalCost *= 2.2;
+    } else if (noteLow.includes("medium")) {
+      totalCost *= 1.6;
+    }
+    return Math.round(totalCost);
+  }
+
+  // Industry standard fallback: 38% - 40% production cost of selling price
+  return Math.round((priceFallback || 400) * 0.40);
+}
+
+/** Update unit cost of an inventory item */
+export async function updatePOSInventoryItemCost(id: string, costPerUnit: number): Promise<boolean> {
+  const item = mockInventory.find((i) => i.id === id);
+  if (item) {
+    item.cost_per_unit = costPerUnit;
+    item.updated_at = new Date().toISOString();
+    try {
+      await supabase.from("inventory").update({ cost_per_unit: costPerUnit }).eq("id", id);
+    } catch (e) {}
+    return true;
+  }
+  return false;
+}
+
+/** Fetch all inventory transactions */
+export async function getPOSInventoryTransactions(): Promise<POSInventoryTransaction[]> {
+  try {
+    const { data, error } = await supabase
+      .from("inventory_transactions")
+      .select("*, inventory(name)")
+      .order("created_at", { ascending: false });
+
+    if (!error && data && data.length > 0) {
+      return data.map((d: any) => ({
+        id: d.id,
+        inventory_id: d.inventory_id,
+        inventory_name: d.inventory?.name,
+        type: d.type,
+        quantity: Number(d.quantity) || 0,
+        cost_per_unit: Number(d.cost_per_unit) || 0,
+        reason: d.reason,
+        created_at: d.created_at,
+      }));
+    }
+  } catch (e) {}
+
+  return getStoredLocalTransactions();
+}
+
+/** Add a batch of inventory items from Excel, CSV, or Quick Text Ingestion */
+export async function addDailyInventoryBatch(
+  entries: {
+    inventory_id?: string;
+    name: string;
+    quantity: number;
+    unit?: string;
+    cost_per_unit?: number;
+  }[],
+  sourceNote: string = "Daily Stock Entry"
+): Promise<{ addedCount: number; totalValue: number }> {
+  let addedCount = 0;
+  let totalValue = 0;
+  const currentLocalTxs = getStoredLocalTransactions();
+  const now = new Date().toISOString();
+
+  for (const entry of entries) {
+    if (!entry.name || entry.quantity <= 0) continue;
+
+    // Try matching existing inventory item by ID or normalized name
+    let invItem = entry.inventory_id
+      ? mockInventory.find((i) => i.id === entry.inventory_id)
+      : undefined;
+
+    if (!invItem) {
+      const cleanNorm = entry.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+      invItem = mockInventory.find((i) => {
+        const itemNorm = i.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+        return itemNorm.includes(cleanNorm) || cleanNorm.includes(itemNorm);
+      });
+    }
+
+    const unitCost = entry.cost_per_unit !== undefined && entry.cost_per_unit > 0
+      ? entry.cost_per_unit
+      : getInventoryCostPerUnit(invItem);
+
+    if (invItem) {
+      invItem.quantity += entry.quantity;
+      if (entry.cost_per_unit !== undefined && entry.cost_per_unit > 0) {
+        invItem.cost_per_unit = entry.cost_per_unit;
+      }
+      invItem.updated_at = now;
+      invItem.status =
+        invItem.quantity <= invItem.minimum_quantity
+          ? "critical"
+          : invItem.quantity <= invItem.minimum_quantity * 2
+          ? "low"
+          : "in_stock";
+
+      try {
+        await supabase
+          .from("inventory")
+          .update({
+            quantity: invItem.quantity,
+            cost_per_unit: invItem.cost_per_unit,
+            updated_at: now,
+          })
+          .eq("id", invItem.id);
+      } catch (e) {}
+    } else {
+      // Create new inventory item
+      const newItem: POSInventoryItem = {
+        id: `inv_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        name: entry.name,
+        unit: entry.unit || "pcs",
+        quantity: entry.quantity,
+        minimum_quantity: Math.max(5, Math.round(entry.quantity * 0.2)),
+        cost_per_unit: unitCost,
+        updated_at: now,
+        status: "in_stock",
+      };
+      mockInventory.push(newItem);
+      invItem = newItem;
+
+      try {
+        await supabase.from("inventory").insert({
+          id: newItem.id,
+          name: newItem.name,
+          unit: newItem.unit,
+          quantity: newItem.quantity,
+          minimum_quantity: newItem.minimum_quantity,
+          cost_per_unit: newItem.cost_per_unit,
+        });
+      } catch (e) {}
+    }
+
+    // Log addition transaction
+    const newTx: POSInventoryTransaction = {
+      id: `tx_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      inventory_id: invItem.id,
+      inventory_name: invItem.name,
+      type: "add",
+      quantity: entry.quantity,
+      cost_per_unit: unitCost,
+      reason: sourceNote,
+      created_at: now,
+    };
+    currentLocalTxs.unshift(newTx);
+    mockInventoryTransactions.unshift(newTx);
+
+    try {
+      await supabase.from("inventory_transactions").insert({
+        id: newTx.id,
+        inventory_id: newTx.inventory_id,
+        type: newTx.type,
+        quantity: newTx.quantity,
+        reason: newTx.reason,
+      });
+    } catch (e) {}
+
+    addedCount++;
+    totalValue += entry.quantity * unitCost;
+  }
+
+  saveStoredLocalTransactions(currentLocalTxs);
+  return { addedCount, totalValue: Math.round(totalValue) };
+}
+
+/** Calculate comprehensive Profit & Loss Metrics for either "today" or a specific month/year */
+export async function getPOSProfitAndLossMetrics(
+  period: "today" | "month" = "month",
+  targetMonth?: number,
+  targetYear?: number
+): Promise<POSProfitLossMetrics> {
+  const [allOrders, allTxs, allInventory] = await Promise.all([
+    getPOSOrders(),
+    getPOSInventoryTransactions(),
+    getPOSInventory(),
+  ]);
+
+  const now = new Date();
+  const currentYear = targetYear !== undefined ? targetYear : now.getFullYear();
+  const currentMonth = targetMonth !== undefined ? targetMonth : now.getMonth();
+  const todayStr = now.toISOString().split("T")[0];
+
+  // 1. Filter valid fulfilled/served orders for period
+  const eligibleOrders = allOrders.filter((o) => {
+    if (o.status !== "completed" && o.status !== "served") return false;
+    if (!o.created_at) return false;
+    const d = new Date(o.created_at);
+    if (isNaN(d.getTime())) return false;
+
+    if (period === "today") {
+      return o.created_at.startsWith(todayStr);
+    }
+    return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+  });
+
+  // Calculate gross revenue & production cost from sold items
+  let totalRevenue = 0;
+  let totalProductionCost = 0;
+  let soldItemsCount = 0;
+  const itemizedMap = new Map<
+    string,
+    { name: string; quantity: number; revenue: number; cost: number }
+  >();
+  const consumedInventoryMap = new Map<string, number>();
+
+  for (const order of eligibleOrders) {
+    totalRevenue += order.total || 0;
+    if (order.items && order.items.length > 0) {
+      for (const item of order.items) {
+        const qty = item.quantity || 1;
+        const price = item.price || 0;
+        const lineRev = price * qty;
+        soldItemsCount += qty;
+
+        const unitCost = getMenuItemProductionCost(item.menu_item_id, price, item.notes || "");
+        const lineCost = unitCost * qty;
+        totalProductionCost += lineCost;
+
+        // Track itemized profit
+        const itemKey = item.menu_item_name || item.menu_item_id;
+        const existing = itemizedMap.get(itemKey) || {
+          name: itemKey,
+          quantity: 0,
+          revenue: 0,
+          cost: 0,
+        };
+        existing.quantity += qty;
+        existing.revenue += lineRev;
+        existing.cost += lineCost;
+        itemizedMap.set(itemKey, existing);
+
+        // Track consumed recipe ingredients
+        const ings = mockIngredients.filter((i) => i.menu_item_id === item.menu_item_id);
+        for (const ing of ings) {
+          const cQty = (ing.quantity_required || 0) * qty;
+          const curr = consumedInventoryMap.get(ing.inventory_id) || 0;
+          consumedInventoryMap.set(ing.inventory_id, curr + cQty);
+        }
+      }
+    }
+  }
+
+  // If order items were empty or minimal, apply standard production cost ratio
+  if (totalProductionCost === 0 && totalRevenue > 0) {
+    totalProductionCost = Math.round(totalRevenue * 0.40);
+  }
+
+  const grossProfit = Math.max(0, totalRevenue - totalProductionCost);
+  const grossProfitMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
+
+  // 2. Filter added inventory transactions for period
+  const eligibleAddTxs = allTxs.filter((tx) => {
+    if (tx.type !== "add" || !tx.created_at) return false;
+    const d = new Date(tx.created_at);
+    if (isNaN(d.getTime())) return false;
+
+    if (period === "today") {
+      return tx.created_at.startsWith(todayStr);
+    }
+    return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+  });
+
+  // Calculate added stock vs consumed stock for loss
+  const addedInventoryMap = new Map<
+    string,
+    { id: string; name: string; quantity: number; cost_per_unit: number; unit: string }
+  >();
+
+  let addedStockValue = 0;
+  for (const tx of eligibleAddTxs) {
+    const inv = allInventory.find((i) => i.id === tx.inventory_id);
+    const unitCost = tx.cost_per_unit || getInventoryCostPerUnit(inv);
+    addedStockValue += tx.quantity * unitCost;
+
+    const existing = addedInventoryMap.get(tx.inventory_id) || {
+      id: tx.inventory_id,
+      name: tx.inventory_name || inv?.name || "Ingredient",
+      quantity: 0,
+      cost_per_unit: unitCost,
+      unit: inv?.unit || "pcs",
+    };
+    existing.quantity += tx.quantity;
+    addedInventoryMap.set(tx.inventory_id, existing);
+  }
+
+  let totalUnsoldLoss = 0;
+  let wasteItemsCount = 0;
+  const lossBreakdown: POSProfitLossMetrics["lossBreakdown"] = [];
+
+  // Formula: For ingredients added in this cycle, (Added - Consumed) * Cost = Loss
+  addedInventoryMap.forEach((val, invId) => {
+    const consumed = consumedInventoryMap.get(invId) || 0;
+    const unsold = Math.max(0, val.quantity - consumed);
+    if (unsold > 0) {
+      const lossAmt = Math.round(unsold * val.cost_per_unit);
+      totalUnsoldLoss += lossAmt;
+      wasteItemsCount++;
+      lossBreakdown.push({
+        inventory_name: val.name,
+        unit: val.unit,
+        added_quantity: val.quantity,
+        consumed_quantity: consumed,
+        unsold_quantity: unsold,
+        unit_cost: val.cost_per_unit,
+        loss_amount: lossAmt,
+      });
+    }
+  });
+
+  // Net Realized Profit = Gross Profit - Unsold Loss
+  const netProfit = grossProfit - totalUnsoldLoss;
+  const netProfitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
+
+  const itemizedBreakdown = Array.from(itemizedMap.values()).map((v) => ({
+    menu_item_name: v.name,
+    quantity_sold: v.quantity,
+    revenue: v.revenue,
+    production_cost: v.cost,
+    profit: v.revenue - v.cost,
+  }));
+
+  return {
+    period,
+    revenue: totalRevenue,
+    productionCost: totalProductionCost,
+    grossProfit,
+    grossProfitMargin: Math.round(grossProfitMargin * 10) / 10,
+    unsoldLoss: totalUnsoldLoss,
+    netProfit,
+    netProfitMargin: Math.round(netProfitMargin * 10) / 10,
+    soldItemsCount,
+    addedStockValue: Math.round(addedStockValue),
+    wasteItemsCount,
+    itemizedBreakdown,
+    lossBreakdown,
+  };
 }
 

@@ -13,11 +13,26 @@ import {
   updateOrderStatus, 
   POSOrder, 
   POSTable, 
-  POSInventoryItem 
+  POSInventoryItem
 } from "@/lib/pos-data";
-import { DollarSign, ShoppingBag, Utensils, AlertTriangle, CheckCircle, XCircle, ArrowUpRight, Clock, TrendingUp, TrendingDown, Calendar, CalendarDays } from "lucide-react";
+import { 
+  DollarSign, 
+  ShoppingBag, 
+  Utensils, 
+  AlertTriangle, 
+  CheckCircle, 
+  XCircle, 
+  ArrowUpRight, 
+  Clock, 
+  TrendingUp, 
+  TrendingDown, 
+  Calendar, 
+  CalendarDays,
+  FileSpreadsheet
+} from "lucide-react";
 import Link from "next/link";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Cell, Tooltip } from "recharts";
+import { InventoryImportModal } from "@/components/inventory-import-modal";
 
 // Mock Data for Charts
 const revenueData = [
@@ -70,6 +85,7 @@ export default function AdminDashboardPage() {
   const [tables, setTables] = useState<POSTable[]>([]);
   const [inventory, setInventory] = useState<POSInventoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   // Reject Modal State
   const [rejectingOrderId, setRejectingOrderId] = useState<string | null>(null);
@@ -275,11 +291,11 @@ export default function AdminDashboardPage() {
           <div>
             <div className="flex items-center space-x-2">
               <span className="h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse" />
-              <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">Revenue Analytics</span>
+              <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">Revenue & Profit Analytics</span>
             </div>
-            <h2 className="text-2xl font-black text-white mt-1">Monthly & Yearly Revenue Summary</h2>
+            <h2 className="text-2xl font-black text-white mt-1">Monthly & Yearly Performance Summary</h2>
             <p className="text-xs text-zinc-400 mt-1 max-w-lg">
-              Aggregate gross revenue calculated from fulfilled and valid orders across the current fiscal cycle.
+              Aggregate gross revenue and recipe-based profit & loss calculated from fulfilled orders.
             </p>
           </div>
 
@@ -294,7 +310,7 @@ export default function AdminDashboardPage() {
               </div>
               <Link href="/admin/reports">
                 <Button size="sm" variant="ghost" className="text-xs text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 rounded-lg">
-                  Breakdown &rarr;
+                  P&L Ledger &rarr;
                 </Button>
               </Link>
             </div>
@@ -309,7 +325,7 @@ export default function AdminDashboardPage() {
               </div>
               <Link href="/admin/reports">
                 <Button size="sm" variant="ghost" className="text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 rounded-lg">
-                  Full Ledger &rarr;
+                  Full Report &rarr;
                 </Button>
               </Link>
             </div>
@@ -438,6 +454,14 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Daily Inventory Stock Ingestion Modal */}
+      <InventoryImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        inventory={inventory}
+        onImportComplete={refreshData}
+      />
     </div>
   );
 }

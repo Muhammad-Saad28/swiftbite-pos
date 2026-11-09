@@ -186,6 +186,7 @@ export type Database = {
           unit: string;
           quantity: number;
           minimum_quantity: number;
+          cost_per_unit?: number;
           updated_at: string;
         };
         Insert: {
@@ -194,10 +195,12 @@ export type Database = {
           unit: string;
           quantity: number;
           minimum_quantity: number;
+          cost_per_unit?: number;
         };
         Update: {
           quantity?: number;
           minimum_quantity?: number;
+          cost_per_unit?: number;
         };
       };
       inventory_transactions: {

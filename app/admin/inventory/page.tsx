@@ -11,6 +11,8 @@ import {
   adjustPOSInventoryStock,
   addPOSInventoryItem,
   deletePOSInventoryItem,
+  getInventoryCostPerUnit,
+  updatePOSInventoryItemCost,
   POSInventoryItem,
 } from "@/lib/pos-data";
 import {
@@ -24,7 +26,10 @@ import {
   CheckCircle2,
   XCircle,
   TrendingDown,
+  FileSpreadsheet,
+  Coins,
 } from "lucide-react";
+import { InventoryImportModal } from "@/components/inventory-import-modal";
 
 /** Strip the trailing SKU suffix e.g. "Chicken boneless raw (CHK_RAW)" → "Chicken boneless raw" */
 function cleanName(raw: string): string {
@@ -78,10 +83,12 @@ export default function AdminInventoryPage() {
 
   // Add New Inventory Item State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [newItemName, setNewItemName] = useState("");
   const [newItemUnit, setNewItemUnit] = useState("kg");
   const [newItemQuantity, setNewItemQuantity] = useState("");
   const [newItemMinThreshold, setNewItemMinThreshold] = useState("");
+  const [newItemCost, setNewItemCost] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
   // Delete State
@@ -120,11 +127,13 @@ export default function AdminInventoryPage() {
     setIsAdding(true);
     const initialQty = parseFloat(newItemQuantity) || 0;
     const minQty = parseFloat(newItemMinThreshold) || 0;
+    const costPerUnit = parseFloat(newItemCost) || undefined;
     await addPOSInventoryItem({
       name: newItemName.trim(),
       unit: newItemUnit.trim().toLowerCase() || "kg",
       quantity: initialQty,
       minimum_quantity: minQty,
+      cost_per_unit: costPerUnit,
     });
     setIsAdding(false);
     setIsAddModalOpen(false);
@@ -132,6 +141,7 @@ export default function AdminInventoryPage() {
     setNewItemUnit("kg");
     setNewItemQuantity("");
     setNewItemMinThreshold("");
+    setNewItemCost("");
     await refreshData();
   };
 
@@ -169,13 +179,23 @@ export default function AdminInventoryPage() {
             Track raw ingredients, stock quantities, and minimum thresholds
           </p>
         </div>
-        <Button
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-orange-600 hover:bg-orange-500 font-bold text-xs flex items-center space-x-1.5 shadow-md shadow-orange-600/20 self-start sm:self-auto"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Item</span>
-        </Button>
+        <div className="flex items-center space-x-2 self-start sm:self-auto">
+          <Button
+            onClick={() => setIsImportModalOpen(true)}
+            className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-zinc-950 font-bold text-xs flex items-center space-x-1.5 shadow-md shadow-amber-500/20"
+          >
+            <FileSpreadsheet className="h-4 w-4" />
+            <span>Import Daily Stock</span>
+          </Button>
+          <Button
+            onClick={() => setIsAddModalOpen(true)}
+            variant="outline"
+            className="border-zinc-700 hover:bg-zinc-800 text-white font-bold text-xs flex items-center space-x-1.5"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add Item</span>
+          </Button>
+        </div>
       </div>
 
       {/* ── Stat Tiles ─────────────────────────────────────── */}
@@ -357,6 +377,14 @@ export default function AdminInventoryPage() {
                     </p>
                   </div>
 
+                  {/* Unit Cost */}
+                  <div className="flex items-center justify-between text-xs py-1.5 border-t border-zinc-800/60">
+                    <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Unit Cost:</span>
+                    <span className="font-mono text-orange-400 font-bold text-xs">
+                      Rs. {getInventoryCostPerUnit(item)} / {item.unit}
+                    </span>
+                  </div>
+
                   {/* Actions */}
                   <div className="flex items-center gap-2 pt-1 border-t border-zinc-800">
                     <button
@@ -441,15 +469,25 @@ export default function AdminInventoryPage() {
             />
           </div>
 
-          <Input
-            label="Minimum Alert Threshold"
-            type="number"
-            step="any"
-            placeholder="e.g. 5.0"
-            value={newItemMinThreshold}
-            onChange={(e) => setNewItemMinThreshold(e.target.value)}
-            required
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Minimum Alert Threshold"
+              type="number"
+              step="any"
+              placeholder="e.g. 5.0"
+              value={newItemMinThreshold}
+              onChange={(e) => setNewItemMinThreshold(e.target.value)}
+              required
+            />
+            <Input
+              label="Cost Per Unit (Rs.)"
+              type="number"
+              step="any"
+              placeholder="e.g. 25.0"
+              value={newItemCost}
+              onChange={(e) => setNewItemCost(e.target.value)}
+            />
+          </div>
 
           <div className="flex justify-end space-x-2 pt-2 border-t border-zinc-800">
             <Button
@@ -574,6 +612,14 @@ export default function AdminInventoryPage() {
           </div>
         </div>
       </Modal>
+
+      {/* ── Daily Inventory Stock Ingestion Modal ──────────── */}
+      <InventoryImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        inventory={inventory}
+        onImportComplete={refreshData}
+      />
     </div>
   );
 }
