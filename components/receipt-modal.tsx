@@ -54,6 +54,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           <title>Receipt #${numericReceiptNo}</title>
           <style id="receipt-page-style">
             @page {
+              size: 80mm auto;
               margin: 0;
             }
             *, *::before, *::after {
@@ -83,11 +84,13 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
               width: 78mm;
               max-width: 78mm;
               margin: 0 auto;
-              padding: 2mm 2mm 0mm 2mm;
+              padding: 2mm 2mm 15mm 2mm;
               box-sizing: border-box;
               height: auto !important;
               min-height: 0 !important;
               max-height: none !important;
+              overflow: visible !important;
+            }
               overflow: visible !important;
             }
             /* Component styling translations for thermal print fidelity */
@@ -194,58 +197,36 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             .divide-y-2 > * + * { border-top: 2px dashed #000000; }
             .divide-dashed { border-style: dashed; }
             
-            /* Clean pagination behavior & zero trailing margins */
+            /* Clean pagination behavior & paper feed margin */
             .print-wrapper, .print-wrapper * {
               page-break-inside: auto;
             }
-            .print-wrapper > *:last-child,
-            .print-wrapper > *:last-child > *:last-child {
-              margin-bottom: 0 !important;
-              padding-bottom: 0 !important;
+            .paper-feed-spacer {
+              height: 15mm;
+              display: block;
+              width: 100%;
             }
           </style>
         </head>
         <body>
           <div class="print-wrapper">
             ${printElement.innerHTML}
+            <div class="paper-feed-spacer"></div>
           </div>
         </body>
       </html>
     `);
     doc.close();
 
-    // Allow browser layout engine to render isolated DOM, compute exact content height, and fit @page dynamically
+    // Allow DOM and layout engine to settle, then print
     setTimeout(() => {
-      try {
-        const wrapper = doc.querySelector(".print-wrapper") as HTMLElement | null;
-        const measuredPx = wrapper?.offsetHeight || wrapper?.scrollHeight || printElement.offsetHeight || 300;
-        // 96 DPI conversion: 1 px ≈ 0.264583 mm
-        const computedHeightMm = Math.max(45, Math.ceil(measuredPx * 0.2646) + 2);
-
-        let dynamicStyle = doc.getElementById("receipt-page-style");
-        if (!dynamicStyle) {
-          dynamicStyle = doc.createElement("style");
-          dynamicStyle.id = "receipt-page-style";
-          doc.head.appendChild(dynamicStyle);
-        }
-        // Valid CSS Paged Media descriptor (no !important on page properties)
-        dynamicStyle.innerHTML = `
-          @page {
-            size: 80mm ${computedHeightMm}mm;
-            margin: 0;
-          }
-        ` + dynamicStyle.innerHTML;
-      } catch (e) {}
-
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      // Remove iframe from DOM after print dialog triggers
       setTimeout(() => {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
-        // Remove iframe from DOM after print dialog triggers
-        setTimeout(() => {
-          iframe.remove();
-        }, 1500);
-      }, 50);
-    }, 150);
+        iframe.remove();
+      }, 2500);
+    }, 250);
   };
 
   const discountAmount = order.discount_amount || 0;
