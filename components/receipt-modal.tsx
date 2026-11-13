@@ -54,7 +54,6 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
           <title>Receipt #${numericReceiptNo}</title>
           <style id="receipt-page-style">
             @page {
-              size: 80mm auto;
               margin: 0;
             }
             *, *::before, *::after {
@@ -84,7 +83,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
               width: 78mm;
               max-width: 78mm;
               margin: 0 auto;
-              padding: 2mm 2mm 15mm 2mm;
+              padding: 2mm 2mm 0mm 2mm;
               box-sizing: border-box;
               height: auto !important;
               min-height: 0 !important;
@@ -195,37 +194,56 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             .divide-y-2 > * + * { border-top: 2px dashed #000000; }
             .divide-dashed { border-style: dashed; }
             
-            /* Clean pagination behavior & paper feed margin */
+            /* Clean pagination behavior & zero trailing margins */
             .print-wrapper, .print-wrapper * {
               page-break-inside: auto;
             }
-            .paper-feed-spacer {
-              height: 15mm;
-              display: block;
-              width: 100%;
+            .print-wrapper > *:last-child,
+            .print-wrapper > *:last-child > *:last-child {
+              margin-bottom: 0 !important;
+              padding-bottom: 0 !important;
             }
           </style>
         </head>
         <body>
           <div class="print-wrapper">
             ${printElement.innerHTML}
-            <div class="paper-feed-spacer"></div>
           </div>
         </body>
       </html>
     `);
     doc.close();
 
-    // Allow DOM and layout engine to settle, then print
-    const cleanup = () => {
-      try {
-        if (iframe && iframe.parentNode) {
-          iframe.parentNode.removeChild(iframe);
-        }
-      } catch (e) {}
-    };
-
+    // Dynamically calculate exact content height to provide thermal drivers a discrete single-page height
     setTimeout(() => {
+      try {
+        const wrapper = doc.querySelector(".print-wrapper") as HTMLElement | null;
+        const measuredPx = wrapper?.offsetHeight || wrapper?.scrollHeight || printElement.offsetHeight || 300;
+        // 96 DPI conversion: 1 px ≈ 0.264583 mm
+        const computedHeightMm = Math.max(45, Math.ceil(measuredPx * 0.2646) + 4);
+
+        let dynamicStyle = doc.getElementById("receipt-page-style");
+        if (!dynamicStyle) {
+          dynamicStyle = doc.createElement("style");
+          dynamicStyle.id = "receipt-page-style";
+          doc.head.appendChild(dynamicStyle);
+        }
+        dynamicStyle.innerHTML = `
+          @page {
+            size: 80mm ${computedHeightMm}mm;
+            margin: 0;
+          }
+        ` + dynamicStyle.innerHTML;
+      } catch (e) {}
+
+      const cleanup = () => {
+        try {
+          if (iframe && iframe.parentNode) {
+            iframe.parentNode.removeChild(iframe);
+          }
+        } catch (e) {}
+      };
+
       try {
         if (iframe.contentWindow) {
           iframe.contentWindow.focus();
@@ -239,9 +257,8 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
       } catch (e) {
         window.print();
       }
-      // Safety fallback: only cleanup after 60 seconds if onafterprint didn't fire
       setTimeout(cleanup, 60000);
-    }, 300);
+    }, 250);
   };
 
   const discountAmount = order.discount_amount || 0;
