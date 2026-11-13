@@ -57,8 +57,9 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
         <head>
           <meta charset="utf-8" />
           <title>Receipt #${numericReceiptNo}</title>
-          <style id="receipt-page-style">
+          <style id="kot-page-style">
             @page {
+              size: 80mm auto;
               margin: 0;
             }
             *, *::before, *::after {
@@ -85,6 +86,8 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               overflow: visible !important;
             }
             .print-wrapper {
+              display: block !important;
+              position: static !important;
               width: 78mm;
               max-width: 78mm;
               margin: 0 auto;
@@ -94,6 +97,8 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               min-height: 0 !important;
               max-height: none !important;
               overflow: visible !important;
+              break-inside: auto !important;
+              page-break-inside: auto !important;
             }
             /* Component styling translations for thermal print fidelity */
             .text-center { text-align: center; }
@@ -218,6 +223,20 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
       </html>
     `);
     doc.close();
+
+    // Diagnostic measurement inspection
+    setTimeout(() => {
+      try {
+        const wrapper = doc.querySelector(".print-wrapper") as HTMLElement | null;
+        console.log("KOT DEBUG:", {
+          wrapperHeight: wrapper?.offsetHeight,
+          wrapperScrollHeight: wrapper?.scrollHeight,
+          bodyHeight: doc.body?.scrollHeight,
+          documentHeight: doc.documentElement?.scrollHeight,
+          itemCount: wrapper?.querySelectorAll(".item-row")?.length,
+        });
+      } catch (err) {}
+    }, 100);
 
     // Dynamically calculate exact content height to provide thermal drivers a discrete single-page height
     setTimeout(() => {
@@ -363,7 +382,7 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
                       item.menu_item_name?.toLowerCase().includes("combo");
 
                     return (
-                      <div key={item.id || idx} className="py-3 text-black font-black font-sans">
+                      <div key={item.id || idx} className="item-row py-3 text-black font-black font-sans">
                         <div className="flex justify-between items-start">
                           <div className="flex items-center space-x-2">
                             <span className="text-xl font-black px-2 py-0.5 rounded bg-black text-white">
