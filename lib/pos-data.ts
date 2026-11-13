@@ -1865,12 +1865,22 @@ export async function adjustPOSInventoryStock(id: string, deltaQuantity: number,
   if (item) {
     item.quantity = Math.max(0, item.quantity + deltaQuantity);
     item.updated_at = new Date().toISOString();
-    try {
-      await supabase.from("inventory").update({ quantity: item.quantity, updated_at: item.updated_at }).eq("id", id);
-    } catch (e) {}
-    return true;
   }
-  return false;
+
+  try {
+    const { data } = await supabase.from("inventory").select("quantity").eq("id", id).single();
+    if (data) {
+      const newQty = Math.max(0, Number(data.quantity) + deltaQuantity);
+      await supabase.from("inventory").update({ quantity: newQty, updated_at: new Date().toISOString() }).eq("id", id);
+      return true;
+    }
+    if (item) {
+      await supabase.from("inventory").update({ quantity: item.quantity, updated_at: item.updated_at }).eq("id", id);
+      return true;
+    }
+  } catch (e) {}
+
+  return !!item;
 }
 
 export async function addPOSInventoryItem(item: {
@@ -1878,6 +1888,7 @@ export async function addPOSInventoryItem(item: {
   unit: string;
   quantity: number;
   minimum_quantity: number;
+  cost_per_unit?: number;
 }): Promise<POSInventoryItem> {
   let newItem: POSInventoryItem = {
     id: `inv_${Date.now()}`,
@@ -1885,31 +1896,72 @@ export async function addPOSInventoryItem(item: {
     unit: item.unit || "kg",
     quantity: item.quantity >= 0 ? item.quantity : 0,
     minimum_quantity: item.minimum_quantity >= 0 ? item.minimum_quantity : 0,
+    cost_per_unit: item.cost_per_unit !== undefined && item.cost_per_unit >= 0 ? item.cost_per_unit : undefined,
     updated_at: new Date().toISOString(),
     status: item.quantity <= item.minimum_quantity ? "critical" : item.quantity <= item.minimum_quantity * 2 ? "low" : "in_stock",
   };
 
   try {
+    const insertPayload: Record<string, any> = {
+      name: item.name,
+      unit: item.unit || "kg",
+      quantity: item.quantity,
+      minimum_quantity: item.minimum_quantity,
+    };
+    if (item.cost_per_unit !== undefined && item.cost_per_unit >= 0) {
+      insertPayload.cost_per_unit = item.cost_per_unit;
+    }
+
     const { data, error } = await supabase
       .from("inventory")
-      .insert({
-        name: item.name,
-        unit: item.unit || "kg",
-        quantity: item.quantity,
-        minimum_quantity: item.minimum_quantity,
-      })
+      .insert(insertPayload)
       .select()
       .single();
 
     if (!error && data) {
       newItem = {
         ...data,
+        cost_per_unit: data.cost_per_unit ?? item.cost_per_unit,
         status: data.quantity <= data.minimum_quantity ? "critical" : data.quantity <= data.minimum_quantity * 2 ? "low" : "in_stock",
       };
     }
   } catch (e) {}
 
   mockInventory.push(newItem);
+
+  // If item was created with starting quantity > 0, log an inventory transaction
+  if (newItem.quantity > 0) {
+    const now = new Date().toISOString();
+    const unitCost = item.cost_per_unit || getInventoryCostPerUnit(newItem);
+    const newTx: POSInventoryTransaction = {
+      id: `tx_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      inventory_id: newItem.id,
+      inventory_name: newItem.name,
+      type: "add",
+      quantity: newItem.quantity,
+      cost_per_unit: unitCost,
+      reason: "Initial Stock",
+      created_at: now,
+    };
+    const currentLocalTxs = getStoredLocalTransactions();
+    currentLocalTxs.unshift(newTx);
+    mockInventoryTransactions.unshift(newTx);
+    saveStoredLocalTransactions(currentLocalTxs);
+
+    try {
+      const txPayload: Record<string, any> = {
+        inventory_id: newItem.id,
+        type: "add",
+        quantity: newItem.quantity,
+        reason: "Initial Stock",
+      };
+      if (unitCost !== undefined && unitCost > 0) {
+        txPayload.cost_per_unit = unitCost;
+      }
+      await supabase.from("inventory_transactions").insert(txPayload);
+    } catch (e) {}
+  }
+
   return newItem;
 }
 
@@ -2242,12 +2294,15 @@ export async function updatePOSInventoryItemCost(id: string, costPerUnit: number
   if (item) {
     item.cost_per_unit = costPerUnit;
     item.updated_at = new Date().toISOString();
-    try {
-      await supabase.from("inventory").update({ cost_per_unit: costPerUnit }).eq("id", id);
-    } catch (e) {}
-    return true;
   }
-  return false;
+  try {
+    const { error } = await supabase
+      .from("inventory")
+      .update({ cost_per_unit: costPerUnit, updated_at: new Date().toISOString() })
+      .eq("id", id);
+    if (!error) return true;
+  } catch (e) {}
+  return !!item;
 }
 
 /** Fetch all inventory transactions */
@@ -2350,14 +2405,22 @@ export async function addDailyInventoryBatch(
       invItem = newItem;
 
       try {
-        await supabase.from("inventory").insert({
-          id: newItem.id,
-          name: newItem.name,
-          unit: newItem.unit,
-          quantity: newItem.quantity,
-          minimum_quantity: newItem.minimum_quantity,
-          cost_per_unit: newItem.cost_per_unit,
-        });
+        const { data: createdDbItem } = await supabase
+          .from("inventory")
+          .insert({
+            name: newItem.name,
+            unit: newItem.unit,
+            quantity: newItem.quantity,
+            minimum_quantity: newItem.minimum_quantity,
+            cost_per_unit: newItem.cost_per_unit,
+          })
+          .select()
+          .single();
+
+        if (createdDbItem && createdDbItem.id) {
+          invItem.id = createdDbItem.id;
+          newItem.id = createdDbItem.id;
+        }
       } catch (e) {}
     }
 
@@ -2376,13 +2439,16 @@ export async function addDailyInventoryBatch(
     mockInventoryTransactions.unshift(newTx);
 
     try {
-      await supabase.from("inventory_transactions").insert({
-        id: newTx.id,
-        inventory_id: newTx.inventory_id,
+      const txPayload: Record<string, any> = {
+        inventory_id: invItem.id,
         type: newTx.type,
         quantity: newTx.quantity,
         reason: newTx.reason,
-      });
+      };
+      if (unitCost !== undefined && unitCost > 0) {
+        txPayload.cost_per_unit = unitCost;
+      }
+      await supabase.from("inventory_transactions").insert(txPayload);
     } catch (e) {}
 
     addedCount++;

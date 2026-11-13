@@ -188,6 +188,7 @@ CREATE TABLE inventory_transactions (
   inventory_id UUID REFERENCES inventory(id) ON DELETE CASCADE,
   type inventory_type_enum NOT NULL,
   quantity DECIMAL(10, 2) NOT NULL,
+  cost_per_unit DECIMAL(10, 2) DEFAULT 0,
   reason TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -434,24 +435,3 @@ INSERT INTO menu_items (id, category_id, name, description, price, available, fe
   ('f0000000-0000-0000-0000-000000000010', 'c0000000-0000-0000-0000-000000000008', 'Cola 500ml', 'Chilled soft drink', 150, true, false),
   ('f0000000-0000-0000-0000-000000000011', 'c0000000-0000-0000-0000-000000000009', 'Chocolate Brownie', 'Warm chocolate brownie with syrup', 250, true, false),
   ('f0000000-0000-0000-0000-000000000012', 'c0000000-0000-0000-0000-000000000010', 'Family Deal 1', '2 Burgers, 1 Pizza, 4 Drinks', 2500, true, true);
-
--- Insert Base Inventory Stock
-INSERT INTO inventory (id, name, unit, quantity, minimum_quantity) VALUES
-  ('e0000000-0000-0000-0000-000000000001', 'Chicken', 'kg', 20.0, 5.0),
-  ('e0000000-0000-0000-0000-000000000002', 'Beef', 'kg', 15.0, 3.0),
-  ('e0000000-0000-0000-0000-000000000003', 'Pizza Dough', 'pcs', 50.0, 10.0),
-  ('e0000000-0000-0000-0000-000000000004', 'Cheese', 'kg', 10.0, 2.0),
-  ('e0000000-0000-0000-0000-000000000005', 'Burger Buns', 'pcs', 100.0, 20.0),
-  ('e0000000-0000-0000-0000-000000000006', 'Fries', 'kg', 30.0, 5.0),
-  ('e0000000-0000-0000-0000-000000000007', 'Soft Drinks', 'pcs', 100.0, 24.0);
-
--- Insert Recipe Ingredients Mapping
-INSERT INTO menu_item_ingredients (menu_item_id, inventory_id, quantity_required) VALUES
-  ('f0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000002', 0.20), -- Smash Burger = 0.20kg Beef
-  ('f0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000005', 1.0),  -- Smash Burger = 1 Bun
-  ('f0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001', 0.15), -- Crispy Chicken Burger = 0.15kg Chicken
-  ('f0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000005', 1.0),  -- Crispy Chicken Burger = 1 Bun
-  ('f0000000-0000-0000-0000-000000000003', 'e0000000-0000-0000-0000-000000000003', 1.0),  -- Pepperoni Pizza = 1 Dough
-  ('f0000000-0000-0000-0000-000000000003', 'e0000000-0000-0000-0000-000000000004', 0.20), -- Pepperoni Pizza = 0.20kg Cheese
-  ('f0000000-0000-0000-0000-000000000009', 'e0000000-0000-0000-0000-000000000006', 0.25), -- Loaded Fries = 0.25kg Fries
-  ('f0000000-0000-0000-0000-000000000010', 'e0000000-0000-0000-0000-000000000007', 1.0);  -- Cola = 1 Soft Drink

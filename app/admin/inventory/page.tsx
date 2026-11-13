@@ -96,6 +96,10 @@ export default function AdminInventoryPage() {
     null
   );
 
+  // Edit Cost State
+  const [editingCostItem, setEditingCostItem] = useState<POSInventoryItem | null>(null);
+  const [editingCostValue, setEditingCostValue] = useState("");
+
   const refreshData = async () => {
     const fetched = await getPOSInventory();
     setInventory(fetched);
@@ -150,6 +154,17 @@ export default function AdminInventoryPage() {
     await deletePOSInventoryItem(deletingItem.id);
     setDeletingItem(null);
     await refreshData();
+  };
+
+  const handleSaveCost = async () => {
+    if (!editingCostItem) return;
+    const cost = parseFloat(editingCostValue);
+    if (!isNaN(cost) && cost >= 0) {
+      await updatePOSInventoryItemCost(editingCostItem.id, cost);
+      setEditingCostItem(null);
+      setEditingCostValue("");
+      await refreshData();
+    }
   };
 
   // Derived counts
@@ -380,9 +395,23 @@ export default function AdminInventoryPage() {
                   {/* Unit Cost */}
                   <div className="flex items-center justify-between text-xs py-1.5 border-t border-zinc-800/60">
                     <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Unit Cost:</span>
-                    <span className="font-mono text-orange-400 font-bold text-xs">
-                      Rs. {getInventoryCostPerUnit(item)} / {item.unit}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono text-orange-400 font-bold text-xs">
+                        Rs. {getInventoryCostPerUnit(item)} / {item.unit}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingCostItem(item);
+                          setEditingCostValue(String(item.cost_per_unit !== undefined && item.cost_per_unit > 0 ? item.cost_per_unit : getInventoryCostPerUnit(item)));
+                        }}
+                        className="p-1 rounded hover:bg-zinc-800 text-zinc-500 hover:text-orange-400 transition-colors"
+                        title="Edit Unit Cost"
+                      >
+                        <Coins className="h-3 w-3" />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Actions */}
@@ -611,6 +640,43 @@ export default function AdminInventoryPage() {
             </Button>
           </div>
         </div>
+      </Modal>
+
+      {/* ── Edit Unit Cost Modal ────────────────────────────── */}
+      <Modal
+        isOpen={!!editingCostItem}
+        onClose={() => setEditingCostItem(null)}
+        title={`Update Unit Cost — ${editingCostItem ? cleanName(editingCostItem.name) : ""}`}
+      >
+        {editingCostItem && (
+          <div className="space-y-4">
+            <p className="text-xs text-zinc-400">
+              Set the cost price per {editingCostItem.unit} for recipe production cost and daily loss calculations.
+            </p>
+            <Input
+              label={`Cost per ${editingCostItem.unit} (Rs.)`}
+              type="number"
+              step="any"
+              min="0"
+              value={editingCostValue}
+              onChange={(e) => setEditingCostValue(e.target.value)}
+              placeholder="e.g. 50.0"
+              autoFocus
+            />
+            <div className="flex justify-end space-x-2 pt-2 border-t border-zinc-800">
+              <Button variant="ghost" size="sm" onClick={() => setEditingCostItem(null)}>
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleSaveCost}
+                className="bg-orange-600 hover:bg-orange-500 font-bold"
+              >
+                Save Cost
+              </Button>
+            </div>
+          </div>
+        )}
       </Modal>
 
       {/* ── Daily Inventory Stock Ingestion Modal ──────────── */}
