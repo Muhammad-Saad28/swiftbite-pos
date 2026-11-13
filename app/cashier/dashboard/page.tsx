@@ -365,7 +365,19 @@ export default function CashierDashboardPage() {
 
     // When new items are added to an active order, prompt the user with the new supplementary Kitchen KOT first
     if (updatedOrder) {
-      const pendingItems = getKitchenPendingItems(updatedOrder);
+      let pendingItems = getKitchenPendingItems(updatedOrder);
+      if (pendingItems.length === 0 && formattedAdditions.length > 0) {
+        pendingItems = formattedAdditions.map((fa, idx) => ({
+          id: `add_${Date.now()}_${idx}`,
+          order_id: updatedOrder.id,
+          menu_item_id: fa.menu_item_id,
+          menu_item_name: fa.menu_item_name,
+          quantity: fa.quantity,
+          price: fa.price,
+          notes: fa.notes || null,
+          is_new: true,
+        }));
+      }
       if (pendingItems.length > 0) {
         setSelectedKitchenOrder({
           ...updatedOrder,

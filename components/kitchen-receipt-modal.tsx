@@ -16,8 +16,8 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
 
   const handlePrint = () => {
     // When printed, automatically register all items on this KOT as dispatched to kitchen
-    if (order && order.items) {
-      markKitchenItemsDispatched(order.id, order.items);
+    if (order && order.items && order.items.length > 0) {
+      markKitchenItemsDispatched(order.id, order.items, !!order.is_addition);
     }
 
     const printElement = document.getElementById("kitchen-receipt");

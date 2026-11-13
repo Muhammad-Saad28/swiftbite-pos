@@ -1292,7 +1292,8 @@ export function getDispatchedKitchenItems(orderId: string): Record<string, numbe
 
 export function markKitchenItemsDispatched(
   orderId: string,
-  items: { menu_item_id: string; menu_item_name?: string; quantity: number; notes?: string | null }[]
+  items: { menu_item_id: string; menu_item_name?: string; quantity: number; notes?: string | null }[],
+  isAddition: boolean = false
 ): void {
   if (typeof window !== "undefined") {
     try {
@@ -1301,7 +1302,12 @@ export function markKitchenItemsDispatched(
 
       items.forEach((item) => {
         const key = `${item.menu_item_id}_${item.menu_item_name || ""}_${item.notes || ""}`;
-        orderDispatched[key] = (orderDispatched[key] || 0) + item.quantity;
+        if (isAddition) {
+          orderDispatched[key] = (orderDispatched[key] || 0) + item.quantity;
+        } else {
+          // Base/initial order: set to exact dispatched quantity without double-counting on reprint
+          orderDispatched[key] = Math.max(orderDispatched[key] || 0, item.quantity);
+        }
       });
 
       all[orderId] = orderDispatched;
