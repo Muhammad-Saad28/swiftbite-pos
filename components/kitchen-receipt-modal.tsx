@@ -96,8 +96,6 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               max-height: none !important;
               overflow: visible !important;
             }
-              overflow: visible !important;
-            }
             /* Component styling translations for thermal print fidelity */
             .text-center { text-align: center; }
             .text-right { text-align: right; }
@@ -193,14 +191,31 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
     doc.close();
 
     // Allow DOM and layout engine to settle, then print
+    const cleanup = () => {
+      try {
+        if (iframe && iframe.parentNode) {
+          iframe.parentNode.removeChild(iframe);
+        }
+      } catch (e) {}
+    };
+
     setTimeout(() => {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
-      // Clean up after print window opens
-      setTimeout(() => {
-        iframe.remove();
-      }, 2500);
-    }, 250);
+      try {
+        if (iframe.contentWindow) {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.onafterprint = () => {
+            cleanup();
+          };
+          iframe.contentWindow.print();
+        } else {
+          window.print();
+        }
+      } catch (e) {
+        window.print();
+      }
+      // Safety fallback: only cleanup after 60 seconds if onafterprint didn't fire
+      setTimeout(cleanup, 60000);
+    }, 300);
   };
 
   const numericReceiptNo = formatOrderNumber(order.order_number || order.id);
@@ -289,7 +304,12 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
               </div>
 
               <div className="divide-y divide-dashed divide-zinc-400">
-                {order.items?.map((item, idx) => {
+                {(!order.items || order.items.length === 0) ? (
+                  <div className="py-4 text-center font-black text-black text-sm">
+                    NO NEW ITEMS PENDING IN KITCHEN
+                  </div>
+                ) : (
+                  order.items.map((item, idx) => {
                   const isDeal =
                     item.menu_item_name?.toLowerCase().includes("deal") ||
                     item.menu_item_name?.toLowerCase().includes("combo");
@@ -320,7 +340,7 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
                       )}
                     </div>
                   );
-                })}
+                }))}
               </div>
             </div>
 

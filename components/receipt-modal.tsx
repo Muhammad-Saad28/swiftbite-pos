@@ -91,8 +91,6 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
               max-height: none !important;
               overflow: visible !important;
             }
-              overflow: visible !important;
-            }
             /* Component styling translations for thermal print fidelity */
             .text-center { text-align: center; }
             .text-left { text-align: left; }
@@ -219,14 +217,31 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
     doc.close();
 
     // Allow DOM and layout engine to settle, then print
+    const cleanup = () => {
+      try {
+        if (iframe && iframe.parentNode) {
+          iframe.parentNode.removeChild(iframe);
+        }
+      } catch (e) {}
+    };
+
     setTimeout(() => {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
-      // Remove iframe from DOM after print dialog triggers
-      setTimeout(() => {
-        iframe.remove();
-      }, 2500);
-    }, 250);
+      try {
+        if (iframe.contentWindow) {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.onafterprint = () => {
+            cleanup();
+          };
+          iframe.contentWindow.print();
+        } else {
+          window.print();
+        }
+      } catch (e) {
+        window.print();
+      }
+      // Safety fallback: only cleanup after 60 seconds if onafterprint didn't fire
+      setTimeout(cleanup, 60000);
+    }, 300);
   };
 
   const discountAmount = order.discount_amount || 0;
@@ -337,13 +352,18 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
             </div>
 
             <div className="space-y-3">
-              {order.items?.map((item) => {
+              {(!order.items || order.items.length === 0) ? (
+                <div className="py-4 text-center text-sm font-black text-black">
+                  No items listed
+                </div>
+              ) : (
+                order.items.map((item, idx) => {
                 const isDeal =
                   item.menu_item_name?.toLowerCase().includes("deal") ||
                   item.menu_item_name?.toLowerCase().includes("combo");
 
                 return (
-                  <div key={item.id} className="py-1 text-base sm:text-lg font-sans text-black font-black">
+                  <div key={item.id || idx} className="py-1 text-base sm:text-lg font-sans text-black font-black">
                     <div className="flex justify-between items-start">
                       <div className="pr-3 text-left">
                         {/* Main Item Name - Matching Same Boldness and Sans Font as ITEM DESCRIPTION */}
@@ -373,7 +393,7 @@ export function ReceiptModal({ isOpen, onClose, order }: ReceiptModalProps) {
                     )}
                   </div>
                 );
-              })}
+              }))}
             </div>
           </div>
 
