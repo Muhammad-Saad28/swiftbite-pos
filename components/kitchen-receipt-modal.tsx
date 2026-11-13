@@ -315,13 +315,8 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
                 <ChefHat className="h-6 w-6" />
               </div>
               <h2 className="text-xl font-black tracking-tight text-black uppercase font-sans">
-                {order.is_addition ? "*** RUNNING KOT (ADDITIONAL ITEMS) ***" : "*** KITCHEN ORDER TICKET ***"}
+                *** KITCHEN ORDER TICKET ***
               </h2>
-              {order.is_addition && (
-                <div className="my-1 py-1 px-2 bg-black text-white rounded text-center text-xs font-black uppercase tracking-wider">
-                  ⚡ SUPPLEMENTARY KOT — PREPARE NEW ITEMS ONLY ⚡
-                </div>
-              )}
               <p className="text-xs font-black tracking-widest text-black uppercase mt-0.5">
                 SWIFTBITE KITCHEN DISPATCH
               </p>
