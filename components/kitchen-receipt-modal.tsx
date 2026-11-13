@@ -192,9 +192,9 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
     setTimeout(() => {
       try {
         const wrapper = doc.querySelector(".print-wrapper") as HTMLElement | null;
-        const measuredPx = wrapper?.offsetHeight || wrapper?.scrollHeight || printElement.offsetHeight || 260;
+        const measuredPx = wrapper?.offsetHeight || wrapper?.scrollHeight || printElement.offsetHeight || 300;
         // 96 DPI conversion: 1 px ≈ 0.264583 mm
-        const computedHeightMm = Math.max(35, Math.ceil(measuredPx * 0.2646) + 4);
+        const computedHeightMm = Math.max(45, Math.ceil(measuredPx * 0.2646) + 4);
 
         let dynamicStyle = doc.getElementById("kot-page-style");
         if (!dynamicStyle) {
