@@ -56,8 +56,8 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
       <html>
         <head>
           <meta charset="utf-8" />
-          <title>KOT #${numericReceiptNo}</title>
-          <style id="kot-page-style">
+          <title>Receipt #${numericReceiptNo}</title>
+          <style id="receipt-page-style">
             @page {
               margin: 0;
             }
@@ -97,74 +97,105 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
             }
             /* Component styling translations for thermal print fidelity */
             .text-center { text-align: center; }
+            .text-left { text-align: left; }
             .text-right { text-align: right; }
             .uppercase { text-transform: uppercase; }
             .flex { display: flex; }
             .inline-flex { display: inline-flex; }
+            .inline-block { display: inline-block; }
             .items-center { align-items: center; }
             .items-start { align-items: flex-start; }
+            .items-baseline { align-items: baseline; }
             .justify-between { justify-content: space-between; }
             .justify-center { justify-content: center; }
+            .space-y-0\\.5 > * + * { margin-top: 2px; }
             .space-y-1 > * + * { margin-top: 4px; }
             .space-y-1\\.5 > * + * { margin-top: 6px; }
             .space-y-2 > * + * { margin-top: 8px; }
-            .space-x-1\\.5 > * + * { margin-left: 6px; }
+            .space-y-2\\.5 > * + * { margin-top: 10px; }
+            .space-x-1 > * + * { margin-left: 4px; }
             .space-x-2 > * + * { margin-left: 8px; }
+            .space-x-\\[2px\\] > * + * { margin-left: 2px; }
             .border-b { border-bottom: 1.5px solid #000; }
             .border-b-2 { border-bottom: 2px solid #000; }
+            .border-t { border-top: 1.5px solid #000; }
             .border-t-2 { border-top: 2px solid #000; }
             .border-y-2 { border-top: 2px solid #000; border-bottom: 2px solid #000; }
             .border-2 { border: 2px solid #000; }
+            .border { border: 1.5px solid #000; }
             .border-dashed { border-style: dashed !important; }
             .border-dotted { border-style: dotted !important; }
             .rounded { border-radius: 4px; }
             .rounded-lg { border-radius: 6px; }
             .rounded-xl { border-radius: 8px; }
+            .rounded-2xl { border-radius: 12px; }
+            .rounded-full { border-radius: 9999px; }
             .bg-black { background-color: #000000 !important; color: #ffffff !important; }
+            .bg-white { background-color: #ffffff !important; }
+            .bg-zinc-100, .bg-zinc-200 { background-color: #f4f4f5 !important; }
             .text-white { color: #ffffff !important; }
             .text-black { color: #000000 !important; }
             .font-black { font-weight: 900; }
             .font-extrabold { font-weight: 800; }
             .font-bold { font-weight: 700; }
+            .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important; }
+            .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; }
             .text-xs { font-size: 11px; line-height: 14px; }
             .text-sm { font-size: 13px; line-height: 16px; }
             .text-base { font-size: 15px; line-height: 18px; }
-            .text-lg { font-size: 16px; line-height: 20px; }
-            .text-xl { font-size: 18px; line-height: 22px; }
+            .text-lg { font-size: 17px; line-height: 20px; }
+            .text-xl { font-size: 19px; line-height: 22px; }
+            .text-2xl { font-size: 21px; line-height: 24px; }
+            .text-3xl { font-size: 24px; line-height: 26px; }
             .p-1 { padding: 4px; }
             .p-1\\.5 { padding: 6px; }
             .p-2 { padding: 8px; }
-            .p-3 { padding: 10px; }
-            .px-1\\.5 { padding-left: 6px; padding-right: 6px; }
+            .p-2\\.5 { padding: 10px; }
+            .p-3 { padding: 12px; }
             .px-2 { padding-left: 8px; padding-right: 8px; }
             .px-2\\.5 { padding-left: 10px; padding-right: 10px; }
             .px-3 { padding-left: 12px; padding-right: 12px; }
+            .px-3\\.5 { padding-left: 14px; padding-right: 14px; }
             .py-0\\.5 { padding-top: 2px; padding-bottom: 2px; }
             .py-1 { padding-top: 4px; padding-bottom: 4px; }
             .py-1\\.5 { padding-top: 6px; padding-bottom: 6px; }
             .py-2 { padding-top: 8px; padding-bottom: 8px; }
             .py-2\\.5 { padding-top: 10px; padding-bottom: 10px; }
             .py-3 { padding-top: 12px; padding-bottom: 12px; }
+            .pt-0\\.5 { padding-top: 2px; }
             .pt-1 { padding-top: 4px; }
+            .pt-1\\.5 { padding-top: 6px; }
             .pt-2 { padding-top: 8px; }
-            .pt-3 { padding-top: 10px; }
-            .pt-4 { padding-top: 14px; }
+            .pt-2\\.5 { padding-top: 10px; }
+            .pt-3 { padding-top: 12px; }
+            .pt-3\\.5 { padding-top: 14px; }
+            .pt-4 { padding-top: 16px; }
+            .pt-5 { padding-top: 20px; }
             .pb-1 { padding-bottom: 4px; }
             .pb-1\\.5 { padding-bottom: 6px; }
             .pb-2 { padding-bottom: 8px; }
             .pb-3 { padding-bottom: 10px; }
+            .pb-4 { padding-bottom: 14px; }
             .my-3 { margin-top: 10px; margin-bottom: 10px; }
             .mt-0\\.5 { margin-top: 2px; }
             .mt-1 { margin-top: 4px; }
             .mt-1\\.5 { margin-top: 6px; }
-            .mt-3 { margin-top: 10px; }
-            .mt-4 { margin-top: 14px; }
+            .mt-2 { margin-top: 8px; }
+            .mt-3 { margin-top: 12px; }
             .mb-0\\.5 { margin-bottom: 2px; }
             .mb-1\\.5 { margin-bottom: 6px; }
-            .pr-2 { padding-right: 8px; }
-            .pl-8 { padding-left: 28px; }
+            .pr-3 { padding-right: 12px; }
+            .h-10 { height: 40px; }
+            .h-18 { height: 72px; }
+            .w-18 { width: 72px; }
+            .h-full { height: 100%; }
+            .w-full { width: 100%; }
+            .leading-snug { line-height: 1.35; }
             .leading-tight { line-height: 1.25; }
-            .italic { font-style: italic; }
+            .tracking-wider { letter-spacing: 0.05em; }
+            .tracking-widest { letter-spacing: 0.1em; }
+            .tracking-tight { letter-spacing: -0.025em; }
+            .whitespace-nowrap { white-space: nowrap; }
             .divide-y-2 > * + * { border-top: 2px dashed #000000; }
             .divide-dashed { border-style: dashed; }
             
@@ -208,14 +239,14 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
             margin: 0;
           }
         ` + dynamicStyle.innerHTML;
-      } catch (e) {}
+      } catch (e) { }
 
       const cleanup = () => {
         try {
           if (iframe && iframe.parentNode) {
             iframe.parentNode.removeChild(iframe);
           }
-        } catch (e) {}
+        } catch (e) { }
       };
 
       try {
@@ -327,37 +358,37 @@ export function KitchenReceiptModal({ isOpen, onClose, order }: KitchenReceiptMo
                   </div>
                 ) : (
                   order.items.map((item, idx) => {
-                  const isDeal =
-                    item.menu_item_name?.toLowerCase().includes("deal") ||
-                    item.menu_item_name?.toLowerCase().includes("combo");
+                    const isDeal =
+                      item.menu_item_name?.toLowerCase().includes("deal") ||
+                      item.menu_item_name?.toLowerCase().includes("combo");
 
-                  return (
-                    <div key={item.id || idx} className="py-3 text-black font-black font-sans">
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xl font-black px-2 py-0.5 rounded bg-black text-white">
-                            {item.quantity}x
-                          </span>
-                          <span className="text-base sm:text-lg font-black text-black tracking-tight leading-snug">
-                            {item.menu_item_name}
-                          </span>
+                    return (
+                      <div key={item.id || idx} className="py-3 text-black font-black font-sans">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xl font-black px-2 py-0.5 rounded bg-black text-white">
+                              {item.quantity}x
+                            </span>
+                            <span className="text-base sm:text-lg font-black text-black tracking-tight leading-snug">
+                              {item.menu_item_name}
+                            </span>
+                          </div>
+                          <span className="text-xs font-black text-black pt-1">[ COOK ]</span>
                         </div>
-                        <span className="text-xs font-black text-black pt-1">[ COOK ]</span>
+                        {/* Only show includes for Combo Deals */}
+                        {isDeal && item.notes && (
+                          <div className="mt-1 text-left text-black font-black font-sans">
+                            <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-black">
+                              COMBO ITEMS TO PREPARE:
+                            </p>
+                            <p className="text-sm font-black text-black leading-tight mt-0.5">
+                              {item.notes}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                      {/* Only show includes for Combo Deals */}
-                      {isDeal && item.notes && (
-                        <div className="mt-1 text-left text-black font-black font-sans">
-                          <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-black">
-                            COMBO ITEMS TO PREPARE:
-                          </p>
-                          <p className="text-sm font-black text-black leading-tight mt-0.5">
-                            {item.notes}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  );
-                }))}
+                    );
+                  }))}
               </div>
             </div>
 
